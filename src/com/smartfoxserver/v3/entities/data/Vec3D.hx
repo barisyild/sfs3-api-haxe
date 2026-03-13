@@ -5,8 +5,6 @@ import com.smartfoxserver.v3.entities.data.ISFSArray;
 import com.smartfoxserver.v3.entities.data.SFSDataType;
 import com.smartfoxserver.v3.entities.data.SFSDataWrapper;
 
-import com.smartfoxserver.v3.entities.MMORoom;
-import com.smartfoxserver.v3.requests.mmo.MMORoomSettings;
 import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
 
 /**
@@ -142,7 +140,6 @@ abstract class Vec3D<T>
         return cast pz;
     }
 
-    @Override
     public function toString():String
     {
         return '($px, $py, $pz)';

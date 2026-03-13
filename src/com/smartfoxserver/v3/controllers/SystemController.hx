@@ -73,7 +73,6 @@ class SystemController extends BaseController
         responseHandlers.set(1600, "ResLoadBalancerError");
     }
 
-    @Override
     override public function handleMessage(resp:IResponse):Void
     {
         if(log.isDebugEnabled())

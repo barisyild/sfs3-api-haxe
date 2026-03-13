@@ -24,7 +24,6 @@ class SFSProtocolCodec implements IProtocolCodec
         this.bitSwarm = handler.getBitSwarm();
     }
 
-    @Override
     public function onPacketRead(buff:Bytes, txType:TransportType, isRaw:Bool):Void
     {
         if (isRaw)
@@ -63,7 +62,6 @@ class SFSProtocolCodec implements IProtocolCodec
         dispatchResponse(resp);
     }
 
-    @Override
     public function onPacketWrite(request:IRequest):Void
     {
         if (request.isRaw())
@@ -97,7 +95,6 @@ class SFSProtocolCodec implements IProtocolCodec
         ioHandler.onDataWrite(request);
     }
 
-    @Override
     public function getIOHandler():IOHandler
     {
         return ioHandler;

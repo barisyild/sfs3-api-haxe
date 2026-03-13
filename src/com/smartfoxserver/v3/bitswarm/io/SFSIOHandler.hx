@@ -31,7 +31,6 @@ class SFSIOHandler extends BaseIOHandler
         this.codec = new SFSProtocolCodec(this);
     }
 
-@Override
     public function getCodec():IProtocolCodec
     {
         return codec;
@@ -50,7 +49,6 @@ class SFSIOHandler extends BaseIOHandler
     /*
 	 * Decode packets
 	 */
-    @Override
     public function onDataRead(byteData:Bytes, txType:TransportType):Void
     {
         if (byteData == null || byteData.length < 1)
@@ -71,7 +69,6 @@ class SFSIOHandler extends BaseIOHandler
 	 * Transport neutral
 	 * Write data to socket (TCP/UDP)
 	 */
-@Override
     public function onDataWrite(request:IRequest):Void
     {
         var binData:Bytes = cast(request.getContent(), Bytes);

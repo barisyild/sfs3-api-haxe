@@ -33,37 +33,31 @@ class Response implements IResponse
         return cast(content, ISFSObject);
     }
 
-    @Override
     public function getRawContent():Bytes
     {
         return cast(content, Bytes);
     }
 
-    @Override
     public function getTransportType():TransportType
     {
         return txType;
     }
 
-    @Override
     public function isRaw():Bool
     {
         return raw;
     }
 
-    @Override
     public function isTcp():Bool
     {
         return txType == TransportType.TCP;
     }
 
-    @Override
     public function isUdp():Bool
     {
         return !isTcp();
     }
 
-    @Override
     public function toString():String
     {
         return '($id, $cid, $txType)';

@@ -221,7 +221,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function setMySelf(mySelf:User):Void {
 		this.mySelf = mySelf;
 	}
@@ -232,7 +231,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function setJoining(value:Bool) {
 		this._isJoining.store(value);
 	}
@@ -255,7 +253,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @see ConfigData
 	 * @return the client configuration details.
 	 */
-	@Override
 	public function getConfig():ConfigData {
 		return cfgData;
 	}
@@ -266,7 +263,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 *
 	 * @return the current session token
 	 */
-	@Override
 	public function getSessionToken():String {
 		return sessionToken;
 	}
@@ -282,13 +278,11 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @see		sfs3.client.requests.JoinRoomRequest
 	 * @return  the last joined Room
 	 */
-	@Override
 	public function getLastJoinedRoom():Room {
 		return lastJoinedRoom;
 	}
 
 	/** @internal */
-	@Override
 	public function setLastJoinedRoom(lastJoinedRoom:Room):Void {
 		this.lastJoinedRoom = lastJoinedRoom;
 	}
@@ -305,7 +299,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 *
 	 * @return the list of joined Rooms
 	 */
-	@Override
 	public function getJoinedRooms():Array<Room> {
 		return roomManager.getJoinedRooms();
 	}
@@ -379,7 +372,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function setReconnectionSeconds(seconds:Int):Void {
 		bitSwarm.getConnSettings().reconnectionSeconds = seconds;
 	}
@@ -395,7 +387,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 *  @param platformId	the id of the platform (e.g. Java, Android etc...)
 	 *  @param version		the version of the platform
 	 */
-	@Override
 	public function setClientDetails(platformId:String, version:String):Void {
 		if (isConnected()) {
 			log.warn("setClientDetails() must be called before the connection is started");
@@ -407,7 +398,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		clientDetails += version != null ? version.replace(CLIENT_TYPE_SEPARATOR, ' ') : "";
 	}
 
-	@Override
 	public function getNetDebugLevel():NetDebugLevel {
 		if (cfgData != null)
 			return cfgData.netDebugLevel;
@@ -502,7 +492,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function dispatchEvent(evt:ApiEvent):Void {
 		dispatcher.dispatchEvent(evt);
 	}
@@ -510,7 +499,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	/**
 	 * @return true if we have an active TCP connection to the server, false otherwise
 	 */
-	@Override
 	public function isConnected():Bool {
 		if (bitSwarm.isConnected() && handshakeComplete)
 			return cfgData.useSSL ? encryptionComplete : true;
@@ -521,7 +509,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	/**
 	 * @return true if we have an active UDP connection to the server, false otherwise
 	 */
-	@Override
 	public function isUdpConnected():Bool {
 		return bitSwarm.isUdpConnected();
 	}
@@ -532,7 +519,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @param cfgData, the connection configuration
 	 * @see ConfigData
 	 */
-	@Override
 	public function connect(cfgData:ConfigData):Void {
 		validateConfigData(cfgData);
 		bitSwarm.connect(this.cfgData);
@@ -541,7 +527,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	/**
 	 * Manually disconnect from the server. Triggers an {@link SFSEvent#CONNECTION_LOST} event
 	 */
-	@Override
 	public function disconnect():Void {
 		bitSwarm.disconnect();
 	}
@@ -550,7 +535,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * Used to simulate an unexpected connection, to test the reconnection system.
 	 * For more information see the online SmartFoxServer3 documentation under Development Basics &gt; Reconnection system
 	 */
-	@Override
 	public function killConnection():Void {
 		if (!isConnected())
 			throw new IllegalStateException("The client is not connected");
@@ -559,13 +543,11 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function getNodeId():String {
 		return this.isConnected() ? nodeId : null;
 	}
 
 	/** @internal */
-	@Override
 	public function setNodeId(value:String):Void {
 		this.nodeId = value;
 	}
@@ -613,7 +595,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * <p/>
 	 * For more information and examples see the SFS3 Documentation under Advanced Topics &gt; Using the UDP Protocol
 	 */
-	@Override
 	public function connectUdp():Void {
 		if (isConnected() && mySelf != null) {
 			var udpHost:String;
@@ -635,7 +616,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	/**
 	 * Closes the current UDP Connection. Triggers a {@link SFSEvent#UDP_CONNECTION_LOST} event.
 	 */
-	@Override
 	public function disconnectUdp():Void {
 		bitSwarm.disconnectUdp();
 	}
@@ -715,7 +695,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	/** @internal */
-	@Override
 	public function handleLogout():Void {
 		resetState();
 	}

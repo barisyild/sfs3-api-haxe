@@ -17,7 +17,6 @@ class BaseController implements IController
         this.bitSwarm = bitSwarm;
     }
 
-    @Override
     public function getId():Int
     {
         return id;
