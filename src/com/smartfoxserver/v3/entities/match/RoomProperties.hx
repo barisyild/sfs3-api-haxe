@@ -4,7 +4,7 @@ package com.smartfoxserver.v3.entities.match;
  * The <em>RoomProperties</em> class contains the names of predefined properties that can be used in matching expressions to search/filter Rooms.
  *
  * @see		MatchExpression
- * @see		sfs3.client.entities.Room Room
+ * @see		com.smartfoxserver.v3.entities.Room Room
  */
 final class RoomProperties
 {

@@ -171,7 +171,7 @@ interface IBuddyManager
 	 *
 	 * @see		com.smartfoxserver.v3.entities.Buddy#getState()
 	 * @see		com.smartfoxserver.v3.entities.variables.ReservedBuddyVariables
-	 * @see		sfs3.client.requests.buddylist.SetBuddyVariablesRequest
+	 * @see		com.smartfoxserver.v3.requests.buddylist.SetBuddyVariablesRequest
 	 */
     public function getMyState():String;
 

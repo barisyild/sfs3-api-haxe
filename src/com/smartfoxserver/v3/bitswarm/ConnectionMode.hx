@@ -3,7 +3,7 @@ package com.smartfoxserver.v3.bitswarm;
 /**
  * The <em>ConnectionMode</em> class contains the constants defining the possible connection modes of the client with the server.
  *
- * @see		sfs3.client.SmartFox#getConnectionMode()
+ * @see		com.smartfoxserver.v3.SmartFox#getConnectionMode()
  */
 enum abstract ConnectionMode(Int)
 {

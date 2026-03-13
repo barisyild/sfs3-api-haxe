@@ -17,7 +17,7 @@ interface IUserManager
 	 * @param	userName	The name of the user whose presence in the users list is to be tested.
 	 * @return	<code>true</code> if the passed user exists in the users list.
 	 *
-	 * @see		sfs3.client.entities.User#getName()
+	 * @see		com.smartfoxserver.v3.entities.User#getName()
 	 */
     public function containsUserName(userName:String):Bool;
 
@@ -27,7 +27,7 @@ interface IUserManager
 	 * @param	userId	The id of the user whose presence in the users list is to be tested.
 	 * @return	<code>true</code> if the passed user exists in the users list.
 	 *
-	 * @see		sfs3.client.entities.User#getId()
+	 * @see		com.smartfoxserver.v3.entities.User#getId()
 	 */
     public function containsUserId(userId:Int):Bool;
 
@@ -45,7 +45,7 @@ interface IUserManager
 	 * @param	userName	The name of the user to be found.
 	 * @return The <em>User</em> object representing the user, or <code>null</code> if no user with the passed name exists in the local users list.
 	 *
-	 * @see		sfs3.client.entities.User#getName()
+	 * @see		com.smartfoxserver.v3.entities.User#getName()
 	 * @see		#getUserById
 	 */
     public function getUserByName(userName:String):User;
@@ -56,7 +56,7 @@ interface IUserManager
 	 * @param	userId	The id of the user to be found.
 	 * @return The <em>User</em> object representing the user, or <code>null</code> if no user with the passed id exists in the local users list.
 	 *
-	 * @see		sfs3.client.entities.User#getId()
+	 * @see		com.smartfoxserver.v3.entities.User#getId()
 	 * @see		#getUserByName
 	 */
     public function getUserById(userId:Int):User;

@@ -54,7 +54,7 @@ interface IRoomManager
 	 *           is to be tested.
 	 * @return <code>true</code> if the passed Room exists in the Rooms list.
 	 *
-	 * @see sfs3.client.entities.Room#getId()
+	 * @see com.smartfoxserver.v3.entities.Room#getId()
 	 */
     public function containsRoom(id:Dynamic):Bool;
 
@@ -68,8 +68,8 @@ interface IRoomManager
 	 * @return <code>true</code> if the Rooms list contains the passed Room and it
 	 *         belongs to the specified Group.
 	 *
-	 * @see sfs3.client.entities.Room#getId()
-	 * @see sfs3.client.entities.Room#getGroupId()
+	 * @see com.smartfoxserver.v3.entities.Room#getId()
+	 * @see com.smartfoxserver.v3.entities.Room#getGroupId()
 	 */
     public function containsRoomInGroup(room:Dynamic, groupId:String):Bool;
 
@@ -148,10 +148,10 @@ interface IRoomManager
 	 *
 	 * @return The list of the available <em>Room</em> objects.
 	 *
-	 * @see sfs3.client.entities.Room
-	 * @see sfs3.client.requests.JoinRoomRequest
-	 * @see sfs3.client.requests.SubscribeRoomGroupRequest
-	 * @see sfs3.client.requests.UnsubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.entities.Room
+	 * @see com.smartfoxserver.v3.requests.JoinRoomRequest
+	 * @see com.smartfoxserver.v3.requests.SubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.requests.UnsubscribeRoomGroupRequest
 	 */
     public function getRoomList():Array<Room>;
 
@@ -172,9 +172,9 @@ interface IRoomManager
 	 *
 	 * @return A list of Room Group names.
 	 *
-	 * @see sfs3.client.entities.Room#getGroupId()
-	 * @see sfs3.client.requests.SubscribeRoomGroupRequest
-	 * @see sfs3.client.requests.UnsubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.entities.Room#getGroupId()
+	 * @see com.smartfoxserver.v3.requests.SubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.requests.UnsubscribeRoomGroupRequest
 	 */
     public function getRoomGroups():Array<String>;
 
@@ -184,7 +184,7 @@ interface IRoomManager
 	 * @param groupId The name of the Group.
 	 * @return The list of <em>Room</em> objects belonging to the passed Room Group.
 	 *
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.entities.Room
 	 */
     public function getRoomListFromGroup(groupId:String):Array<Room>;
 
@@ -194,8 +194,8 @@ interface IRoomManager
 	 * @return The list of <em>Room</em> objects representing the Rooms currently
 	 *         joined by the client.
 	 *
-	 * @see sfs3.client.entities.Room
-	 * @see sfs3.client.requests.JoinRoomRequest
+	 * @see com.smartfoxserver.v3.entities.Room
+	 * @see com.smartfoxserver.v3.requests.JoinRoomRequest
 	 */
     public function getJoinedRooms():Array<Room>;
 

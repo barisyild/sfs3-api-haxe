@@ -23,10 +23,10 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>myVariables</td><td><em>List&lt;BuddyVariable&gt;</em></td><td>A list of all the Buddy Variables associated with the current user.</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.InitBuddyListRequest
-	 * @see		sfs3.client.entities.managers.IBuddyManager
-	 * @see		sfs3.client.entities.Buddy
-	 * @see		sfs3.client.entities.variables.BuddyVariable
+	 * @see		com.smartfoxserver.v3.requests.buddylist.InitBuddyListRequest
+	 * @see		com.smartfoxserver.v3.entities.managers.IBuddyManager
+	 * @see		com.smartfoxserver.v3.entities.Buddy
+	 * @see		com.smartfoxserver.v3.entities.variables.BuddyVariable
 	 * @see		#BUDDY_ERROR
 	 */
     public static final BUDDY_LIST_INIT:String = "buddyListInit";
@@ -42,8 +42,8 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>buddy</td><td><em>Buddy</em></td><td>The <em>Buddy</em> object corresponding to the buddy that was added.</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.AddBuddyRequest
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.AddBuddyRequest
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 * @see		#BUDDY_REMOVE
 	 * @see		#BUDDY_ERROR
 	 */
@@ -59,8 +59,8 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>buddy</td><td><em>Buddy</em></td><td>The <em>Buddy</em> object corresponding to the buddy that was removed.</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.RemoveBuddyRequest
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.RemoveBuddyRequest
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 * @see		#BUDDY_ADD
 	 * @see		#BUDDY_ERROR
 	 */
@@ -76,8 +76,8 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>buddy</td><td><em>Buddy</em></td><td>The <em>Buddy</em> object corresponding to the buddy that was blocked/unblocked.</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.BlockBuddyRequest
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.BlockBuddyRequest
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 * @see		#BUDDY_ERROR
 	 */
     public static final BUDDY_BLOCK:String = "buddyBlock";
@@ -110,8 +110,8 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>isItMe</td><td><em>Boolean</em></td><td><code>true</code> if the online state was changed by the current user</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.GoOnlineRequest
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.GoOnlineRequest
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 */
     public static final BUDDY_ONLINE_STATE_CHANGE:String = "buddyOnlineStateChange";
 
@@ -127,9 +127,9 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>changedVars</td><td><em>List&lt;BuddyVariable&gt;</em></td><td>The list of Buddy Variable names that were created or changed.</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.SetBuddyVariablesRequest
-	 * @see		sfs3.client.entities.variables.BuddyVariable
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.SetBuddyVariablesRequest
+	 * @see		com.smartfoxserver.v3.entities.variables.BuddyVariable
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 */
     public static final BUDDY_VARIABLES_UPDATE:String = "buddyVariablesUpdate";
 
@@ -146,8 +146,8 @@ class SFSBuddyEvent extends ApiEvent
 	 * <tr><td>data</td><td><em>ISFSObject</em></td><td>Extra custom parameters, may be null</td></tr>
 	 * </table>
 	 *
-	 * @see		sfs3.client.requests.buddylist.BuddyMessageRequest
-	 * @see		sfs3.client.entities.Buddy
+	 * @see		com.smartfoxserver.v3.requests.buddylist.BuddyMessageRequest
+	 * @see		com.smartfoxserver.v3.entities.Buddy
 	 */
     public static final BUDDY_MESSAGE:String = "buddyMessage";
 

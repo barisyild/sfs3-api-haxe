@@ -50,9 +50,9 @@ using StringTools;
  * <p><b>Example of usage:</b></p>
  * <pre>
  * {@code
- *     import sfs3.client.*;
- *     import sfs3.client.requests.*;
- *     import sfs3.client.util.ConfigData;
+ *     import com.smartfoxserver.v3.*;
+ *     import com.smartfoxserver.v3.requests.*;
+ *     import com.smartfoxserver.v3.ConfigData;
  *
  *     public class SFS3Connector
  *     {
@@ -213,8 +213,8 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * This object is generated upon successful login, so it is <code>null</code> before the login or if the login request failed.
 	 * <p/>
 	 *
-	 * @see		sfs3.client.entities.User#isItMe()
-	 * @see		sfs3.client.requests.LoginRequest
+	 * @see		com.smartfoxserver.v3.entities.User#isItMe()
+	 * @see		com.smartfoxserver.v3.requests.LoginRequest
 	 */
 	public function getMySelf():User {
 		return mySelf;
@@ -275,7 +275,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * You can use the <em>JoinRoomRequest</em> request to join a Room.</p>
 	 *
 	 * @see		#getJoinedRooms()
-	 * @see		sfs3.client.requests.JoinRoomRequest
+	 * @see		com.smartfoxserver.v3.requests.JoinRoomRequest
 	 * @return  the last joined Room
 	 */
 	public function getLastJoinedRoom():Room {
@@ -294,8 +294,8 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 *
 	 * @see		#getLastJoinedRoom()
 	 * @see		#getRoomManager()
-	 * @see		sfs3.client.entities.Room
-	 * @see		sfs3.client.requests.JoinRoomRequest
+	 * @see		com.smartfoxserver.v3.entities.Room
+	 * @see		com.smartfoxserver.v3.requests.JoinRoomRequest
 	 *
 	 * @return the list of joined Rooms
 	 */
@@ -348,7 +348,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * System.out.println("Connection mode: " + sfs.getConnectionMode());
 	 * </pre>
 	 *
-	 * @see 	sfs3.client.bitswarm.ConnectionMode
+	 * @see 	com.smartfoxserver.v3.bitswarm.ConnectionMode
 	 */
 	public function getConnectionMode():String {
 		return bitSwarm.getConnectionMode().name();
@@ -672,7 +672,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @param interval  An optional amount of seconds to pause between each query (recommended 3-4s)
 	 * @param queueSize  The amount of values stored temporarily and used to calculate the average lag
 	 *
-	 * @see		sfs3.client.core.SFSEvent#PING_PONG
+	 * @see		com.smartfoxserver.v3.core.SFSEvent#PING_PONG
 	 */
 	public function enableLagMonitor(enabled:Bool, interval:Int = 4, queueSize:Int = 10):Void {
 		if (mySelf == null) {

@@ -13,9 +13,9 @@ package com.smartfoxserver.v3.core;
  * <b>Example of usage:</b>
  * <pre>
  * {@code
- *     import sfs3.client.*;
- *     import sfs3.client.requests.*;
- *     import sfs3.client.util.ConfigData;
+ *     import com.smartfoxserver.v3.*;
+ *     import com.smartfoxserver.v3.requests.*;
+ *     import com.smartfoxserver.v3.ConfigData;
  *
  *     public class SFS3Connector
  *     {
@@ -194,7 +194,7 @@ class SFSEvent extends ApiEvent
 	 * </table>
 	 *
 	 * @see LagValue
-	 * @see sfs3.client.SmartFox#enableLagMonitor(boolean)
+	 * @see com.smartfoxserver.v3.SmartFox#enableLagMonitor(boolean)
 	 */
     public static final PING_PONG:String = "pingPong";
 
@@ -223,8 +223,8 @@ class SFSEvent extends ApiEvent
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.SmartFox#disconnect()
-	 * @see sfs3.client.util.ClientDisconnectionReason
+	 * @see com.smartfoxserver.v3.SmartFox#disconnect()
+	 * @see com.smartfoxserver.v3.util.ClientDisconnectionReason
 	 * @see #CONNECTION
 	 * @see #CONNECTION_RETRY
 	 */
@@ -316,8 +316,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.LoginRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.LoginRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 * @see #LOGIN_ERROR
 	 * @see #LOGOUT
 	 */
@@ -353,7 +353,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.LoginRequest
+	 * @see com.smartfoxserver.v3.requests.LoginRequest
 	 * @see #LOGIN
 	 */
     public static final LOGIN_ERROR:String = "loginError";
@@ -368,7 +368,7 @@ s	 * <p>
 	 * No parameters are available for this event object.
 	 * </p>
 	 *
-	 * @see sfs3.client.requests.LogoutRequest
+	 * @see com.smartfoxserver.v3.requests.LogoutRequest
 	 * @see #LOGIN
 	 */
     public static final LOGOUT:String = "logout";
@@ -398,9 +398,9 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.CreateRoomRequest
-	 * @see sfs3.client.requests.game.CreateSFSGameRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.CreateRoomRequest
+	 * @see com.smartfoxserver.v3.requests.game.CreateSFSGameRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_REMOVE
 	 * @see #ROOM_CREATION_ERROR
 	 */
@@ -429,7 +429,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_ADD
 	 */
     public static final ROOM_REMOVE:String = "roomRemove";
@@ -463,8 +463,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.CreateRoomRequest
-	 * @see sfs3.client.requests.game.CreateSFSGameRequest
+	 * @see com.smartfoxserver.v3.requests.CreateRoomRequest
+	 * @see com.smartfoxserver.v3.requests.game.CreateSFSGameRequest
 	 * @see #ROOM_ADD
 	 */
     public static final ROOM_CREATION_ERROR:String = "roomCreationError";
@@ -495,7 +495,7 @@ s	 * <p>
 	 *
 	 * @see JoinRoomRequest
 	 * @see QuickJoinGameRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_JOIN_ERROR
 	 */
     public static final ROOM_JOIN:String = "roomJoin";
@@ -568,9 +568,9 @@ s	 * <p>
 	 *
 	 * @see JoinRoomRequest
 	 * @see QuickJoinGameRequest
-	 * @see sfs3.client.requests.RoomSettings#setEvents(sfs3.client.requests.RoomEvents)
-	 * @see sfs3.client.entities.User
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.RoomSettings#setEvents(com.smartfoxserver.v3.requests.RoomEvents)
+	 * @see com.smartfoxserver.v3.entities.User
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #USER_EXIT_ROOM
 	 * @see #USER_COUNT_CHANGE
 	 */
@@ -607,10 +607,10 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.LeaveRoomRequest
-	 * @see sfs3.client.requests.RoomSettings#setEvents(sfs3.client.requests.RoomEvents)
-	 * @see sfs3.client.entities.User
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.LeaveRoomRequest
+	 * @see com.smartfoxserver.v3.requests.RoomSettings#setEvents(com.smartfoxserver.v3.requests.RoomEvents)
+	 * @see com.smartfoxserver.v3.entities.User
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #USER_ENTER_ROOM
 	 * @see #USER_COUNT_CHANGE
 	 */
@@ -653,11 +653,11 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.JoinRoomRequest
+	 * @see com.smartfoxserver.v3.requests.JoinRoomRequest
 	 * @see QuickJoinGameRequest
-	 * @see sfs3.client.requests.LeaveRoomRequest
-	 * @see sfs3.client.requests.RoomSettings#setEvents(sfs3.client.requests.RoomEvents)
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.LeaveRoomRequest
+	 * @see com.smartfoxserver.v3.requests.RoomSettings#setEvents(com.smartfoxserver.v3.requests.RoomEvents)
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #USER_ENTER_ROOM
 	 * @see #USER_EXIT_ROOM
 	 */
@@ -703,8 +703,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.entities.User
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.entities.User
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #PRIVATE_MESSAGE
 	 */
     public static final PUBLIC_MESSAGE:String = "publicMessage";
@@ -755,8 +755,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.PrivateMessageRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.PrivateMessageRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 * @see #PUBLIC_MESSAGE
 	 */
     public static final PRIVATE_MESSAGE:String = "privateMessage";
@@ -791,8 +791,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ObjectMessageRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.ObjectMessageRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 */
     public static final OBJECT_MESSAGE:String = "objectMessage";
 
@@ -833,10 +833,10 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ModeratorMessageRequest
-	 * @see sfs3.client.requests.KickUserRequest
-	 * @see sfs3.client.requests.BanUserRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.ModeratorMessageRequest
+	 * @see com.smartfoxserver.v3.requests.KickUserRequest
+	 * @see com.smartfoxserver.v3.requests.BanUserRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 * @see #ADMIN_MESSAGE
 	 */
     public static final MODERATOR_MESSAGE:String = "moderatorMessage";
@@ -876,8 +876,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.AdminMessageRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.AdminMessageRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 * @see #MODERATOR_MESSAGE
 	 */
     public static final ADMIN_MESSAGE:String = "adminMessage";
@@ -927,7 +927,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ExtensionRequest
+	 * @see com.smartfoxserver.v3.requests.ExtensionRequest
 	 */
     public static final EXTENSION_RESPONSE:String = "extensionResponse";
 
@@ -963,8 +963,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.SetRoomVariablesRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.SetRoomVariablesRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 */
     public static final ROOM_VARIABLES_UPDATE:String = "roomVariablesUpdate";
 
@@ -998,8 +998,8 @@ s	 * <p>
 	 * </table>
 	 *
 	 * @see SmartFox#getJoinedRooms()
-	 * @see sfs3.client.requests.SetUserVariablesRequest
-	 * @see sfs3.client.entities.User
+	 * @see com.smartfoxserver.v3.requests.SetUserVariablesRequest
+	 * @see com.smartfoxserver.v3.entities.User
 	 */
     public static final USER_VARIABLES_UPDATE:String = "userVariablesUpdate";
 
@@ -1033,8 +1033,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.SubscribeRoomGroupRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.SubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_GROUP_SUBSCRIBE_ERROR
 	 * @see #ROOM_GROUP_UNSUBSCRIBE
 	 */
@@ -1064,7 +1064,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.UnsubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.requests.UnsubscribeRoomGroupRequest
 	 * @see #ROOM_GROUP_UNSUBSCRIBE_ERROR
 	 * @see #ROOM_GROUP_SUBSCRIBE
 	 */
@@ -1098,7 +1098,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.SubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.requests.SubscribeRoomGroupRequest
 	 * @see #ROOM_GROUP_SUBSCRIBE
 	 */
     public static final ROOM_GROUP_SUBSCRIBE_ERROR:String = "roomGroupSubscribeError";
@@ -1131,7 +1131,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.UnsubscribeRoomGroupRequest
+	 * @see com.smartfoxserver.v3.requests.UnsubscribeRoomGroupRequest
 	 * @see #ROOM_GROUP_UNSUBSCRIBE
 	 */
     public static final ROOM_GROUP_UNSUBSCRIBE_ERROR:String = "roomGroupUnsubscribeError";
@@ -1170,9 +1170,9 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.SpectatorToPlayerRequest
-	 * @see sfs3.client.entities.User
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.SpectatorToPlayerRequest
+	 * @see com.smartfoxserver.v3.entities.User
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #SPECTATOR_TO_PLAYER_ERROR
 	 * @see #PLAYER_TO_SPECTATOR
 	 */
@@ -1208,9 +1208,9 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.PlayerToSpectatorRequest
-	 * @see sfs3.client.entities.User
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.PlayerToSpectatorRequest
+	 * @see com.smartfoxserver.v3.entities.User
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #PLAYER_TO_SPECTATOR_ERROR
 	 * @see #SPECTATOR_TO_PLAYER
 	 */
@@ -1245,7 +1245,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.SpectatorToPlayerRequest
+	 * @see com.smartfoxserver.v3.requests.SpectatorToPlayerRequest
 	 * @see #SPECTATOR_TO_PLAYER
 	 */
     public static final SPECTATOR_TO_PLAYER_ERROR:String = "spectatorToPlayerError";
@@ -1279,7 +1279,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.PlayerToSpectatorRequest
+	 * @see com.smartfoxserver.v3.requests.PlayerToSpectatorRequest
 	 * @see #PLAYER_TO_SPECTATOR
 	 */
     public static final PLAYER_TO_SPECTATOR_ERROR:String = "playerToSpectatorError";
@@ -1313,8 +1313,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomNameRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomNameRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_NAME_CHANGE_ERROR
 	 */
     public static final ROOM_NAME_CHANGE:String = "roomNameChange";
@@ -1348,7 +1348,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomNameRequest
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomNameRequest
 	 * @see #ROOM_NAME_CHANGE
 	 */
     public static final ROOM_NAME_CHANGE_ERROR:String = "roomNameChangeError";
@@ -1377,8 +1377,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomPasswordStateRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomPasswordStateRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_PASSWORD_STATE_CHANGE_ERROR
 	 */
     public static final ROOM_PASSWORD_STATE_CHANGE:String = "roomPasswordStateChange";
@@ -1412,7 +1412,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomPasswordStateRequest
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomPasswordStateRequest
 	 * @see #ROOM_PASSWORD_STATE_CHANGE
 	 */
     public static final ROOM_PASSWORD_STATE_CHANGE_ERROR:String = "roomPasswordStateChangeError";
@@ -1441,8 +1441,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomCapacityRequest
-	 * @see sfs3.client.entities.Room
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomCapacityRequest
+	 * @see com.smartfoxserver.v3.entities.Room
 	 * @see #ROOM_CAPACITY_CHANGE_ERROR
 	 */
     public static final ROOM_CAPACITY_CHANGE:String = "roomCapacityChange";
@@ -1476,7 +1476,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.ChangeRoomCapacityRequest
+	 * @see com.smartfoxserver.v3.requests.ChangeRoomCapacityRequest
 	 * @see #ROOM_CAPACITY_CHANGE
 	 */
     public static final ROOM_CAPACITY_CHANGE_ERROR:String = "roomCapacityChangeError";
@@ -1505,7 +1505,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.FindRoomsRequest
+	 * @see com.smartfoxserver.v3.requests.FindRoomsRequest
 	 */
     public static final ROOM_FIND_RESULT:String = "roomFindResult";
 
@@ -1533,7 +1533,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.FindUsersRequest
+	 * @see com.smartfoxserver.v3.requests.FindUsersRequest
 	 */
     public static final USER_FIND_RESULT:String = "userFindResult";
 
@@ -1561,9 +1561,9 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.invitation.InviteUsersRequest
-	 * @see sfs3.client.requests.invitation.InvitationReplyRequest
-	 * @see sfs3.client.entities.invitation.Invitation
+	 * @see com.smartfoxserver.v3.requests.invitation.InviteUsersRequest
+	 * @see com.smartfoxserver.v3.requests.invitation.InvitationReplyRequest
+	 * @see com.smartfoxserver.v3.entities.invitation.Invitation
 	 * @see #INVITATION_REPLY
 	 */
     public static final INVITATION:String = "invitation";
@@ -1604,8 +1604,8 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.invitation.InvitationReplyRequest
-	 * @see sfs3.client.entities.invitation.InvitationReply
+	 * @see com.smartfoxserver.v3.requests.invitation.InvitationReplyRequest
+	 * @see com.smartfoxserver.v3.entities.invitation.InvitationReply
 	 * @see #INVITATION
 	 * @see #INVITATION_REPLY_ERROR
 	 */
@@ -1640,7 +1640,7 @@ s	 * <p>
 	 * </tr>
 	 * </table>
 	 *
-	 * @see sfs3.client.requests.invitation.InvitationReplyRequest
+	 * @see com.smartfoxserver.v3.requests.invitation.InvitationReplyRequest
 	 * @see #INVITATION_REPLY
 	 * @see #INVITATION
 	 */
