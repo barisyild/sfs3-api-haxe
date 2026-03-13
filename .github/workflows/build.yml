@@ -16,6 +16,7 @@ jobs:
         run: |
           haxelib install crypto
           haxelib install colyseus-websocket
+          haxelib install haxe-concurrent
           haxelib install hxjava
           haxelib git air https://github.com/tobil4sk/air
       - name: Build libraries
