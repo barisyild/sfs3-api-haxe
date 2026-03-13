@@ -20,7 +20,7 @@ jobs:
           haxelib git air https://github.com/tobil4sk/air
       - name: Build libraries
         run: haxe build.hxml
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
           name: SFS3_API_JVM.jar
           path: out/SFS3_API_JVM.jar
