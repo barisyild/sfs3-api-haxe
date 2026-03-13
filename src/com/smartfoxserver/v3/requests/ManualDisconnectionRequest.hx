@@ -1,0 +1,25 @@
+package com.smartfoxserver.v3.requests;
+
+import com.smartfoxserver.v3.ISmartFox;
+
+/**
+ * <b>*Private*</b>
+ * This is used by the system. Never send this directly.
+ */
+class ManualDisconnectionRequest extends BaseRequest 
+{
+	public function new() 
+	{
+		super(BaseRequest.ManualDisconnection);
+	}
+
+	/**
+	 * <b>*Private*</b>
+	 */
+	public function validate(sfs:ISmartFox):Void { }
+
+	/**
+	 * <b>*Private*</b>
+	 */
+	public function execute(sfs:ISmartFox):Void { }
+}

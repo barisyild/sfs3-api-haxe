@@ -1,0 +1,16 @@
+-lib haxe-concurrent
+-lib crypto
+--class-path src
+--macro "include('com.smartfoxserver')"
+
+--each
+-python out/SFS3_API_PY.py
+
+--next
+
+-lib air
+-swf-version 11.4
+-swf out/SFS3_API_AS3.swc
+
+--next
+--jvm out/SFS3_API_JVM.jar

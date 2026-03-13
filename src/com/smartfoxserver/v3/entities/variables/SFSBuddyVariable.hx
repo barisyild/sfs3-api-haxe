@@ -1,0 +1,24 @@
+package com.smartfoxserver.v3.entities.variables;
+
+import com.smartfoxserver.v3.entities.data.ISFSArray;
+
+class SFSBuddyVariable extends BaseVariable implements BuddyVariable
+{
+	public static inline var OFFLINE_PREFIX:String = "$";
+
+	public static function fromSFSArray(sfsa:ISFSArray):BuddyVariable
+	{
+		return new SFSBuddyVariable(
+			sfsa.getShortString(0),
+			sfsa.getElementAt(2),
+			VariableType.fromId(sfsa.getByte(1))
+		);
+	}
+
+	public function new(name:String, ?val:Dynamic, ?type:VariableType)
+	{
+		super(name, val, type);
+	}
+
+	public function isOffline():Bool return StringTools.startsWith(name, OFFLINE_PREFIX);
+}

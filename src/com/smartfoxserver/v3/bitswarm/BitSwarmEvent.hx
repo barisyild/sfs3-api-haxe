@@ -1,0 +1,26 @@
+package com.smartfoxserver.v3.bitswarm;
+
+import com.smartfoxserver.v3.core.ApiEvent;
+
+class BitSwarmEvent extends ApiEvent {
+    public static final CONNECT:String = "connect";
+    public static final DISCONNECT:String = "disconnect";
+    public static final CONNECTION_RETRY:String = "connectionRetry";
+    public static final CONNECTION_RESUME:String = "connectionResume";
+    public static final IO_ERROR:String = "ioError";
+    public static final SECURITY_ERROR:String = "securityError";
+    public static final DATA_ERROR:String = "dataError";
+    public static final INIT_CRYPTO:String = "initCrypto";
+
+    // Used internally to complete the UdpInit cycle stated by UdpClient.connect(...)
+    public static final UDP_CONNECT:String = "udpConnect";
+    public static final UDP_DISCONNECT:String = "udpDisconnect";
+
+
+    public function new(type:String, params:Map<String, Dynamic> = null)
+    {
+        if(params == null)
+            params = new Map<String, Dynamic>();
+        super(type, params);
+    }
+}
