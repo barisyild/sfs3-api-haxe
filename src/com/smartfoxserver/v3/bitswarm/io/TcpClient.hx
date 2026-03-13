@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.bitswarm.io;
 
-#if flash
+#if (flash || openfl)
 typedef TcpClient = FlashTcpClient;
 #else
 typedef TcpClient = SysTcpClient;
