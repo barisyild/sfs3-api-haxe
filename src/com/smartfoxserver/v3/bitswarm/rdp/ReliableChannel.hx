@@ -8,6 +8,9 @@ import com.smartfoxserver.v3.bitswarm.rdp.data.UDPData;
 import haxe.Timer;
 import haxe.io.BytesInput;
 import hx.concurrent.lock.RLock;
+#if (openfl || flash)
+import flash.events.Event;
+#end
 
 class ReliableChannel extends BaseReliableChannel {
     private static final RTX_LOOP_PAUSE:Int = 50;
@@ -37,16 +40,31 @@ class ReliableChannel extends BaseReliableChannel {
         this.unAckedLock = new RLock();
         this.fragManager = new FragManager(this);
 
+        #if (openfl || flash)
+        flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        #else
         this.getThreadPool().submit(function() {
             rtxLoop();
         });
+
         this.getThreadPool().submit(function() {
             packetBufferCleaner();
         });
+        #end
     }
+
+    #if (openfl || flash)
+    private function onEnterFrame(e:Event):Void {
+        rtxLoop();
+        packetBufferCleaner();
+    }
+    #end
 
     public function destroy():Void {
         this.running = false;
+        #if (openfl || flash)
+        flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        #end
     }
 
     public function getCurrentRTT():Float {
