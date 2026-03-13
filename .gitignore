@@ -1,3 +1,7 @@
 *.java
 *.class
 notes.txt
+.idea
+*.jar
+*.iml
+out
