@@ -1,0 +1,36 @@
+name: Build Artifacts
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: krdlab/setup-haxe@v1
+      - name: Set up Haxelib dependencies
+        run: |
+          haxelib install haxe-crypto 0.0.7
+          haxelib install colyseus-websocket 1.0.12
+          haxelib install hxjava
+      - name: Build libraries
+        run: haxe build.hxml
+      - uses: actions/upload-artifact@v3
+        with:
+          name: SFS3_API_JVM.jar
+          path: out/SFS3_API_JVM.jar
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v3
+        with:
+          name: SFS3_API_PY.py
+          path: out/SFS3_API_PY.py
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v3
+        with:
+          name: SFS3_API_AS3.swc
+          path: out/SFS3_API_AS3.swc
+          #if-no-files-found: error
