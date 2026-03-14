@@ -19,6 +19,7 @@ jobs:
           haxelib install haxe-concurrent
           haxelib install hxjava
           haxelib git air https://github.com/tobil4sk/air
+          haxelib install hxnodejs
       - name: Build libraries
         run: haxe build.hxml
       - uses: actions/upload-artifact@v7
