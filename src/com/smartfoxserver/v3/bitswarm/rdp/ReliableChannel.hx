@@ -264,7 +264,7 @@ class ReliableChannel extends BaseReliableChannel {
     }
 
     private function rtxLoop():Void {
-        #if flash
+        #if (flash || js)
         if (!this.running) return;
         #else
         while (this.running) {
@@ -295,7 +295,7 @@ class ReliableChannel extends BaseReliableChannel {
         } catch (ex:Dynamic) {
             this.log.warn("Exception in RTX Loop: " + ex);
         }
-        #if flash
+        #if (flash || js)
         haxe.Timer.delay(rtxLoop, RTX_LOOP_PAUSE);
         #else
         Sys.sleep(0.050); // 50ms
@@ -304,7 +304,7 @@ class ReliableChannel extends BaseReliableChannel {
     }
 
     private function packetBufferCleaner():Void {
-        #if flash
+        #if (flash || js)
         if (!this.running) return;
         #else
         while (this.running) {
@@ -372,7 +372,7 @@ class ReliableChannel extends BaseReliableChannel {
             this.log.warn("Unexpected error: " + ex);
         }
 
-        #if flash
+        #if (flash || js)
         haxe.Timer.delay(packetBufferCleaner, BUFFER_CLEANER_LOOP_PAUSE);
         #else
         Sys.sleep(0.016); // 16ms

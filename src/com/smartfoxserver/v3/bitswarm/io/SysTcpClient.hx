@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.bitswarm.io;
 
-#if !flash
+#if (!flash && !js)
 import com.smartfoxserver.v3.ConfigData;
 import com.smartfoxserver.v3.bitswarm.BitSwarmClient;
 import com.smartfoxserver.v3.bitswarm.SocketState;

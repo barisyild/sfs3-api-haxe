@@ -14,3 +14,11 @@
 
 --next
 --jvm out/SFS3_API_JVM.jar
+
+--next
+--js out/SFS3_API_JS.js
+
+--next
+-lib hxnodejs
+-D nodejs
+--js out/SFS3_API_Node.js

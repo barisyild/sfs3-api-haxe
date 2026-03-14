@@ -329,14 +329,14 @@ class BitSwarmClient implements IBitSwarmClient {
 
 		// Calculate time left before the reconnection loop times out
 		var reconnectionMillis:Float = connSettings.reconnectionSeconds * 1000;
-		var nowMs:Float = #if flash Date.now().getTime() #else Sys.time() * 1000 #end;
+		var nowMs:Float = Date.now().getTime();
 		var timeLeft:Float = (reconState.firstAttemptTime() + reconnectionMillis) - nowMs;
 
 		if (timeLeft > 0) {
 			trace("Reconnection attempt:" + reconState.counter() + " - time left:" + (timeLeft / 1000) + " sec.");
 
 			// Retry connection: pause and retry
-			#if flash
+			#if (flash || js)
 			haxe.Timer.delay(function() {
 				connect(cfgData);
 				reconState.incCounter();
