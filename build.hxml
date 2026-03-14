@@ -2,6 +2,7 @@
 -lib crypto
 --class-path src
 --macro "include('com.smartfoxserver')"
+-dce no
 
 --each
 -python out/SFS3_API_PY.py
