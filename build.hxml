@@ -16,9 +16,11 @@
 --jvm out/SFS3_API_JVM.jar
 
 --next
+-D js-es=6
 --js out/SFS3_API_JS.js
 
 --next
+-D js-es=6
 -lib hxnodejs
 -D nodejs
 --js out/SFS3_API_Node.js

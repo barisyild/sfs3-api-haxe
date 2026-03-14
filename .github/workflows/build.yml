@@ -35,4 +35,14 @@ jobs:
         with:
           name: SFS3_API_AS3.swc
           path: out/SFS3_API_AS3.swc
-          #if-no-files-found: error
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SFS3_API_JS.js
+          path: out/SFS3_API_JS.js
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: SFS3_API_Node.js
+          path: out/SFS3_API_Node.js
+          if-no-files-found: error
