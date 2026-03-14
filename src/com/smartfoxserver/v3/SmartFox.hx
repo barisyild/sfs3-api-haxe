@@ -727,6 +727,9 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @see shutdownApi()
 	 */
 	public function stopExecutors():Void {
+		scheduler.stop();
+		eventThreadPool.stop();
+
 		dispatcher.removeAll();
 	}
 
