@@ -15,6 +15,7 @@ import com.smartfoxserver.v3.entities.match.MatchExpression;
  * @see		com.smartfoxserver.v3.entities.match.MatchExpression MatchExpression
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_FIND_RESULT
  */
+@:expose("SFS3.FindRoomsRequest")
 class FindRoomsRequest extends BaseRequest 
 {
 	/**

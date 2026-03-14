@@ -5,6 +5,7 @@ import com.smartfoxserver.v3.entities.data.ISFSObject;
 import com.smartfoxserver.v3.entities.match.MatchExpression;
 import com.smartfoxserver.v3.requests.RoomSettings;
 
+@:expose("SFS3.ClusterRoomSettings")
 class ClusterRoomSettings extends RoomSettings
 {
 	private var _isPublic:Bool;

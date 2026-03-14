@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.variables.RoomVariable;
  * @see CreateRoomRequest
  * @see com.smartfoxserver.v3.entities.Room
  */
+@:expose("SFS3.RoomSettings")
 class RoomSettings
 {
 	private var name:String;

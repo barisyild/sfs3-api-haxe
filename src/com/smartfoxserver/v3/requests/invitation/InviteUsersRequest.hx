@@ -26,6 +26,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see InvitationReplyRequest
  */
 
+@:expose("SFS3.InviteUsersRequest")
 class InviteUsersRequest extends BaseRequest
 {
 	/**

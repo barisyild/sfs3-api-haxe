@@ -3,6 +3,7 @@ package com.smartfoxserver.v3.requests;
 /**
  * <b>*Private*</b>
  */
+@:expose("SFS3.GenericMessageType")
 class GenericMessageType 
 {
 	/**

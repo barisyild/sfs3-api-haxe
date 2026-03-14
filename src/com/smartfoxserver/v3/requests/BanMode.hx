@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.requests;
  *
  * @see		BanUserRequest
  */
+@:expose("SFS3.BanMode")
 class BanMode 
 {
 	/**

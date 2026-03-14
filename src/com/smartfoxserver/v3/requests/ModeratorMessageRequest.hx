@@ -17,6 +17,7 @@ import haxe.Exception;
  * @see		com.smartfoxserver.v3.entities.User#getPrivilegeId()
  * @see		AdminMessageRequest
  */
+@:expose("SFS3.ModeratorMessageRequest")
 class ModeratorMessageRequest extends GenericMessageRequest 
 {
 

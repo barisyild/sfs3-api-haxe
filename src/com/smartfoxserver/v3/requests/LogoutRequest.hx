@@ -13,6 +13,7 @@ import com.smartfoxserver.v3.exceptions.SFSValidationException;
  *
  * @see		com.smartfoxserver.v3.core.SFSEvent#LOGOUT
  */
+@:expose("SFS3.LogoutRequest")
 class LogoutRequest extends BaseRequest 
 {
 	/**

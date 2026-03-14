@@ -24,6 +24,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see		InitBuddyListRequest
  */
 
+@:expose("SFS3.SetBuddyVariablesRequest")
 class SetBuddyVariablesRequest extends BaseRequest {
 	/**
 	 * @internal

@@ -18,6 +18,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see		RoomSettings#getEvents()
  */
 
+@:expose("SFS3.LeaveRoomRequest")
 class LeaveRoomRequest extends BaseRequest 
 {
 	/**

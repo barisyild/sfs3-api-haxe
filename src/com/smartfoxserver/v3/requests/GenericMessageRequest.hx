@@ -11,6 +11,7 @@ import com.smartfoxserver.v3.entities.data.Set;
 import com.smartfoxserver.v3.core.LoggerFactory;
 import com.smartfoxserver.v3.core.Logger;
 
+@:expose("SFS3.GenericMessageRequest")
 class GenericMessageRequest extends BaseRequest
 {
 	/**

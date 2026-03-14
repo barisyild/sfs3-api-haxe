@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.entities.invitation;
  *
  * @see com.smartfoxserver.v3.requests.invitation.InvitationReplyRequest
  */
+@:expose("SFS3.InvitationReply")
 enum abstract InvitationReply(Int) from Int to Int
 {
 	/** Accept the invitation */

@@ -21,6 +21,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see		com.smartfoxserver.v3.core.SFSEvent#PUBLIC_MESSAGE
  * @see		com.smartfoxserver.v3.requests.RoomSettings#getPermissions()
  */
+@:expose("SFS3.PublicMessageRequest")
 class PublicMessageRequest extends GenericMessageRequest 
 {
 

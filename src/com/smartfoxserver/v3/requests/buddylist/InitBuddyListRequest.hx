@@ -17,6 +17,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see		com.smartfoxserver.v3.core.SFSBuddyEvent#BUDDY_LIST_INIT
  * @see		com.smartfoxserver.v3.core.SFSBuddyEvent#BUDDY_ERROR
  */
+@:expose("SFS3.InitBuddyListRequest")
 class InitBuddyListRequest extends BaseRequest 
 {
 	/**

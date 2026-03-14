@@ -80,6 +80,7 @@ package com.smartfoxserver.v3.core;
  * }
  * </pre>
  */
+@:expose("SFS3.SFSEvent")
 class SFSEvent extends ApiEvent
 {
     /**

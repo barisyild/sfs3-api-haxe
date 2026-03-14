@@ -8,6 +8,7 @@ import haxe.io.Bytes;
 import haxe.Int64;
 import com.smartfoxserver.v3.exceptions.UnsupportedOperationException;
 
+@:expose("SFS3.SFSArray")
 class SFSArray implements ISFSArray {
     private final serializer:ISFSDataSerializer = DefaultSFSDataSerializer.getInstance();
     private final dataHolder:Array<SFSDataWrapper> = new Array();

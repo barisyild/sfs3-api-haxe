@@ -19,6 +19,7 @@ import com.smartfoxserver.v3.entities.variables.UserVariable;
  * @see		com.smartfoxserver.v3.core.SFSEvent#USER_VARIABLES_UPDATE
  * @see		com.smartfoxserver.v3.requests.RoomSettings#getPermissions()
  */
+@:expose("SFS3.SetUserVariablesRequest")
 class SetUserVariablesRequest extends BaseRequest 
 {
 	/**

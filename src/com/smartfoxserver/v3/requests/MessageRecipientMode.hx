@@ -9,6 +9,7 @@ import haxe.Exception;
  * @see		ModeratorMessageRequest
  * @see		AdminMessageRequest
  */
+@:expose("SFS3.MessageRecipientMode")
 class MessageRecipientMode 
 {
 	/**

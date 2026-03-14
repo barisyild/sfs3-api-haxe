@@ -34,6 +34,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see com.smartfoxserver.v3.SmartFox#isUdpConnected()
  * @see com.smartfoxserver.v3.core.SFSEvent#EXTENSION_RESPONSE
  */
+@:expose("SFS3.ExtensionRequest")
 class ExtensionRequest extends BaseRequest
 {
 	/**

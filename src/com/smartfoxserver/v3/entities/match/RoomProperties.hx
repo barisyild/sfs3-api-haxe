@@ -6,6 +6,7 @@ package com.smartfoxserver.v3.entities.match;
  * @see		MatchExpression
  * @see		com.smartfoxserver.v3.entities.Room Room
  */
+@:expose("SFS3.RoomProperties")
 final class RoomProperties
 {
     /**

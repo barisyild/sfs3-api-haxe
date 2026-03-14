@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.entities.match;
  * @see		MatchExpression
  * @see		com.smartfoxserver.v3.entities.User User
  */
+@:expose("SFS3.UserProperties")
 final class UserProperties
 {
     /**

@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.entities.variables;
 
 import com.smartfoxserver.v3.entities.data.ISFSArray;
 
+@:expose("SFS3.SFSRoomVariable")
 class SFSRoomVariable extends BaseVariable implements RoomVariable
 {
 	private var _isPersistent:Bool = false;

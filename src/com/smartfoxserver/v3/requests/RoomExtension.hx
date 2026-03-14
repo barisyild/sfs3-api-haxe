@@ -14,6 +14,7 @@ package com.smartfoxserver.v3.requests;
  * @see CreateRoomRequest
  * @see ExtensionRequest
  */
+@:expose("SFS3.RoomExtension")
 class RoomExtension
 {
 	private var id:String; 				// <-- mandatory

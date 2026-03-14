@@ -17,6 +17,7 @@ import com.smartfoxserver.v3.exceptions.SFSValidationException;
  * @see		com.smartfoxserver.v3.entities.User#getPrivilegeId()
  * @see		BanUserRequest
  */
+@:expose("SFS3.KickUserRequest")
 class KickUserRequest extends BaseRequest 
 {
 	/**

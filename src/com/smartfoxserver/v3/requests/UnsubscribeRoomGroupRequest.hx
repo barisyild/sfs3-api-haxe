@@ -15,6 +15,7 @@ import com.smartfoxserver.v3.exceptions.SFSValidationException;
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_GROUP_UNSUBSCRIBE_ERROR
  * @see		SubscribeRoomGroupRequest
  */
+@:expose("SFS3.UnsubscribeRoomGroupRequest")
 class UnsubscribeRoomGroupRequest extends BaseRequest 
 {
 

@@ -8,6 +8,7 @@ package com.smartfoxserver.v3.requests;
  * @see com.smartfoxserver.v3.requests.RoomSettings#getPermissions()
  * @see CreateRoomRequest
  */
+@:expose("SFS3.RoomPermissions")
 class RoomPermissions
 {
 	private var allowNameChange:Bool;

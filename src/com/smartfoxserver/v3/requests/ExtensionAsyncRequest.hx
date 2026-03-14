@@ -20,6 +20,7 @@ import com.smartfoxserver.v3.entities.Room;
  * 
  * @see ExtensionRequest
  */
+@:expose("SFS3.ExtensionAsyncRequest")
 class ExtensionAsyncRequest extends ExtensionRequest
 {
 	private static final KEY_ASYNC:String = "a";

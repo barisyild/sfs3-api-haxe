@@ -15,6 +15,7 @@ import com.smartfoxserver.v3.entities.User;
  *
  * @see		com.smartfoxserver.v3.core.SFSEvent#OBJECT_MESSAGE
  */
+@:expose("SFS3.ObjectMessageRequest")
 class ObjectMessageRequest extends GenericMessageRequest 
 {
 	/**

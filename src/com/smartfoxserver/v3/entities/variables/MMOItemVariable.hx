@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.entities.variables;
 
 import com.smartfoxserver.v3.entities.data.ISFSArray;
 
+@:expose("SFS3.MMOItemVariable")
 class MMOItemVariable extends BaseVariable implements IMMOItemVariable
 {
 	public static function fromSFSArray(sfsa:ISFSArray):IMMOItemVariable

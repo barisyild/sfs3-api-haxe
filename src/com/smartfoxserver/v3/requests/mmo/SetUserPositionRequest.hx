@@ -22,6 +22,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see com.smartfoxserver.v3.entities.data.Vec3D
  * 
  */
+@:expose("SFS3.SetUserPositionRequest")
 class SetUserPositionRequest extends BaseRequest
 {
 	/** <b>API internal usage only</b> */

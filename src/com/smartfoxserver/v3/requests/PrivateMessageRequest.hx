@@ -15,6 +15,7 @@ import com.smartfoxserver.v3.entities.data.ISFSObject;
  *
  * @see		com.smartfoxserver.v3.core.SFSEvent#PRIVATE_MESSAGE
  */
+@:expose("SFS3.PrivateMessageRequest")
 class PrivateMessageRequest extends GenericMessageRequest 
 {
 

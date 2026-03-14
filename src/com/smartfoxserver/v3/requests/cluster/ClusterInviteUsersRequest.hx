@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.entities.Buddy;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.requests.BaseRequest;
 
+@:expose("SFS3.ClusterInviteUsersRequest")
 class ClusterInviteUsersRequest extends BaseRequest
 {
 	/**

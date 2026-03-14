@@ -23,6 +23,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_CAPACITY_CHANGE_ERROR
  * @see		com.smartfoxserver.v3.requests.RoomSettings#getPermissions()
  */
+@:expose("SFS3.ChangeRoomCapacityRequest")
 class ChangeRoomCapacityRequest extends BaseRequest 
 {
 	/**

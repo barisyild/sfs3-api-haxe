@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.ISmartFox;
  * <b>*Private*</b> Sends a ping-pong request in order to measure the current lag.
  * This is used by the system. Never send this directly.
  */
+@:expose("SFS3.PingPongRequest")
 class PingPongRequest extends BaseRequest 
 {
 	/**

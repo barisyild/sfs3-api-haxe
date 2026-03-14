@@ -17,6 +17,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see		com.smartfoxserver.v3.core.SFSEvent#SPECTATOR_TO_PLAYER_ERROR
  * @see		PlayerToSpectatorRequest
  */
+@:expose("SFS3.SpectatorToPlayerRequest")
 class SpectatorToPlayerRequest extends BaseRequest 
 {
 	/**

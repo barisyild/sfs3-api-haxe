@@ -19,6 +19,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see		AddBuddyRequest
  * @see		InitBuddyListRequest
  */
+@:expose("SFS3.RemoveBuddyRequest")
 class RemoveBuddyRequest extends BaseRequest 
 {
 	/**

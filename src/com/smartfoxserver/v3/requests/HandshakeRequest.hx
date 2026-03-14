@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.requests;
 
+@:expose("SFS3.HandshakeRequest")
 class HandshakeRequest extends BaseRequest
 {
     /**

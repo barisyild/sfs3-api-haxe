@@ -7,6 +7,7 @@ import com.smartfoxserver.v3.entities.User;
 /**
  * @internal
  */
+@:expose("SFS3.UdpInitRequest")
 class UdpInitRequest extends BaseRequest
 {
 	public static final KEY_HANDSHAKE:String = "h";

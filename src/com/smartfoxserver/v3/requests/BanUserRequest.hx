@@ -30,6 +30,7 @@ import com.smartfoxserver.v3.exceptions.SFSValidationException;
  * @see BanMode
  * @see KickUserRequest
  */
+@:expose("SFS3.BanUserRequest")
 class BanUserRequest extends BaseRequest
 {
 	/**

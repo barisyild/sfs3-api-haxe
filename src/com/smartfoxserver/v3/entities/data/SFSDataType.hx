@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.entities.data;
 
+@:expose("SFS3.SFSDataType")
 enum abstract SFSDataType(Int) from Int to Int {
 	var NULL = 0;
 	var BOOL = 1;

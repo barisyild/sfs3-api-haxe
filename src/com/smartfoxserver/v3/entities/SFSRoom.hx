@@ -34,6 +34,7 @@ import hx.concurrent.collection.SynchronizedMap;
  * @see com.smartfoxserver.v3.requests.ChangeRoomPasswordStateRequest
  * @see com.smartfoxserver.v3.requests.ChangeRoomCapacityRequest
  */
+@:expose("SFS3.SFSRoom")
 class SFSRoom implements Room
 {
 	public static final DEFAULT_GROUP_ID:String = "default";

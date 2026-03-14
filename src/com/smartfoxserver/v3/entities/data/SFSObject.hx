@@ -9,6 +9,7 @@ import haxe.Int64;
 import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.ISFSDataSerializer;
 import haxe.io.BytesInput;
 
+@:expose("SFS3.SFSObject")
 class SFSObject implements ISFSObject {
     private final serializer:ISFSDataSerializer = DefaultSFSDataSerializer.getInstance();
     private var dataHolder:Map<String, SFSDataWrapper> = new Map<String, SFSDataWrapper>();

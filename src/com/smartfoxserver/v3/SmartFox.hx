@@ -123,6 +123,7 @@ using StringTools;
  *
  * @see		<a href="https://www.smartfoxserver.com">www.smartfoxserver.com</a>
  */
+@:expose("SFS3.SmartFox")
 class SmartFox implements ISmartFox implements IDispatchable {
 	private final MIN_PORT_VALUE:Int = 0;
 	private final MAX_PORT_VALUE:Int = 65535;

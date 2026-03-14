@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.entities.match;
  *
  * @see MatchExpression
  */
+@:expose("SFS3.LogicOperator")
 class LogicOperator
 {
 	/** AND logical operator */

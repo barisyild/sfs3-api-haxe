@@ -19,6 +19,7 @@ import com.smartfoxserver.v3.entities.variables.RoomVariable;
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_VARIABLES_UPDATE
  * @see		com.smartfoxserver.v3.entities.variables.SFSRoomVariable
  */
+@:expose("SFS3.SetRoomVariablesRequest")
 class SetRoomVariablesRequest extends BaseRequest 
 {
 	/**

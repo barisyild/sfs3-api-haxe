@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.entities.match;
  *
  * @see MatchExpression
  */
+@:expose("SFS3.StringMatch")
 class StringMatch implements IMatcher
 {
 	/** Condition: string1 == string2 */

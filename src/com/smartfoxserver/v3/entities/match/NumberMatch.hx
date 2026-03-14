@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.entities.match;
  *
  * @see MatchExpression
  */
+@:expose("SFS3.NumberMatch")
 class NumberMatch implements IMatcher
 {
 	/** Condition: number1 == number2 */

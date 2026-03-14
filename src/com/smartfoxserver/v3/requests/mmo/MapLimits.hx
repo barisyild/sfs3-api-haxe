@@ -11,6 +11,7 @@ import haxe.Exception;
  * @see com.smartfoxserver.v3.entities.MMORoom
  * @see com.smartfoxserver.v3.entities.data.Vec3D
  */
+@:expose("SFS3.MapLimits")
 class MapLimits
 {
 	private var lowerLimit:Vec3D<Any>;

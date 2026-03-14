@@ -20,6 +20,7 @@ import com.smartfoxserver.v3.requests.mmo.MMORoomSettings;
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_ADD
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_CREATION_ERROR
  */
+@:expose("SFS3.CreateRoomRequest")
 class CreateRoomRequest extends BaseRequest {
 	/**
 	 * @internal

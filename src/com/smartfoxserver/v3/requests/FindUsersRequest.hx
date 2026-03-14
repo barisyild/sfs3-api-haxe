@@ -16,6 +16,7 @@ import com.smartfoxserver.v3.entities.match.MatchExpression;
  * @see		com.smartfoxserver.v3.entities.match.MatchExpression
  * @see		com.smartfoxserver.v3.core.SFSEvent#USER_FIND_RESULT
  */
+@:expose("SFS3.FindUsersRequest")
 class FindUsersRequest extends BaseRequest 
 {
 	/**

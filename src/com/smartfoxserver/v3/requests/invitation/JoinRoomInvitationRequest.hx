@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.requests.RoomSettings;
 
+@:expose("SFS3.JoinRoomInvitationRequest")
 class JoinRoomInvitationRequest extends BaseRequest
 {
 	private static final KEY_ROOM_ID:String = "r";

@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.entities.variables;
 
 import com.smartfoxserver.v3.entities.data.ISFSArray;
 
+@:expose("SFS3.SFSUserVariable")
 class SFSUserVariable extends BaseVariable implements UserVariable
 {
 	private var _isPrivate:Bool = false;

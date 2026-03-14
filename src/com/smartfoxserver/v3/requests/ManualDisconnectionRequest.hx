@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.ISmartFox;
  * <b>*Private*</b>
  * This is used by the system. Never send this directly.
  */
+@:expose("SFS3.ManualDisconnectionRequest")
 class ManualDisconnectionRequest extends BaseRequest 
 {
 	public function new() 

@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.entities;
 
+@:expose("SFS3.UserPrivileges")
 /**
  * The <em>UserPrivileges</em> class contains the constants describing the
  * default user types known by SmartFoxServer. The server assigns one of these

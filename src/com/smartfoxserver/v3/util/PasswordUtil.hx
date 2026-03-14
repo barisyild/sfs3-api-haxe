@@ -3,6 +3,7 @@ package com.smartfoxserver.v3.util;
 import haxe.crypto.Sha256;
 import haxe.io.Bytes;
 
+@:expose("SFS3.PasswordUtil")
 /**
  * Helper class for logging in with a pre-hashed password.<br>
  * You will need it if your server-side database store User passwords hashed with MD5/SHA256

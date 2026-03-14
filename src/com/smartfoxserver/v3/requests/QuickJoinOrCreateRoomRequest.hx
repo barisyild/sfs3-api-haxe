@@ -23,6 +23,7 @@ import com.smartfoxserver.v3.entities.match.MatchExpression;
  * @see		com.smartfoxserver.v3.core.SFSEvent#ROOM_CREATION_ERROR
  * 
  */
+@:expose("SFS3.QuickJoinOrCreateRoomRequest")
 class QuickJoinOrCreateRoomRequest extends BaseRequest 
 {
 	/**

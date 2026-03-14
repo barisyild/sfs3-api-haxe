@@ -25,6 +25,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see com.smartfoxserver.v3.requests.JoinRoomRequest
  */
 
+@:expose("SFS3.QuickJoinGameRequest")
 class QuickJoinGameRequest extends BaseRequest
 {
 	private static final MAX_ROOMS:Int = 32;

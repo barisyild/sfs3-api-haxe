@@ -20,6 +20,7 @@ import com.smartfoxserver.v3.requests.GenericMessageType;
  * @see		com.smartfoxserver.v3.core.SFSBuddyEvent#BUDDY_MESSAGE
  * @see		InitBuddyListRequest
  */
+@:expose("SFS3.BuddyMessageRequest")
 class BuddyMessageRequest extends GenericMessageRequest 
 {
 	/**

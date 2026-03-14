@@ -22,6 +22,7 @@ import com.smartfoxserver.v3.requests.BaseRequest;
  * @see		com.smartfoxserver.v3.core.SFSBuddyEvent#BUDDY_ONLINE_STATE_CHANGE
  * @see		InitBuddyListRequest
  */
+@:expose("SFS3.GoOnlineRequest")
 class GoOnlineRequest extends BaseRequest 
 {
 	/**

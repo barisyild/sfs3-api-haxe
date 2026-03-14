@@ -35,6 +35,7 @@ import com.smartfoxserver.v3.requests.invitation.InviteUsersRequest;
  * @see		com.smartfoxserver.v3.core.SFSEvent#INVITATION
  */
 
+@:expose("SFS3.CreateSFSGameRequest")
 class CreateSFSGameRequest extends BaseRequest 
 {
 	/**

@@ -4,7 +4,7 @@ package com.smartfoxserver.v3.util;
  * The <em>ClientDisconnectionReason</em> class contains the constants
  * describing the possible reasons why a disconnection from the server occurred.
  */
-
+@:expose("SFS3.ClientDisconnectionReason")
 class ClientDisconnectionReason
 {
 

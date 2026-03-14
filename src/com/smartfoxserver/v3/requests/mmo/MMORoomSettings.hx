@@ -14,6 +14,7 @@ import com.smartfoxserver.v3.entities.data.Vec3D;
  * @see 	CreateRoomRequest
  * @see		MMORoom
  */
+@:expose("SFS3.MMORoomSettings")
 class MMORoomSettings extends RoomSettings
 {
 	private var defaultAOI:Vec3D<Any>;

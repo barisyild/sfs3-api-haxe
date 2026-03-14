@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.entities.variables;
 
+@:expose("SFS3.ReservedBuddyVariables")
 class ReservedBuddyVariables
 {
 	public static inline var BV_ONLINE:String = "$__BV_ONLINE__";

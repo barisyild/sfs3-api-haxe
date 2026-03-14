@@ -21,6 +21,7 @@ import com.smartfoxserver.v3.util.PasswordUtil;
  * @see com.smartfoxserver.v3.core.SFSEvent#LOGIN
  * @see com.smartfoxserver.v3.core.SFSEvent#LOGIN_ERROR
  */
+@:expose("SFS3.LoginRequest")
 class LoginRequest extends BaseRequest 
 {
 	/** @internal */

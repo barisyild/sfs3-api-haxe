@@ -9,6 +9,7 @@ package com.smartfoxserver.v3.core;
  * @see SFSEvent
  */
 
+@:expose("SFS3.SFSBuddyEvent")
 class SFSBuddyEvent extends ApiEvent
 {
     /**

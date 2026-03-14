@@ -5,6 +5,7 @@ package com.smartfoxserver.v3.requests.mmo;
  * <P>
  * <b>NOTE:</b>MMOItemVariables can be set only from server side. Please check the relevant documentation.
  */
+@:expose("SFS3.SetMMOItemVariables")
 class SetMMOItemVariables
 {
 	public static final KEY_ROOM_ID:String = "r";

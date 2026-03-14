@@ -23,6 +23,7 @@ import com.smartfoxserver.v3.entities.data.ISFSObject;
  * @see com.smartfoxserver.v3.entities.User#getPrivilegeId()
  * @see ModeratorMessageRequest
  */
+@:expose("SFS3.AdminMessageRequest")
 class AdminMessageRequest extends GenericMessageRequest
 {
 

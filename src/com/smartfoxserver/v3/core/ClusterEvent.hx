@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.core;
 
+@:expose("SFS3.SFSClusterEvent")
 class ClusterEvent extends ApiEvent
 {
     public static final CONNECTION_REQUIRED:String = "connectionRequired";

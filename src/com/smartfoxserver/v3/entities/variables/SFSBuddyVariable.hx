@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.entities.variables;
 
 import com.smartfoxserver.v3.entities.data.ISFSArray;
 
+@:expose("SFS3.SFSBuddyVariable")
 class SFSBuddyVariable extends BaseVariable implements BuddyVariable
 {
 	public static inline var OFFLINE_PREFIX:String = "$";

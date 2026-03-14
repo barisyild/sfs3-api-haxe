@@ -18,6 +18,7 @@ import com.smartfoxserver.v3.requests.mmo.MMORoomSettings;
  *  <p>See constructors for all the details.</p>
  *  
  */
+@:expose("SFS3.ClusterJoinOrCreateRequest")
 class ClusterJoinOrCreateRequest extends BaseRequest 
 {
 	/**

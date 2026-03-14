@@ -22,6 +22,7 @@ import com.smartfoxserver.v3.entities.Room;
  * @see 	com.smartfoxserver.v3.core.SFSEvent#USER_COUNT_CHANGE
  * @see		com.smartfoxserver.v3.requests.RoomSettings#getEvents()
  */
+@:expose("SFS3.JoinRoomRequest")
 class JoinRoomRequest extends BaseRequest 
 {
 	/**

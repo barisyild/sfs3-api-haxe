@@ -16,6 +16,7 @@ import com.smartfoxserver.v3.requests.RoomSettings;
  * @see 	CreateSFSGameRequest
  * @see		com.smartfoxserver.v3.entities.Room
  */
+@:expose("SFS3.SFSGameSettings")
 class SFSGameSettings extends RoomSettings 
 {
 	private var _isPublic:Bool;

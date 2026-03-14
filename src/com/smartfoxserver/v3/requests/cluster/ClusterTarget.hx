@@ -3,6 +3,7 @@ package com.smartfoxserver.v3.requests.cluster;
 /**
  * Represents a target Room on a Cluster Game Node
  */
+@:expose("SFS3.ClusterTarget")
 class ClusterTarget
 {
 	private var serverId:String; 

@@ -1,5 +1,6 @@
 package com.smartfoxserver.v3.entities.variables;
 
+@:expose("SFS3.VariableType")
 enum abstract VariableType(Int) from Int to Int {
     var NULL = 0;
     var BOOL = 1;

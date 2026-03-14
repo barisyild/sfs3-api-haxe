@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.data.SFSArray;
  * @see UserProperties
  * @see MatchExpression
  */
+@:expose("SFS3.MatchExpression")
 class MatchExpression
 {
 	private var varName:String;

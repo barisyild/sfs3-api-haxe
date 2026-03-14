@@ -1,4 +1,5 @@
 package com.smartfoxserver.v3.util;
+@:expose("SFS3.SFSErrorCodes")
 class SFSErrorCodes {
     private static var errorMap:Map<Int, String>;
 

@@ -8,6 +8,7 @@ package com.smartfoxserver.v3.requests;
  * @see com.smartfoxserver.v3.requests.RoomSettings#getEvents()
  * @see CreateRoomRequest
  */
+@:expose("SFS3.RoomEvents")
 class RoomEvents
 {
 	private var allowUserEnter:Bool;
