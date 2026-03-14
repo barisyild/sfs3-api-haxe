@@ -1,5 +1,6 @@
 -lib haxe-concurrent
 -lib crypto
+-lib colyseus-websocket
 --class-path src
 --macro "include('com.smartfoxserver')"
 -dce no

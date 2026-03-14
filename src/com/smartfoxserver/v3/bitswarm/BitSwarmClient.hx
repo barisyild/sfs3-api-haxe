@@ -16,6 +16,7 @@ import com.smartfoxserver.v3.bitswarm.io.SocketEvent;
 import com.smartfoxserver.v3.bitswarm.io.SysParam;
 import com.smartfoxserver.v3.bitswarm.io.TcpClient;
 import com.smartfoxserver.v3.bitswarm.io.UdpClient;
+import com.smartfoxserver.v3.bitswarm.io.WebSocketClient;
 import com.smartfoxserver.v3.controllers.ExtensionController;
 import com.smartfoxserver.v3.controllers.SystemController;
 import com.smartfoxserver.v3.core.ApiEvent;
@@ -37,6 +38,7 @@ class BitSwarmClient implements IBitSwarmClient {
 	private var scheduler:Executor;
 
 	private var tcpClient:BaseSocketClient;
+	private var wsClient:WebSocketClient;
 	private var udpClient:BaseUdpSocketClient;
 	private var bbClient:BlueBoxClient;
 
@@ -85,6 +87,8 @@ class BitSwarmClient implements IBitSwarmClient {
 
 		if (connMode == ConnectionMode.SOCKET)
 			connectTcp(cfgData.host, cfgData.port, cfgData.tcpConnectionTimeout);
+		else if (connMode == ConnectionMode.WEBSOCKET)
+			connectWs(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
 		else
 			connectBlueBox(cfgData.host, cfgData.httpPort);
 	}
@@ -105,7 +109,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		if (success)
 			evt = new BitSwarmEvent(BitSwarmEvent.CONNECTION_RESUME);
 		else {
-			tcpClient.destroy(null);
+			getActiveSocketClient().destroy(null);
 			var params = new Map<String, Dynamic>();
 			params.set(EventParam.DisconnectionReason, ClientDisconnectionReason.RECONNECTION_FAILURE);
 			evt = new BitSwarmEvent(BitSwarmEvent.DISCONNECT, params);
@@ -150,6 +154,23 @@ class BitSwarmClient implements IBitSwarmClient {
 		bbClient.connect(host, port);
 	}
 
+	private function connectWs(host:String, port:Int):Void {
+		if (wsClient != null) {
+			if (wsClient.isConnected())
+				throw new Exception("An active connection already exists");
+			else
+				throw new Exception("The connection cannot be reused. Please create a new instance");
+		}
+
+		wsClient = new WebSocketClient(this);
+		wsClient.addEventListener(SocketEvent.Connected, onWsConnect);
+		wsClient.addEventListener(SocketEvent.Disconnected, onWsDisconnect);
+		wsClient.addEventListener(SocketEvent.DataReceived, onWsData);
+		wsClient.addEventListener(SocketEvent.Error, onWsError);
+
+		wsClient.connect(host, port);
+	}
+
 	public function connectUdp(udpHost:String, udpPort:Int):Void {
 		if (udpClient != null)
 			throw new Exception("A UDP client instance already exists");
@@ -182,21 +203,17 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	/*
-	 * If bluebox is enabled and a BBClient instance exists we return
-	 * the state of BBClient. Otherwise we return the state of the TcpConnection
+	 * Returns the state of the active connection based on the current connection mode.
+	 * If bluebox is enabled and a BBClient instance exists we return the state of BBClient.
 	 */
 	public function isConnected():Bool {
 		if (cfgData == null)
 			return false;
 
-		if (tcpClient != null) {
-			if (cfgData.blueBox.isActive && bbClient != null)
-				return bbClient.isConnected();
-			else
-				return tcpClient.isConnected();
-		}
+		if (cfgData.blueBox.isActive && bbClient != null)
+			return bbClient.isConnected();
 
-		return false;
+		return hasActiveSocketClient() && getActiveSocketClient().isConnected();
 	}
 
 	public function isUdpConnected():Bool {
@@ -265,6 +282,39 @@ class BitSwarmClient implements IBitSwarmClient {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------
+
+	private function onWsConnect(evt:ApiEvent):Void {
+		var reconAttempt = (reconState != null && reconState.isPending());
+
+		var params = new Map<String, Dynamic>();
+		params.set(EventParam.Success, true);
+		params.set(SysParam.IsReconnection, reconAttempt);
+
+		dispatchEvent(new BitSwarmEvent(BitSwarmEvent.CONNECT, params));
+	}
+
+	private function onWsDisconnect(evt:ApiEvent):Void {
+		handleDisconnectionEvent(new BitSwarmEvent(BitSwarmEvent.DISCONNECT, evt.getParams()));
+	}
+
+	private function onWsData(evt:ApiEvent):Void {
+		try {
+			ioHandler.onDataRead(cast evt.getParams().get(EventParam.Data), TransportType.TCP);
+		} catch (ex:Exception) {
+			trace("WebSocket Read Error: " + ex.message);
+		}
+	}
+
+	private function onWsError(evt:ApiEvent):Void {
+		if (reconState != null && reconState.isPending())
+			attemptReconnection();
+		else
+			notifyConnectionError();
+	}
+
+	// ---------------------------------------------------------------------------------------
+
 	private function notifyConnectionError():Void {
 		var params = new Map<String, Dynamic>();
 		params.set(EventParam.Success, false);
@@ -288,7 +338,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		 */
 		var reason:String = cast evt.getParam(EventParam.DisconnectionReason);
 
-		if (reason == ClientDisconnectionReason.UNKNOWN && connSettings.reconnectionSeconds > 0 && connMode == ConnectionMode.SOCKET)
+		if (reason == ClientDisconnectionReason.UNKNOWN && connSettings.reconnectionSeconds > 0 && hasActiveSocketClient())
 			attemptReconnection();
 		// If we lost the main TCP connection, UDP has to go down as well
 		else {
@@ -318,8 +368,11 @@ class BitSwarmClient implements IBitSwarmClient {
 			throw new Exception("Reconnection is not enabled in the current Zone");
 
 		// Ditch previous connection
-		tcpClient.destroy(null);
-		tcpClient = null;
+		getActiveSocketClient().destroy(null);
+		if (connMode == ConnectionMode.WEBSOCKET)
+			wsClient = null;
+		else
+			tcpClient = null;
 
 		// Handle the start of the reconnection loop
 		if (reconState == null) {
@@ -469,7 +522,7 @@ class BitSwarmClient implements IBitSwarmClient {
 			if (bbClient != null && bbClient.isConnected())
 				bbClient.send(byteData);
 			else
-				tcpClient.write(byteData);
+				getActiveSocketClient().write(byteData);
 		}
 		// Bypass RDP (used only for initial UDP handshake)
 		else if (txType == TransportType.UDP && !udpClient.isUdpInited())
@@ -489,8 +542,8 @@ class BitSwarmClient implements IBitSwarmClient {
 			if (!isConnected())
 				throw new Exception("Client is already disconnected");
 
-			if (connMode == ConnectionMode.SOCKET)
-				tcpClient.disconnect(reason, null);
+			if (hasActiveSocketClient())
+				getActiveSocketClient().disconnect(reason, null);
 			else
 				bbClient.disconnect(reason, null);
 		} catch (ex:Exception) {
@@ -514,10 +567,9 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	public function getConnectionState():SocketState {
-		if (tcpClient == null)
-			return SocketState.Disconnected;
-		else
-			return tcpClient.getSocketState();
+		if (hasActiveSocketClient())
+			return getActiveSocketClient().getSocketState();
+		return SocketState.Disconnected;
 	}
 
 	public function getConnSettings():ConnSettings {
@@ -537,10 +589,22 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	public function killConnection():Void {
-		if (connMode == ConnectionMode.SOCKET)
-			cast(tcpClient, TcpClient).kill();
+		if (hasActiveSocketClient())
+			getActiveSocketClient().kill();
 		else
 			throw new Exception("killConnection() does not work in " + connMode + " mode");
+	}
+
+	private function getActiveSocketClient():BaseSocketClient {
+		return switch (connMode) {
+			case ConnectionMode.SOCKET: tcpClient;
+			case ConnectionMode.WEBSOCKET: wsClient;
+			default: null;
+		};
+	}
+
+	private function hasActiveSocketClient():Bool {
+		return getActiveSocketClient() != null;
 	}
 
 	private function dispatchEvent(evt:BitSwarmEvent):Void {
