@@ -8,7 +8,6 @@
 -python out/SFS3_API_PY.py
 
 --next
-
 -lib air
 -swf-version 11.4
 -swf out/SFS3_API_AS3.swc
