@@ -1,8 +1,9 @@
 package com.smartfoxserver.v3.util;
 class SFSErrorCodes {
-    private static var errorMap:Map<Int, String> = new Map();
+    private static var errorMap:Map<Int, String>;
 
     static function __init__():Void {
+        errorMap = new Map();
         errorMap.set(0, "Client API version is obsolete: %s; required version: %s"); 										// 0
         errorMap.set(1, "Requested Zone %s does not exist");
         errorMap.set(2, "User name not recognized or length is out of bounds: %s");
