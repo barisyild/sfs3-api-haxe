@@ -737,7 +737,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		#if sys
 		sys.thread.Thread.create(() -> {
 			stopExecutors();
-			Sys.sleep(500);
+			Sys.sleep(0.5);
 
 			handshakeComplete = false;
 			encryptionComplete = false;
