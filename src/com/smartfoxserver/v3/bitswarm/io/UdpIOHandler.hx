@@ -25,7 +25,7 @@ class UdpIOHandler extends SpecializedIOHandler {
 			if (remainingData.length > hexDumpMaxSize) 
 				log.info('Incoming, $txType, Size: ${remainingData.length}, Dump omitted');
 			else 
-				log.info('Incoming, $txType, \n${ByteUtils.hexDump(remainingData)}');
+				log.info('Incoming, $txType, \n${ByteUtils.hexDump(remainingData.getData())}');
 		}
 		
 		if (header.isEncrypted()) {

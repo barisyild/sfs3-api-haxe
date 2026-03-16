@@ -51,7 +51,7 @@ class SFSProtocolCodec implements IProtocolCodec
         var buff = new BytesInput(bytes);
         var ctrlId:Int =  buff.readByte();
         var reqId = buff.readInt16();
-        var sfso:SFSObject = SFSObject.newFromBinaryData(bytes);
+        var sfso:SFSObject = SFSObject.newFromBinaryData(bytes.getData());
 
         // Debug
         var dbgLvl:NetDebugLevel = bitSwarm.getNetDebugLevel();

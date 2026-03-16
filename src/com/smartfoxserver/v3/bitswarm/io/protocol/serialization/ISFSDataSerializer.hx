@@ -5,12 +5,13 @@ import com.smartfoxserver.v3.entities.data.ISFSArray;
 import com.smartfoxserver.v3.entities.data.ISFSObject;
 import com.smartfoxserver.v3.entities.data.SFSArray;
 import com.smartfoxserver.v3.entities.data.SFSObject;
+import haxe.io.BytesData;
 
 interface ISFSDataSerializer {
-    function object2binary(object:ISFSObject):Bytes;
-    function array2binary(array:ISFSArray):Bytes;
-    function binary2object(data:Bytes):ISFSObject;
-    function binary2array(data:Bytes):ISFSArray;
+    function object2binary(object:ISFSObject):BytesData;
+    function array2binary(array:ISFSArray):BytesData;
+    function binary2object(data:BytesData):ISFSObject;
+    function binary2array(data:BytesData):ISFSArray;
     function object2json(map:Map<String, Dynamic>):String;
     function array2json(list:Array<Dynamic>):String;
     function json2object(jsonStr:String):ISFSObject;

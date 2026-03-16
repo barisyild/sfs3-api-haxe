@@ -5,8 +5,9 @@ import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.DefaultObjectDum
 import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.DefaultSFSDataSerializer;
 import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.ISFSDataSerializer;
 import haxe.io.Bytes;
-import haxe.Int64;
 import com.smartfoxserver.v3.exceptions.UnsupportedOperationException;
+import haxe.io.BytesData;
+import com.smartfoxserver.v3.util.TypeSafety;
 
 @:expose("SFS3.SFSArray")
 class SFSArray implements ISFSArray {
@@ -17,7 +18,7 @@ class SFSArray implements ISFSArray {
 
     }
 
-    public static function newFromBinaryData(bytes:Bytes):SFSArray {
+    public static function newFromBinaryData(bytes:BytesData):SFSArray {
         return DefaultSFSDataSerializer.getInstance().binary2array(bytes);
     }
 
@@ -63,7 +64,7 @@ class SFSArray implements ISFSArray {
         return ByteUtils.hexDump(this.toBinary());
     }
 
-    public function toBinary():Bytes {
+    public function toBinary():BytesData {
         return this.serializer.array2binary(this);
     }
 
@@ -109,7 +110,7 @@ class SFSArray implements ISFSArray {
         return wrapper != null ? cast wrapper.getObject() : null;
     }
 
-    public function getLong(index:Int):Null<Int64> {
+    public function getLong(index:Int):Null<PlatformInt64> {
         var wrapper:SFSDataWrapper = this.dataHolder[index];
         return wrapper != null ? cast wrapper.getObject() : null;
     }
@@ -152,12 +153,12 @@ class SFSArray implements ISFSArray {
         return wrapper != null ? cast wrapper.getObject() : null;
     }
 
-    public function getByteArray(index:Int):Null<Bytes> {
+    public function getByteArray(index:Int):Null<BytesData> {
         var wrapper:SFSDataWrapper = this.dataHolder[index];
         return wrapper != null ? cast wrapper.getObject() : null;
     }
 
-    public function getUnsignedByteArray(index:Int):Null<Bytes> {
+    public function getUnsignedByteArray(index:Int):Null<BytesData> {
         var wrapper:SFSDataWrapper = this.dataHolder[index];
         if (wrapper == null) {
             return null;
@@ -171,7 +172,7 @@ class SFSArray implements ISFSArray {
                 unsignedBytes.set(i, serializer.getUnsignedByte(b));
             }
 
-            return unsignedBytes;
+            return unsignedBytes.getData();
         }
     }
 
@@ -185,7 +186,7 @@ class SFSArray implements ISFSArray {
         return wrapper != null ? cast wrapper.getObject() : null;
     }
 
-    public function getLongArray(index:Int):Null<Array<Int64>> {
+    public function getLongArray(index:Int):Null<Array<PlatformInt64>> {
         var wrapper:SFSDataWrapper = this.dataHolder[index];
         return wrapper != null ? cast wrapper.getObject() : null;
     }
@@ -229,51 +230,102 @@ class SFSArray implements ISFSArray {
         return wrapper != null ? cast wrapper.getObject() : null;
     }
 
-    public function addBool(value:Bool):Void {
+    public function addBool(value:Bool #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        TypeSafety.checkNotNull(value);
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkBool(value);
+        #end
         this.addObject(value, SFSDataType.BOOL);
     }
 
-    public function addBoolArray(value:Array<Bool>):Void {
+    public function addBoolArray(value:Array<Bool> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        TypeSafety.checkNotNull(value);
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkBoolArray(value);
+        #end
         this.addObject(value, SFSDataType.BOOL_ARRAY);
     }
 
-    public function addByte(value:Int):Void {
+    public function addByte(value:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        TypeSafety.checkNotNull(value);
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkByte(value);
+        #end
         this.addObject(value, SFSDataType.BYTE);
     }
 
-    public function addByteArray(value:Bytes):Void {
+    public function addByteArray(value:BytesData #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkByteArray(value);
+        #end
         this.addObject(value, SFSDataType.BYTE_ARRAY);
     }
 
-    public function addDouble(value:Float):Void {
+    public function addDouble(value:Float #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkDouble(value);
+        #end
         this.addObject(value, SFSDataType.DOUBLE);
     }
 
-    public function addDoubleArray(value:Array<Float>):Void {
+    public function addDoubleArray(value:Array<Float> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkDoubleArray(value);
+        #end
         this.addObject(value, SFSDataType.DOUBLE_ARRAY);
     }
 
-    public function addFloat(value:Float):Void {
+    public function addFloat(value:Float #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkFloat(value);
+        #end
         this.addObject(value, SFSDataType.FLOAT);
     }
 
-    public function addFloatArray(value:Array<Float>):Void {
+    public function addFloatArray(value:Array<Float> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkFloatArray(value);
+        #end
         this.addObject(value, SFSDataType.FLOAT_ARRAY);
     }
 
-    public function addInt(value:Int):Void {
+    public function addInt(value:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkInt(value);
+        #end
         this.addObject(value, SFSDataType.INT);
     }
 
-    public function addIntArray(value:Array<Int>):Void {
+    public function addIntArray(value:Array<Int> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkIntArray(value);
+        #end
         this.addObject(value, SFSDataType.INT_ARRAY);
     }
 
-    public function addLong(value:Int64):Void {
+    public function addLong(value:PlatformInt64 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkLong(value);
+        #end
         this.addObject(value, SFSDataType.LONG);
     }
 
-    public function addLongArray(value:Array<Int64>):Void {
+    public function addLongArray(value:Array<PlatformInt64> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkLongArray(value);
+        #end
         this.addObject(value, SFSDataType.LONG_ARRAY);
     }
 
@@ -281,59 +333,106 @@ class SFSArray implements ISFSArray {
         this.addObject(null, SFSDataType.NULL);
     }
 
-    public function addSFSArray(value:ISFSArray):Void {
+    public function addSFSArray(value:ISFSArray #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkSFSArray(value);
+        #end
         this.addObject(value, SFSDataType.SFS_ARRAY);
     }
 
-    public function addSFSObject(value:ISFSObject):Void {
+    public function addSFSObject(value:ISFSObject #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkSFSObject(value);
+        #end
         this.addObject(value, SFSDataType.SFS_OBJECT);
     }
 
-    public function addShort(value:Int):Void {
+    public function addShort(value:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkShort(value);
+        #end
         this.addObject(value, SFSDataType.SHORT);
     }
 
-    public function addShortArray(value:Array<Int>):Void {
+    public function addShortArray(value:Array<Int> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkShortArray(value);
+        #end
         this.addObject(value, SFSDataType.SHORT_ARRAY);
     }
 
     public function addString(value:String):Void {
+        TypeSafety.checkString(value);
         this.addObject(value, SFSDataType.STRING);
     }
 
     public function addShortString(value:String):Void {
+        TypeSafety.checkShortString(value);
         this.addObject(value, SFSDataType.SHORT_STRING);
     }
 
     public function addText(value:String):Void {
+        TypeSafety.checkText(value);
         this.addObject(value, SFSDataType.TEXT);
     }
 
-    public function addVector2(value:SFSVector2):Void {
+    public function addVector2(value:SFSVector2 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkVector2(value);
+        #end
         this.addObject(value, SFSDataType.VECTOR2);
     }
 
-    public function addVector3(value:SFSVector3):Void {
+    public function addVector3(value:SFSVector3 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkVector3(value);
+        #end
         this.addObject(value, SFSDataType.VECTOR3);
     }
 
-    public function addStringArray(value:Array<String>):Void {
+    public function addStringArray(value:Array<String> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkStringArray(value);
+        #end
         this.addObject(value, SFSDataType.STRING_ARRAY);
     }
 
-    public function addShortStringArray(value:Array<String>):Void {
+    public function addShortStringArray(value:Array<String> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkShortStringArray(value);
+        #end
         this.addObject(value, SFSDataType.SHORT_STRING_ARRAY);
     }
 
-    public function addVector2Array(value:Array<SFSVector2>):Void {
+    public function addVector2Array(value:Array<SFSVector2> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkVector2Array(value);
+        #end
         this.addObject(value, SFSDataType.VECTOR2_ARRAY);
     }
 
-    public function addVector3Array(value:Array<SFSVector3>):Void {
+    public function addVector3Array(value:Array<SFSVector3> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkVector3Array(value);
+        #end
         this.addObject(value, SFSDataType.VECTOR3_ARRAY);
     }
 
-    public function add(wrappedObject:SFSDataWrapper):Void {
+    public function add(wrappedObject:SFSDataWrapper #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void {
+        #if !strict_language
+        if(validateType)
+            TypeSafety.checkDataWrapper(wrappedObject);
+        #end
         this.dataHolder.push(wrappedObject);
     }
 

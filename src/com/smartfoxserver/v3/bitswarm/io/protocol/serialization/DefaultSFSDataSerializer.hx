@@ -3,7 +3,6 @@ package com.smartfoxserver.v3.bitswarm.io.protocol.serialization;
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
 import haxe.io.BytesOutput;
-import haxe.Int64;
 import haxe.Json;
 import com.smartfoxserver.v3.core.Logger;
 import com.smartfoxserver.v3.core.LoggerFactory;
@@ -16,6 +15,9 @@ import com.smartfoxserver.v3.entities.data.SFSObject;
 import com.smartfoxserver.v3.entities.data.SFSVector2;
 import com.smartfoxserver.v3.entities.data.SFSVector3;
 import com.smartfoxserver.v3.exceptions.SFSCodecException;
+import haxe.io.BytesData;
+import com.smartfoxserver.v3.entities.data.PlatformInt64;
+import com.smartfoxserver.v3.util.TypeSafety;
 
 class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private static var _instance:DefaultSFSDataSerializer;
@@ -37,24 +39,32 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     // --- Binary to Object ---
 
-    public function binary2object(data:Bytes):ISFSObject {
-        if (data.length < 3)
-            throw new haxe.Exception("Can't decode an SFSObject. Byte data is insufficient. Size: " + data.length + " bytes");
-        var buffer = new BytesInput(data);
+    public function binary2object(data:BytesData):ISFSObject {
+        #if !strict_language
+        TypeSafety.checkByteArray(data);
+        #end
+        var bytes:Bytes = Bytes.ofData(data);
+        if (bytes.length < 3)
+            throw new haxe.Exception("Can't decode an SFSObject. Byte data is insufficient. Size: " + bytes.length + " bytes");
+        var buffer = new BytesInput(bytes);
         buffer.bigEndian = true;
         return binaryinput2object(buffer);
     }
 
-    public function binaryinput2object(data:BytesInput):ISFSObject {
+    private function binaryinput2object(data:BytesInput):ISFSObject {
         if (data.length < 3)
             throw new haxe.Exception("Can't decode an SFSObject. Byte data is insufficient. Size: " + data.length + " bytes");
         return decodeSFSObject(data);
     }
 
-    public function binary2array(data:Bytes):SFSArray {
-        if (data.length < 3)
-            throw new haxe.Exception("Can't decode an SFSArray. Byte data is insufficient. Size: " + data.length + " bytes");
-        var buffer = new BytesInput(data);
+    public function binary2array(data:BytesData):SFSArray {
+        #if !strict_language
+        TypeSafety.checkByteArray(data);
+        #end
+        var bytes:Bytes = Bytes.ofData(data);
+        if (bytes.length < 3)
+            throw new haxe.Exception("Can't decode an SFSArray. Byte data is insufficient. Size: " + bytes.length + " bytes");
+        var buffer = new BytesInput(bytes);
         buffer.bigEndian = true;
         return cast decodeSFSArray(buffer);
     }
@@ -173,7 +183,8 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binDecode_LONG(buffer:BytesInput):SFSDataWrapper {
         var hi = buffer.readInt32();
         var lo = buffer.readInt32();
-        return new SFSDataWrapper(SFSDataType.LONG, Int64.make(hi, lo));
+        trace(PlatformInt64.make(hi, lo));
+        return new SFSDataWrapper(SFSDataType.LONG, PlatformInt64.make(hi, lo));
     }
 
     private function binDecode_FLOAT(buffer:BytesInput):SFSDataWrapper {
@@ -230,7 +241,8 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arraySize = buffer.readInt32();
         if (arraySize < 0) throw new SFSCodecException("Error decoding typed array size. Negative size: " + arraySize);
         var byteData = buffer.read(arraySize);
-        return new SFSDataWrapper(SFSDataType.BYTE_ARRAY, byteData);
+        var bytesData:BytesData = byteData.getData();
+        return new SFSDataWrapper(SFSDataType.BYTE_ARRAY, bytesData);
     }
 
     private function binDecode_SHORT_ARRAY(buffer:BytesInput):SFSDataWrapper {
@@ -249,11 +261,11 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     private function binDecode_LONG_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
-        var arr = new Array<Int64>();
+        var arr = new Array<PlatformInt64>();
         for (j in 0...arraySize) {
             var hi = buffer.readInt32();
             var lo = buffer.readInt32();
-            arr.push(Int64.make(hi, lo));
+            arr.push(PlatformInt64.make(hi, lo));
         }
         return new SFSDataWrapper(SFSDataType.LONG_ARRAY, arr);
     }
@@ -317,7 +329,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     // --- Object to Binary ---
 
-    public function object2binary(object:ISFSObject):Bytes {
+    public function object2binary(object:ISFSObject):BytesData {
         var buffer = new BytesOutput();
         buffer.bigEndian = true;
         buffer.writeByte(SFSDataType.SFS_OBJECT);
@@ -325,16 +337,16 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         return obj2bin(object, buffer);
     }
 
-    private function obj2bin(object:ISFSObject, buffer:BytesOutput):Bytes {
+    private function obj2bin(object:ISFSObject, buffer:BytesOutput):BytesData {
         for (key in object.getKeys()) {
             var wrapper = object.get(key);
             encodeSFSObjectKey(buffer, key);
             encodeObject(buffer, wrapper.getTypeId(), wrapper.getObject());
         }
-        return buffer.getBytes();
+        return buffer.getBytes().getData();
     }
 
-    public function array2binary(array:ISFSArray):Bytes {
+    public function array2binary(array:ISFSArray):BytesData {
         var buffer = new BytesOutput();
         buffer.bigEndian = true;
         buffer.writeByte(SFSDataType.SFS_ARRAY);
@@ -342,11 +354,11 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         return arr2bin(array, buffer);
     }
 
-    private function arr2bin(array:ISFSArray, buffer:BytesOutput):Bytes {
+    private function arr2bin(array:ISFSArray, buffer:BytesOutput):BytesData {
         for (wrapper in array) {
             encodeObject(buffer, wrapper.getTypeId(), wrapper.getObject());
         }
-        return buffer.getBytes();
+        return buffer.getBytes().getData();
     }
 
     private function encodeSFSObjectKey(buffer:BytesOutput, value:String):Void {
@@ -382,8 +394,8 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         else if (typeId == SFSDataType.SHORT_STRING_ARRAY) { binEncode_SHORT_STRING_ARRAY(buffer, cast object); }
         else if (typeId == SFSDataType.VECTOR2_ARRAY) { binEncode_VECTOR2_ARRAY(buffer, cast object); }
         else if (typeId == SFSDataType.VECTOR3_ARRAY) { binEncode_VECTOR3_ARRAY(buffer, cast object); }
-        else if (typeId == SFSDataType.SFS_ARRAY) { buffer.write(array2binary(cast object)); }
-        else if (typeId == SFSDataType.SFS_OBJECT) { buffer.write(object2binary(cast object)); }
+        else if (typeId == SFSDataType.SFS_ARRAY) { buffer.write(Bytes.ofData(array2binary(cast object))); }
+        else if (typeId == SFSDataType.SFS_OBJECT) { buffer.write(Bytes.ofData(object2binary(cast object))); }
         else { throw new haxe.Exception("Unrecognized type in SFSObject serialization: " + typeId); }
     }
 
@@ -413,7 +425,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         buffer.writeInt32(value);
     }
 
-    private function binEncode_LONG(buffer:BytesOutput, value:Int64):Void {
+    private function binEncode_LONG(buffer:BytesOutput, value:PlatformInt64):Void {
         buffer.writeByte(SFSDataType.LONG);
         buffer.writeInt32(value.high);
         buffer.writeInt32(value.low);
@@ -473,10 +485,12 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (b in value) buffer.writeByte(b ? 1 : 0);
     }
 
-    private function binEncode_BYTE_ARRAY(buffer:BytesOutput, value:Bytes):Void {
+    private function binEncode_BYTE_ARRAY(buffer:BytesOutput, value:BytesData):Void {
+        var bytes:Bytes = Bytes.ofData(value);
+
         buffer.writeByte(SFSDataType.BYTE_ARRAY);
-        buffer.writeInt32(value.length);
-        buffer.write(value);
+        buffer.writeInt32(bytes.length);
+        buffer.write(bytes);
     }
 
     private function binEncode_SHORT_ARRAY(buffer:BytesOutput, value:Array<Int>):Void {
@@ -491,7 +505,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (item in value) buffer.writeInt32(item);
     }
 
-    private function binEncode_LONG_ARRAY(buffer:BytesOutput, value:Array<Int64>):Void {
+    private function binEncode_LONG_ARRAY(buffer:BytesOutput, value:Array<PlatformInt64>):Void {
         buffer.writeByte(SFSDataType.LONG_ARRAY);
         buffer.writeInt16(value.length);
         for (item in value) {

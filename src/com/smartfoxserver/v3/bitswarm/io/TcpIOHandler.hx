@@ -54,7 +54,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 			if (data.length > hexDumpMaxSize) 
 				log.info('Incoming, TCP, Size: ${data.length}, Dump omitted');
 			else 
-				log.info('Incoming, TCP, \n${ByteUtils.hexDump(data)}');
+				log.info('Incoming, TCP, \n${ByteUtils.hexDump(data.getData())}');
 		}
 		
 		try {

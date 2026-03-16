@@ -1,6 +1,7 @@
 package com.smartfoxserver.v3.bitswarm.util;
 
 import haxe.io.Bytes;
+import haxe.io.BytesData;
 
 class ByteUtils {
 
@@ -18,7 +19,8 @@ class ByteUtils {
         return tmpArray;
     }
 
-    public static function hexDump(buffer:Bytes, ?size:Null<Int>):String {
+    public static function hexDump(bytesData:BytesData, ?size:Null<Int>):String {
+        var buffer:Bytes = Bytes.ofData(bytesData);
         if (size == null) {
             size = buffer.length;
         }

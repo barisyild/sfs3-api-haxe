@@ -6,6 +6,8 @@ import com.smartfoxserver.v3.entities.data.SFSArray;
 import com.smartfoxserver.v3.entities.data.SFSVector2;
 import com.smartfoxserver.v3.entities.data.SFSVector3;
 import haxe.Int64;
+import haxe.Exception;
+import com.smartfoxserver.v3.entities.data.PlatformInt64;
 
 class BaseVariable implements Variable
 {
@@ -13,16 +15,19 @@ class BaseVariable implements Variable
 	private var type:VariableType;
 	private var val:Dynamic;
 
-	public function new(name:String, ?value:Dynamic, ?type:VariableType)
+	public function new(name:String, value:Null<Dynamic>, type:Null<VariableType>)
 	{
+		if(type == null)
+			type = VariableType.NULL;
+
 		this.name = name;
-		if (type != null)
-		{
-			this.val = value;
-			this.type = type;
-		}
-		else
-			setValue(value);
+		this.val = value;
+		this.type = type;
+
+		if(value == null && type != VariableType.NULL)
+			throw new Exception("");
+		else if(value != null && type == VariableType.NULL)
+			throw new Exception("");
 	}
 
 	public function getName():String return name;
@@ -33,7 +38,7 @@ class BaseVariable implements Variable
 	public function getByteValue():Int return cast val;
 	public function getShortValue():Int return cast val;
 	public function getIntValue():Int return cast val;
-	public function getLongValue():Int64 return cast val;
+	public function getLongValue():PlatformInt64 return cast val;
 	public function getFloatValue():Float return cast val;
 	public function getDoubleValue():Float return cast val;
 	public function getStringValue():String return cast val;
@@ -72,33 +77,6 @@ class BaseVariable implements Variable
 			case VECTOR2: arr.addVector2(getSFSVector2Value());
 			default: throw "Unsupported Variable type: " + type;
 		}
-	}
-
-	private function setValue(val:Dynamic):Void
-	{
-		this.val = val;
-		if (val == null)
-			type = VariableType.NULL;
-		else if (Std.isOfType(val, Bool))
-			type = VariableType.BOOL;
-		else if (Std.isOfType(val, Int))
-			type = VariableType.INT;
-		else if (Std.isOfType(val, Float))
-			type = VariableType.DOUBLE;
-		else if (Std.isOfType(val, String))
-			type = VariableType.STRING;
-		else if (Std.isOfType(val, ISFSObject))
-			type = VariableType.OBJECT;
-		else if (Std.isOfType(val, ISFSArray))
-			type = VariableType.ARRAY;
-		else if (Std.isOfType(val, SFSVector3))
-			type = VariableType.VECTOR3;
-		else if (Std.isOfType(val, SFSVector2))
-			type = VariableType.VECTOR2;
-		else if (Int64.isInt64(val))
-			type = VariableType.LONG;
-		else
-			throw "Unsupported Variable type: " + Type.getClassName(Type.getClass(val));
 	}
 
 	public function toString():String return '[Var] ${type} $name: $val';

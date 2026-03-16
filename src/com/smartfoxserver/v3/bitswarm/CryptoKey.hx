@@ -1,6 +1,7 @@
 package com.smartfoxserver.v3.bitswarm;
 import haxe.io.Bytes;
 import com.smartfoxserver.v3.bitswarm.util.ByteUtils;
+import haxe.io.BytesData;
 
 class CryptoKey {
     private static final SIZE:Int = 16;
@@ -8,10 +9,11 @@ class CryptoKey {
     private var secretKey:Bytes;
     private var initVector:Bytes;
 
-    public function new(combinedBytes:Bytes) {
+    public function new(combinedBytesData:BytesData) {
         this.secretKey = Bytes.alloc(SIZE);
         this.initVector = Bytes.alloc(SIZE);
 
+        var combinedBytes:Bytes = Bytes.ofData(combinedBytesData);
         this.secretKey.blit(0, combinedBytes, 0, SIZE);
         this.initVector.blit(0, combinedBytes, SIZE, SIZE);
     }
@@ -26,6 +28,6 @@ class CryptoKey {
 
     public function toString():String {
         // ByteUtils.hexDump metodunun daha önce import.hx içinde tanımlandığını varsayıyorum
-        return "CryptoKey: " + ByteUtils.hexDump(secretKey) + "\nIV: " + ByteUtils.hexDump(initVector);
+        return "CryptoKey: " + ByteUtils.hexDump(secretKey.getData()) + "\nIV: " + ByteUtils.hexDump(initVector.getData());
     }
 }

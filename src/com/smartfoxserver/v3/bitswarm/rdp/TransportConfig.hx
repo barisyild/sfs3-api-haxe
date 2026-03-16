@@ -4,6 +4,7 @@ import hx.concurrent.executor.Executor;
 import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import haxe.io.BytesInput;
+import haxe.io.BytesData;
 
 class ReliableImpl {
     public static final ACK_ACTIVE:Int = 1;
@@ -44,7 +45,8 @@ class TransportConfig {
         return bo.getBytes();
     }
 
-    public static function deserialize(bytes:Bytes):TransportConfig {
+    public static function deserialize(bytesData:BytesData):TransportConfig {
+        var bytes:Bytes = Bytes.ofData(bytesData);
         var txCfg = new TransportConfig();
         var bi = new BytesInput(bytes);
         txCfg.reliableImpl = bi.readByte();

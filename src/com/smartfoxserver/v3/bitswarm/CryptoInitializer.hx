@@ -110,7 +110,7 @@ class CryptoInitializer implements IDispatchable
 		{
 			var bytes = Base64.decode(response);
 			
-			var sfso = SFSObject.newFromBinaryData(bytes);
+			var sfso = SFSObject.newFromBinaryData(bytes.getData());
 			
 			var binKeys = sfso.getByteArray(KEY_BINARY_KEYS);
 			var newToken = sfso.getString(KEY_SESSION_TOKEN);

@@ -1,26 +1,37 @@
 -lib haxe-concurrent
--lib crypto
 -lib colyseus-websocket
+-D library
 --class-path src
 --macro "include('com.smartfoxserver')"
 -dce std
 
 --each
+-D default_validation
+-D untyped
 -python out/SFS3_API_PY.py
 
 --next
+-D strict_language
+--jvm out/SFS3_API_JVM.jar
+
+--next
+-lib crypto
+-D strict_language
 -lib air
 -swf-version 11.4
 -swf out/SFS3_API_AS3.swc
 
 --next
---jvm out/SFS3_API_JVM.jar
-
---next
+-lib crypto
+-D default_validation
+-D untyped
 -D js-es=6
 --js out/SFS3_API_JS.js
 
 --next
+-lib crypto
+-D default_validation
+-D untyped
 -D js-es=6
 -lib hxnodejs
 -D nodejs

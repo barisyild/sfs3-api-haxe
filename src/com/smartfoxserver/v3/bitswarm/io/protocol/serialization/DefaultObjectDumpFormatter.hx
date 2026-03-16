@@ -5,6 +5,7 @@ import com.smartfoxserver.v3.entities.data.SFSArray;
 import com.smartfoxserver.v3.entities.data.SFSDataType;
 import com.smartfoxserver.v3.entities.data.SFSDataWrapper;
 import com.smartfoxserver.v3.entities.data.SFSObject;
+import haxe.io.BytesData;
 
 class DefaultObjectDumpFormatter {
     private static final MAX_ARRAY_DUMP_SIZE:Int = 10;
@@ -14,8 +15,8 @@ class DefaultObjectDumpFormatter {
     public static final TOKEN_DIVIDER:Int = 0x13;
     public static var NEW_LINE:String = #if sys (Sys.systemName() == "Windows" ? "\r\n" : "\n"); #else "\n"; #end
 
-    public static function prettyPrintByteArray(bytes:Bytes):String {
-        return bytes == null ? "Null" : 'Byte[${bytes.length}]';
+    public static function prettyPrintByteArray(bytesData:BytesData):String {
+        return bytesData == null ? "Null" : 'Byte[${Bytes.ofData(bytesData).length}]';
     }
 
     public static function prettyPrintCollection(coll:Array<Dynamic>, typeId:SFSDataType):String {

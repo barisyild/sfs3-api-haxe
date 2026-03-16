@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.entities.data;
 import haxe.io.Bytes;
-import haxe.Int64;
+import haxe.io.BytesData;
 
 interface ISFSObject {
     function isNull(var1:String):Bool;
@@ -15,7 +15,7 @@ interface ISFSObject {
 
     function iterator():Iterator<SFSDataWrapper>;
 
-    function toBinary():Bytes;
+    function toBinary():BytesData;
 
     function toJson():String;
 
@@ -33,7 +33,7 @@ interface ISFSObject {
 
     function getInt(var1:String):Null<Int>;
 
-    function getLong(var1:String):Null<Int64>;
+    function getLong(var1:String):Null<PlatformInt64>;
 
     function getFloat(var1:String):Null<Float>;
 
@@ -47,7 +47,7 @@ interface ISFSObject {
 
     function getBoolArray(var1:String):Null<Array<Bool>>;
 
-    function getByteArray(var1:String):Null<Bytes>;
+    function getByteArray(var1:String):Null<BytesData>;
 
     function getUnsignedByteArray(var1:String):Null<Array<Int>>;
 
@@ -55,7 +55,7 @@ interface ISFSObject {
 
     function getIntArray(var1:String):Null<Array<Int>>;
 
-    function getLongArray(var1:String):Null<Array<Int64>>;
+    function getLongArray(var1:String):Null<Array<PlatformInt64>>;
 
     function getFloatArray(var1:String):Null<Array<Float>>;
 
@@ -79,19 +79,19 @@ interface ISFSObject {
 
     function putNull(var1:String):Void;
 
-    function putBool(var1:String, var2:Bool):Void;
+    function putBool(var1:String, var2:Bool #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putByte(var1:String, var2:Int):Void;
+    function putByte(var1:String, var2:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putShort(var1:String, var2:Int):Void;
+    function putShort(var1:String, var2:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putInt(var1:String, var2:Int):Void;
+    function putInt(var1:String, var2:Int #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putLong(var1:String, var2:Int64):Void;
+    function putLong(var1:String, var2:PlatformInt64 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putFloat(var1:String, var2:Float):Void;
+    function putFloat(var1:String, var2:Float #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putDouble(var1:String, var2:Float):Void;
+    function putDouble(var1:String, var2:Float #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
     function putString(var1:String, var2:String):Void;
 
@@ -99,35 +99,35 @@ interface ISFSObject {
 
     function putText(var1:String, var2:String):Void;
 
-    function putVector2(var1:String, var2:SFSVector2):Void;
+    function putVector2(var1:String, var2:SFSVector2 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putVector3(var1:String, var2:SFSVector3):Void;
+    function putVector3(var1:String, var2:SFSVector3 #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putBoolArray(var1:String, var2:Array<Bool>):Void;
+    function putBoolArray(var1:String, var2:Array<Bool> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putByteArray(var1:String, var2:Bytes):Void;
+    function putByteArray(var1:String, var2:BytesData #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putShortArray(var1:String, var2:Array<Int>):Void;
+    function putShortArray(var1:String, var2:Array<Int> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putIntArray(var1:String, var2:Array<Int>):Void;
+    function putIntArray(var1:String, var2:Array<Int> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putLongArray(var1:String, var2:Array<Int64>):Void;
+    function putLongArray(var1:String, var2:Array<PlatformInt64> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putFloatArray(var1:String, var2:Array<Float>):Void;
+    function putFloatArray(var1:String, var2:Array<Float> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putDoubleArray(var1:String, var2:Array<Float>):Void;
+    function putDoubleArray(var1:String, var2:Array<Float> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putStringArray(var1:String, var2:Array<String>):Void;
+    function putStringArray(var1:String, var2:Array<String> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putShortStringArray(var1:String, var2:Array<String>):Void;
+    function putShortStringArray(var1:String, var2:Array<String> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putVector2Array(var1:String, var2:Array<SFSVector2>):Void;
+    function putVector2Array(var1:String, var2:Array<SFSVector2> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putVector3Array(var1:String, var2:Array<SFSVector3>):Void;
+    function putVector3Array(var1:String, var2:Array<SFSVector3> #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putSFSArray(var1:String, var2:ISFSArray):Void;
+    function putSFSArray(var1:String, var2:ISFSArray #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function putSFSObject(var1:String, var2:ISFSObject):Void;
+    function putSFSObject(var1:String, var2:ISFSObject #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 
-    function put(var1:String, var2:SFSDataWrapper):Void;
+    function put(var1:String, var2:SFSDataWrapper #if !strict_language, validateType:Bool = #if default_validation true #else false #end #end):Void;
 }

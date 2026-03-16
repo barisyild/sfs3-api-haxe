@@ -4,6 +4,7 @@ import com.smartfoxserver.v3.entities.data.ISFSArray;
 import com.smartfoxserver.v3.entities.data.ISFSObject;
 import com.smartfoxserver.v3.entities.data.SFSVector2;
 import com.smartfoxserver.v3.entities.data.SFSVector3;
+import com.smartfoxserver.v3.entities.data.PlatformInt64;
 
 interface Variable
 {
@@ -14,7 +15,7 @@ interface Variable
 	function getByteValue():Int;
 	function getShortValue():Int;
 	function getIntValue():Int;
-	function getLongValue():haxe.Int64;
+	function getLongValue():PlatformInt64;
 	function getFloatValue():Float;
 	function getDoubleValue():Float;
 	function getStringValue():String;
