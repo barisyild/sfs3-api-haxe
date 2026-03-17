@@ -9,6 +9,8 @@
 --each
 -D default_validation
 -D untyped
+--class-path src/macro
+--macro PythonMinifyMacro.run()
 -python out/SFS3_API_PY.py
 
 --next

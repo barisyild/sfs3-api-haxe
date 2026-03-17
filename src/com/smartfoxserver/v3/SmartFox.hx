@@ -554,10 +554,10 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	private function validateConfigData(cfgData:ConfigData) {
-		if (cfgData.host == null || cfgData.host.isEmpty())
+		if (cfgData.host == null || cfgData.host.length == 0)
 			throw new IllegalArgumentException("Invalid Host/IpAddress");
 
-		if (cfgData.zone == null || cfgData.zone.isEmpty())
+		if (cfgData.zone == null || cfgData.zone.length == 0)
 			throw new IllegalArgumentException("Invalid Zone name");
 
 		if (cfgData.port < MIN_PORT_VALUE || cfgData.port > MAX_PORT_VALUE)
