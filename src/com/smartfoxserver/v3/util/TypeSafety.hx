@@ -56,33 +56,17 @@ class TypeSafety {
     }
 
     public static function checkShortString(value:String):Void {
-        var isStringType:Bool = value is String;
-        if(!isStringType)
-            throw new IllegalArgumentException('Value is not a "string" type.');
-
-        var isShort:Bool = value.length <= 255;
-        if(!isShort)
-            throw new IllegalArgumentException('Maximum size limit exceeded (expected maximum 255, got ${value.length})');
+        return checkString(value);
     }
 
     public static function checkString(value:String):Void {
         var isStringType:Bool = value is String;
         if(!isStringType)
             throw new IllegalArgumentException('Value is not a "string" type.');
-
-        var isString:Bool = value.length <= 32768;
-        if(!isString)
-            throw new IllegalArgumentException('Maximum size limit exceeded (expected maximum 32768, got ${value.length})');
     }
 
     public static function checkText(value:String):Void {
-        var isStringType:Bool = value is String;
-        if(!isStringType)
-            throw new IllegalArgumentException('Value is not a "string" type.');
-
-        var isText:Bool = value.length <= 2147483648;
-        if(!isText)
-            throw new IllegalArgumentException('Maximum size limit exceeded. (expected maximum 2147483648, got ${value.length})');
+        return checkString(value);
     }
 
     public static function checkStringArray(value:Array<String>):Void {
