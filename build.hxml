@@ -3,7 +3,6 @@
 -D library
 --class-path src
 --macro "include('com.smartfoxserver')"
--dce std
 --macro keep('com.smartfoxserver')
 -dce full
 
