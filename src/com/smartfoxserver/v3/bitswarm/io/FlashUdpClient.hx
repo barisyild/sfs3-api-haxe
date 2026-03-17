@@ -84,7 +84,7 @@ class FlashUdpClient extends BaseUdpSocketClient {
 		try {
 			var ba = e.data;
 			var data = Bytes.ofData(ba);
-			lastUdpPacketTime = haxe.Timer.stamp();
+			lastUdpPacketTime = Timer.stamp();
 
 			if (rdpTx == null) {
 				triggerOnDataEvent(data, TransportType.UDP);
@@ -208,7 +208,7 @@ class FlashUdpClient extends BaseUdpSocketClient {
 		var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, [EventParam.Success => true]);
 		bitSwarm.getDispatcher().dispatchEvent(initEvt);
 
-		lastUdpPacketTime = haxe.Timer.stamp();
+		lastUdpPacketTime = Timer.stamp();
 
 		// Periodic timeout / keep-alive check using haxe.Timer (Flash-friendly)
 		timeoutCheckTimer = new Timer(Std.int(KEEP_ALIVE_SECONDS * 1000));

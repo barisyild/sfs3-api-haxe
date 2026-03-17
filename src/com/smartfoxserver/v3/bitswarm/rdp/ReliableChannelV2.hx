@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.bitswarm.rdp.data.UDPData;
 import haxe.Timer;
 import haxe.io.BytesInput;
 import hx.concurrent.lock.RLock;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 class ReliableChannelV2 extends BaseReliableChannel {
     private static final MIN_RTX_PAUSE:Int = 20;
@@ -207,7 +208,7 @@ class ReliableChannelV2 extends BaseReliableChannel {
     function dispatchPacket(packet:RDPacket, ?fragCount:Int):Void {
         if (fragCount == null) fragCount = 0;
         if (fragCount < 0) {
-            throw new haxe.Exception("fragCount can't be negative: " + fragCount);
+            throw new IllegalStateException("fragCount can't be negative: " + fragCount);
         } else {
             this.transport.getIncomingDataHandler()(packet.getData(), packet.getEndPoint(), TxpMode.RELIABLE_ORDERED);
         }

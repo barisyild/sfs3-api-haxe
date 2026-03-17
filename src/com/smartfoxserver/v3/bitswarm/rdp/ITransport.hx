@@ -1,13 +1,14 @@
 package com.smartfoxserver.v3.bitswarm.rdp;
 
 import com.smartfoxserver.v3.bitswarm.rdp.data.EndPoint;
+import haxe.io.Bytes;
 
 interface ITransport {
     function init():Void;
     function destroy():Void;
     function getCfg():TransportConfig;
-    function dataReceived(data:haxe.io.Bytes, sender:EndPoint):Void;
-    function sendData(data:haxe.io.Bytes, mode:TxpMode, sender:EndPoint):Void;
+    function dataReceived(data:Bytes, sender:EndPoint):Void;
+    function sendData(data:Bytes, mode:TxpMode, sender:EndPoint):Void;
     function sendPing(sender:EndPoint):Void;
     function getIncomingDataHandler():TxpCallback;
     function getOutgoingDataHandler():TxpCallback;

@@ -12,6 +12,7 @@ import haxe.io.Bytes;
 import sys.net.Host;
 import sys.net.Socket;
 import com.smartfoxserver.v3.entities.data.Queue;
+import haxe.io.Eof;
 
 
 class SysTcpClient extends BaseSocketClient {
@@ -135,7 +136,7 @@ class SysTcpClient extends BaseSocketClient {
 				var evt = new SocketEvent(SocketEvent.DataReceived);
 				evt.getParams().set(EventParam.Data, data);
 				evtDispatcher.dispatchEvent(evt);
-			} catch (ex:haxe.io.Eof) {
+			} catch (ex:Eof) {
 				log.warn("TCP Read: Connection closed (EOF), State: " + Std.string(socketState));
 
 				if (socketState != SocketState.Disconnected)

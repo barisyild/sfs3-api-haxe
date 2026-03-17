@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.IDispatchable;
 import com.smartfoxserver.v3.util.WebServices;
 import haxe.crypto.Base64;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 /*
  * Some of the methods here are not referenced directly in this project but they are used
@@ -50,7 +51,7 @@ class CryptoInitializer implements IDispatchable
 			this.storage = wrapper;
 		
 		if (storage.getKey() != null)
-			throw new haxe.Exception("Cryptography is already initialized!");
+			throw new IllegalStateException("Cryptography is already initialized!");
 	}
 	
 	public function init():Void

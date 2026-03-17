@@ -1,6 +1,7 @@
 package com.smartfoxserver.v3.bitswarm.rdp.data;
 
 import haxe.Int64;
+import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
 
 class NAck64History {
     public static final BIT_SIZE:Int = 64;
@@ -54,7 +55,7 @@ class NAck64History {
             }
             return this.history;
         } else {
-            throw new haxe.Exception("Invalid bitpos: " + index);
+            throw new IllegalArgumentException("Invalid bitpos: " + index);
         }
     }
 

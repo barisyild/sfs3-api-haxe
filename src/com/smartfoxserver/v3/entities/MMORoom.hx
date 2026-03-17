@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.entities;
 
 import com.smartfoxserver.v3.entities.data.Vec3D;
 import hx.concurrent.collection.SynchronizedMap;
+import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
 
 /**
  * The <em>MMORoom</em> object represents a specialized type of Room entity on the client.
@@ -90,7 +91,7 @@ class MMORoom extends SFSRoom
 	public function setDefaultAOI(defaultAOI:Vec3D<Any>):Void
     {
 		if (this.defaultAOI != null)
-			throw new haxe.Exception("This value is read-only");
+			throw new IllegalArgumentException("This value is read-only");
 		
 	    this.defaultAOI = defaultAOI;
     }
@@ -99,7 +100,7 @@ class MMORoom extends SFSRoom
 	public function setLowerMapLimit(lowerMapLimit:Vec3D<Any>):Void
     {
 		if (this.lowerMapLimit != null)
-			throw new haxe.Exception("This value is read-only");
+			throw new IllegalArgumentException("This value is read-only");
 		
 	    this.lowerMapLimit = lowerMapLimit;
     }
@@ -108,7 +109,7 @@ class MMORoom extends SFSRoom
 	public function setHigherMapLimit(higherMapLimit:Vec3D<Any>):Void
     {
 		if (this.higherMapLimit != null)
-			throw new haxe.Exception("This value is read-only");
+			throw new IllegalArgumentException("This value is read-only");
 		
 	    this.higherMapLimit = higherMapLimit;
     }

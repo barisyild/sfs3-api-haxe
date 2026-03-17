@@ -11,6 +11,7 @@ import hx.concurrent.atomic.AtomicInt;
 import hx.concurrent.lock.RLock;
 import com.smartfoxserver.v3.core.Logger;
 import com.smartfoxserver.v3.core.LoggerFactory;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 class FragManager {
     private var fragIdGen:AtomicInt = new AtomicInt(0);
@@ -111,7 +112,7 @@ class FragManager {
         var startSize = packet.getDataSize();
 
         if (startSize <= this.cfg.mtu) {
-            throw new haxe.Exception('Packet does not need to be fragmented, size < MTU (${startSize})');
+            throw new IllegalStateException('Packet does not need to be fragmented, size < MTU (${startSize})');
         }
 
         var totFrags = Std.int(startSize / this.cfg.mtu);

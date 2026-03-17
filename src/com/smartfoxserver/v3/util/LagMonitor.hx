@@ -78,7 +78,7 @@ class LagMonitor
     public function onPingPong():Float
     {
         // Calculate lag in milliseconds
-        var lagValue:Float = (haxe.Timer.stamp() - lastReqTime) * 1000;
+        var lagValue:Float = (Timer.stamp() - lastReqTime) * 1000;
 
         // Update statistics
         if (minValue > lagValue)
@@ -139,7 +139,7 @@ class LagMonitor
      */
     private function lagMonitorRunner():Void
     {
-        lastReqTime = haxe.Timer.stamp();
+        lastReqTime = Timer.stamp();
 
         if (sfs != null && sfs.isConnected())
         {

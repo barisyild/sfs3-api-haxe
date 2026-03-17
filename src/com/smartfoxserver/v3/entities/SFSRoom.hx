@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.entities.managers.SFSUserManager;
 import com.smartfoxserver.v3.entities.variables.RoomVariable;
 import com.smartfoxserver.v3.entities.variables.SFSRoomVariable;
 import hx.concurrent.collection.SynchronizedMap;
+import com.smartfoxserver.v3.exceptions.SFSException;
 
 /**
  * The <em>SFSRoom</em> object represents a SmartFoxServer Room on the
@@ -398,7 +399,7 @@ class SFSRoom implements Room
 	public function setRoomManager(manager:IRoomManager):Void
 	{
 		if (roomManager != null)
-			throw new haxe.Exception("Room manager already assigned. Room: " + this);
+			throw new SFSException("Room manager already assigned. Room: " + this);
 
 		roomManager = manager;
 	}

@@ -18,6 +18,8 @@ import com.smartfoxserver.v3.exceptions.SFSCodecException;
 import haxe.io.BytesData;
 import com.smartfoxserver.v3.entities.data.PlatformInt64;
 import com.smartfoxserver.v3.util.TypeSafety;
+import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private static var _instance:DefaultSFSDataSerializer;
@@ -45,7 +47,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         #end
         var bytes:Bytes = Bytes.ofData(data);
         if (bytes.length < 3)
-            throw new haxe.Exception("Can't decode an SFSObject. Byte data is insufficient. Size: " + bytes.length + " bytes");
+            throw new IllegalStateException("Can't decode an SFSObject. Byte data is insufficient. Size: " + bytes.length + " bytes");
         var buffer = new BytesInput(bytes);
         buffer.bigEndian = true;
         return binaryinput2object(buffer);
@@ -53,7 +55,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     private function binaryinput2object(data:BytesInput):ISFSObject {
         if (data.length < 3)
-            throw new haxe.Exception("Can't decode an SFSObject. Byte data is insufficient. Size: " + data.length + " bytes");
+            throw new IllegalStateException("Can't decode an SFSObject. Byte data is insufficient. Size: " + data.length + " bytes");
         return decodeSFSObject(data);
     }
 
@@ -63,7 +65,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         #end
         var bytes:Bytes = Bytes.ofData(data);
         if (bytes.length < 3)
-            throw new haxe.Exception("Can't decode an SFSArray. Byte data is insufficient. Size: " + bytes.length + " bytes");
+            throw new IllegalStateException("Can't decode an SFSArray. Byte data is insufficient. Size: " + bytes.length + " bytes");
         var buffer = new BytesInput(bytes);
         buffer.bigEndian = true;
         return cast decodeSFSArray(buffer);
@@ -73,17 +75,17 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var sfsObject = SFSObject.newInstance();
         var headerByte = buffer.readByte();
         if (headerByte != SFSDataType.SFS_OBJECT)
-            throw new haxe.Exception("Invalid SFSDataType. Expected: " + SFSDataType.SFS_OBJECT + ", found: " + headerByte);
+            throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_OBJECT + ", found: " + headerByte);
 
         var size = buffer.readInt16();
         if (size < 0)
-            throw new haxe.Exception("Can't decode SFSObject. Size is negative = " + size);
+            throw new IllegalStateException("Can't decode SFSObject. Size is negative = " + size);
 
         for (i in 0...size) {
             var key = decodeSFSObjectKey(buffer);
             var decodedObject = decodeObject(buffer);
             if (decodedObject == null)
-                throw new haxe.Exception("Could not decode value for key: " + key);
+                throw new IllegalStateException("Could not decode value for key: " + key);
             sfsObject.put(key, decodedObject);
         }
         return sfsObject;
@@ -93,19 +95,23 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var sfsArray = SFSArray.newInstance();
         var headerByte = buffer.readByte();
         if (headerByte != SFSDataType.SFS_ARRAY)
-            throw new haxe.Exception("Invalid SFSDataType. Expected: " + SFSDataType.SFS_ARRAY + ", found: " + headerByte);
+            throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_ARRAY + ", found: " + headerByte);
 
         var size = buffer.readInt16();
         if (size < 0)
-            throw new haxe.Exception("Can't decode SFSArray. Size is negative = " + size);
+            throw new IllegalStateException("Can't decode SFSArray. Size is negative = " + size);
 
-        for (i in 0...size) {
-            var decodedObject = decodeObject(buffer);
-            if (decodedObject == null)
-                throw new haxe.Exception("Could not decode SFSArray item at index: " + i);
-            sfsArray.add(decodedObject);
+        try {
+            for (i in 0...size) {
+                var decodedObject = decodeObject(buffer);
+                if (decodedObject == null)
+                    throw new IllegalStateException("Could not decode SFSArray item at index: " + i);
+                sfsArray.add(decodedObject);
+            }
+            return sfsArray;
+        } catch (codecError:SFSCodecException) {
+            throw new IllegalArgumentException(codecError.message);
         }
-        return sfsArray;
     }
 
     private function decodeSFSObjectKey(buffer:BytesInput):String {
@@ -364,7 +370,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function encodeSFSObjectKey(buffer:BytesOutput, value:String):Void {
         var keyBytes = Bytes.ofString(value);
         if (keyBytes.length > 255)
-            throw new haxe.Exception("Object Key size: " + keyBytes.length + ", expected max 255 bytes.");
+            throw new IllegalStateException("Object Key size: " + keyBytes.length + ", expected max 255 bytes.");
         buffer.writeByte(keyBytes.length);
         buffer.write(keyBytes);
     }
@@ -396,7 +402,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         else if (typeId == SFSDataType.VECTOR3_ARRAY) { binEncode_VECTOR3_ARRAY(buffer, cast object); }
         else if (typeId == SFSDataType.SFS_ARRAY) { buffer.write(Bytes.ofData(array2binary(cast object))); }
         else if (typeId == SFSDataType.SFS_OBJECT) { buffer.write(Bytes.ofData(object2binary(cast object))); }
-        else { throw new haxe.Exception("Unrecognized type in SFSObject serialization: " + typeId); }
+        else { throw new IllegalArgumentException("Unrecognized type in SFSObject serialization: " + typeId); }
     }
 
     // --- Encode helpers ---
@@ -444,7 +450,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binEncode_STRING(buffer:BytesOutput, value:String):Void {
         var stringBytes = Bytes.ofString(value);
         if (stringBytes.length > 32767)
-            throw new haxe.Exception("String element exceeds max size: " + stringBytes.length + ", Limit is: 32767");
+            throw new IllegalArgumentException("String element exceeds max size: " + stringBytes.length + ", Limit is: 32767");
         buffer.writeByte(SFSDataType.STRING);
         buffer.writeInt16(stringBytes.length);
         buffer.write(stringBytes);
@@ -453,7 +459,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binEncode_SHORT_STRING(buffer:BytesOutput, value:String):Void {
         var stringBytes = Bytes.ofString(value);
         if (stringBytes.length > 255)
-            throw new haxe.Exception("Short String element exceeds max size: " + stringBytes.length + ", Limit is: 255");
+            throw new IllegalArgumentException("Short String element exceeds max size: " + stringBytes.length + ", Limit is: 255");
         buffer.writeByte(SFSDataType.SHORT_STRING);
         buffer.writeByte(stringBytes.length);
         buffer.write(stringBytes);
@@ -532,7 +538,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (item in value) {
             var binStr = Bytes.ofString(item);
             if (binStr.length > 32767)
-                throw new haxe.Exception("String element in array exceeds max size: " + binStr.length + ", Limit is: 32767");
+                throw new IllegalArgumentException("String element in array exceeds max size: " + binStr.length + ", Limit is: 32767");
             buffer.writeInt16(binStr.length);
             buffer.write(binStr);
         }
@@ -544,7 +550,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (item in value) {
             var binStr = Bytes.ofString(item);
             if (binStr.length > 255)
-                throw new haxe.Exception("Short String element in array exceeds max size: " + binStr.length + ", Limit is: 255");
+                throw new IllegalArgumentException("Short String element in array exceeds max size: " + binStr.length + ", Limit is: 255");
             buffer.writeByte(binStr.length);
             buffer.write(binStr);
         }
@@ -585,14 +591,14 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     public function json2object(jsonStr:String):ISFSObject {
         if (jsonStr.length < 2)
-            throw new haxe.Exception("Can't decode SFSObject. JSON String is too short. Len: " + jsonStr.length);
+            throw new IllegalStateException("Can't decode SFSObject. JSON String is too short. Len: " + jsonStr.length);
         var parsed:Dynamic = Json.parse(jsonStr);
         return decodeJsonSFSObject(parsed);
     }
 
     public function json2array(jsonStr:String):SFSArray {
         if (jsonStr.length < 2)
-            throw new haxe.Exception("Can't decode SFSArray. JSON String is too short. Len: " + jsonStr.length);
+            throw new IllegalStateException("Can't decode SFSArray. JSON String is too short. Len: " + jsonStr.length);
         var parsed:Array<Dynamic> = Json.parse(jsonStr);
         return decodeJsonSFSArray(parsed);
     }
@@ -604,7 +610,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
             var value:Dynamic = Reflect.field(jso, key);
             var decodedObject = decodeJsonObject(value);
             if (decodedObject == null)
-                throw new haxe.Exception("(json2sfsobj) Could not decode value for key: " + key);
+                throw new IllegalStateException("(json2sfsobj) Could not decode value for key: " + key);
             sfsObject.put(key, decodedObject);
         }
         return sfsObject;
@@ -615,7 +621,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (value in jsa) {
             var decodedObject = decodeJsonObject(value);
             if (decodedObject == null)
-                throw new haxe.Exception("(json2sfarray) Could not decode value for object: " + Std.string(value));
+                throw new IllegalStateException("(json2sfarray) Could not decode value for object: " + Std.string(value));
             sfsArray.add(decodedObject);
         }
         return sfsArray;

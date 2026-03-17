@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.bitswarm.rdp;
 
 import com.smartfoxserver.v3.bitswarm.rdp.data.RDPacket;
 import haxe.Timer;
+import haxe.io.Bytes;
 
 abstract class BaseReliableChannel extends BaseChannel implements ReliableInternals {
     public function new(transport:ITransport) {
@@ -17,7 +18,7 @@ abstract class BaseReliableChannel extends BaseChannel implements ReliableIntern
     public abstract function getCurrentRTT():Float;
 
     private function triggerSendEvent(packet:RDPacket):Void {
-        var data:haxe.io.Bytes = null;
+        var data:Bytes = null;
         if (packet.getHeader().isAck()) {
             data = packet.getData();
         } else {

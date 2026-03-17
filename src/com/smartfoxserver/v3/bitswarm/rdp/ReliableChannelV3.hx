@@ -12,6 +12,7 @@ import hx.concurrent.lock.RLock;
 import hx.concurrent.collection.SynchronizedMap;
 import com.smartfoxserver.v3.entities.data.Queue;
 import com.smartfoxserver.v3.entities.data.Deque;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 class ReliableChannelV3 extends BaseReliableChannel {
     private static final NACK_MAX_CACHE_SIZE:Int = 34;
@@ -285,7 +286,7 @@ class ReliableChannelV3 extends BaseReliableChannel {
     function dispatchPacket(packet:RDPacket, ?fragCount:Int):Void {
         if (fragCount == null) fragCount = 0;
         if (fragCount < 0) {
-            throw new haxe.Exception("fragCount can't be negative: " + fragCount);
+            throw new IllegalStateException("fragCount can't be negative: " + fragCount);
         } else {
             this.transport.getIncomingDataHandler()(packet.getData(), packet.getEndPoint(), TxpMode.RELIABLE_ORDERED);
         }

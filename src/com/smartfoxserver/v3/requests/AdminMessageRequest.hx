@@ -1,6 +1,7 @@
 package com.smartfoxserver.v3.requests;
 
 import com.smartfoxserver.v3.entities.data.ISFSObject;
+import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
 
 /**
  * Sends an administrator message to a specific user or a group of users.
@@ -48,7 +49,7 @@ class AdminMessageRequest extends GenericMessageRequest
 		super();
 		
 		if (recipientMode == null)
-			throw new haxe.Exception("RecipientMode cannot be null!");
+			throw new IllegalArgumentException("RecipientMode cannot be null!");
 
 		type = GenericMessageType.ADMIN_MSG;
 		this.message = message;

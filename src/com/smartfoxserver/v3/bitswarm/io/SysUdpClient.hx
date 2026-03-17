@@ -23,6 +23,7 @@ import com.smartfoxserver.v3.bitswarm.TransportType.TransportTypeTools;
 import sys.net.UdpSocket;
 import sys.net.Address;
 import com.smartfoxserver.v3.entities.data.Queue;
+import haxe.Timer;
 
 class SysUdpClient extends BaseUdpSocketClient {
 	// MTU is ~1500 bytes, 2KB buffer is enough
@@ -191,7 +192,7 @@ class SysUdpClient extends BaseUdpSocketClient {
 		bitSwarm.getDispatcher().dispatchEvent(initEvt);
 
 		// Update timestamp
-		lastUdpPacketTime = haxe.Timer.stamp();
+		lastUdpPacketTime = Timer.stamp();
 
 		// Periodic timeout / keep-alive check
 		timeoutCheckTaskId = threadPool.submit(function():Void {
@@ -257,7 +258,7 @@ class SysUdpClient extends BaseUdpSocketClient {
 				if (rdpTx == null) {
 					triggerOnDataEvent(data, TransportType.UDP);
 				} else {
-					lastUdpPacketTime = haxe.Timer.stamp();
+					lastUdpPacketTime = Timer.stamp();
 					rdpTx.dataReceived(data, serverEndPoint);
 				}
 			} catch (ex:Exception) {

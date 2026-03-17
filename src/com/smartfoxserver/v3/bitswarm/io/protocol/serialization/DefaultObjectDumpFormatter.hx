@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.entities.data.SFSDataType;
 import com.smartfoxserver.v3.entities.data.SFSDataWrapper;
 import com.smartfoxserver.v3.entities.data.SFSObject;
 import haxe.io.BytesData;
+import com.smartfoxserver.v3.exceptions.IllegalStateException;
 
 class DefaultObjectDumpFormatter {
     private static final MAX_ARRAY_DUMP_SIZE:Int = 10;
@@ -75,7 +76,7 @@ class DefaultObjectDumpFormatter {
             } else if (ch == 0x12) {
                 --indentPos;
                 if (indentPos < 0) {
-                    throw new haxe.Exception("Unbalanced dump tokens: indentPos is negative");
+                    throw new IllegalStateException("Unbalanced dump tokens: indentPos is negative");
                 }
                 if (lastCh != ch) {
                     buf.add(NEW_LINE);
@@ -91,7 +92,7 @@ class DefaultObjectDumpFormatter {
         }
 
         if (indentPos != 0) {
-            throw new haxe.Exception("Unbalanced dump tokens: indentPos should be zero");
+            throw new IllegalStateException("Unbalanced dump tokens: indentPos should be zero");
         }
 
         return buf.toString();
