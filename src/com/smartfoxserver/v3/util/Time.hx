@@ -10,6 +10,6 @@ class Time {
     }
 
     public static function ms64():Int64 {
-        return Int64.fromFloat(currentMs());
+        return Int64.fromFloat(ms());
     }
 }
