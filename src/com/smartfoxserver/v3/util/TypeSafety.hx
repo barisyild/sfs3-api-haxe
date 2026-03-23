@@ -150,6 +150,8 @@ class TypeSafety {
     public static function checkLong(value:PlatformInt64):Void {
         #if python
         var isLong:Bool = python.Syntax.code("isinstance({0}, int)", value);
+        #elseif js
+        var isLong:Bool = js.Syntax.code("typeof {0} === 'bigint'", value);
         #else
         var isLong:Bool = haxe.Int64.isInt64(value);
         #end
