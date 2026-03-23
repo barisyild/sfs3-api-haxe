@@ -142,10 +142,12 @@ class FlashUdpClient extends BaseUdpSocketClient {
 	 * For Flash, write() sends directly via DatagramSocket (event-driven, no queue needed)
 	 */
 	public function write(data:Bytes, txType:TransportType = null):Void {
-		if (socketState != SocketState.Connected || udpSocket == null)
+		if (udpSocket == null)
 			return;
 
 		if (txType == null) {
+			if (socketState != SocketState.Connected && socketState != SocketState.Connecting)
+				return;
 			try {
 				udpSocket.send(data.getData(), 0, data.length, serverHost, serverPort);
 			} catch (ex:Dynamic) {
@@ -154,6 +156,8 @@ class FlashUdpClient extends BaseUdpSocketClient {
 					disconnect(ClientDisconnectionReason.UNKNOWN, Std.string(ex));
 			}
 		} else {
+			if (socketState != SocketState.Connected)
+				return;
 			if (rdpTx != null) {
 				rdpTx.sendData(data, TransportTypeTools.toRdpMode(txType), serverEndPoint);
 			} else {
