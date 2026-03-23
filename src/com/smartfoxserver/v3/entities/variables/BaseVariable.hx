@@ -29,15 +29,14 @@ class BaseVariable implements Variable
 			throw new Exception("");
 		else if(value != null && type == VariableType.NULL)
 		{
-			// TODO: Handle types automatically.
 			if(value is String)
-				value = VariableType.STRING;
+				this.type = VariableType.STRING;
 			else if(value is Bool)
-				value = VariableType.BOOL;
-			else if(value is Float)
-				value = VariableType.FLOAT;
+				this.type = VariableType.BOOL;
 			else if(value is Int)
-				value = VariableType.INT;
+				this.type = VariableType.INT;
+			else if(value is Float)
+				this.type = VariableType.FLOAT;
 			else throw "Undefined Variable Type.";
 		}
 	}
