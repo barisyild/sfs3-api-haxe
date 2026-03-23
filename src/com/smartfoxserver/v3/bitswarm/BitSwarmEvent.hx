@@ -21,7 +21,7 @@ class BitSwarmEvent extends ApiEvent {
     public function new(type:String, params:PlatformStringMap<Dynamic> = null)
     {
         if(params == null)
-            params = new Map<String, Dynamic>();
+            params = new PlatformStringMap<Dynamic>();
         super(type, params);
     }
 }

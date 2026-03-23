@@ -69,13 +69,13 @@ class ApiEvent {
 	 * @param type      The type of event.
 	 * @param params An object containing the parameters of the event.
 	 */
-    public function new(type:String, params:Map<String, Dynamic>) {
+    public function new(type:String, params:PlatformStringMap<Dynamic>) {
         this.type = type;
         if(params != null)
             setParams(params);
 
         if(this.getParams() == null)
-            this.setParams(new Map<String, Dynamic>());
+            this.setParams(new PlatformStringMap<Dynamic>());
     }
 
     /**

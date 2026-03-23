@@ -120,7 +120,7 @@ class NodeTcpClient extends BaseSocketClient {
 		if (socketState == SocketState.Disconnected)
 			throw new Exception("TCP connection is already closed");
 		closeSocket();
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 		evtDispatcher.dispatchEvent(new SFSocketEvent(SFSocketEvent.Disconnected, params));
