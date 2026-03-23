@@ -1,8 +1,6 @@
 package com.smartfoxserver.v3.bitswarm;
 import com.smartfoxserver.v3.bitswarm.rdp.TxpMode;
 
-
-@:expose("SFS3.TransportType")
 enum TransportType {
     TCP;
     UDP;
@@ -41,4 +39,12 @@ class TransportTypeTools {
             case _: false;
         }
     }
+}
+
+@:expose("SFS3.TransportType")
+class JSTransportType {
+    public static var TCP:TransportType = TransportType.TCP;
+    public static var UDP:TransportType = TransportType.UDP;
+    public static var UDP_RELIABLE:TransportType = TransportType.UDP_RELIABLE;
+    public static var UDP_UNRELIABLE:TransportType = TransportType.UDP_UNRELIABLE;
 }
