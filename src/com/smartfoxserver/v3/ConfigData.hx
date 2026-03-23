@@ -50,6 +50,9 @@ final class ConfigData
 	 */
     public var useSSL:Bool 				= false;
 
+    /** Use WebSocket transport instead of raw TCP socket. Required for browser targets, optional for others. */
+    public var useWebSocket:Bool		= false;
+
     /** When sending data via UDP, if the UDP connection failed, it will use TCP instead */
     public var useTcpFallback:Bool 		= false;
 

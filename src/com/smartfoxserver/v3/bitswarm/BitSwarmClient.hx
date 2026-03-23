@@ -86,6 +86,9 @@ class BitSwarmClient implements IBitSwarmClient {
 	public function connect(cfgData:ConfigData):Void {
 		this.cfgData = cfgData;
 
+		if (cfgData.useWebSocket)
+			connMode = ConnectionMode.WEBSOCKET;
+
 		if (connMode == ConnectionMode.SOCKET)
 			connectTcp(cfgData.host, cfgData.port, cfgData.tcpConnectionTimeout);
 		else if (connMode == ConnectionMode.WEBSOCKET)
