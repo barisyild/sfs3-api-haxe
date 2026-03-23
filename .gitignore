@@ -5,3 +5,4 @@ notes.txt
 *.jar
 *.iml
 out
+sample/python/*/SFS3_API_PY.py

@@ -12,6 +12,7 @@
 --class-path src/macro/python
 --macro macro.python.MinifyMacro.run()
 -python out/SFS3_API_PY.py
+--cmd copy out\SFS3_API_PY.py sample\python\SimpleChat\SFS3_API_PY.py
 
 --next
 -D strict_language
