@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.entities.data.SFSVector3;
 import haxe.Int64;
 import haxe.Exception;
 import com.smartfoxserver.v3.entities.data.PlatformInt64;
+import com.smartfoxserver.v3.entities.variables.VariableType;
 
 class BaseVariable implements Variable
 {
@@ -27,7 +28,18 @@ class BaseVariable implements Variable
 		if(value == null && type != VariableType.NULL)
 			throw new Exception("");
 		else if(value != null && type == VariableType.NULL)
-			throw new Exception("");
+		{
+			// TODO: Handle types automatically.
+			if(value is String)
+				value = VariableType.STRING;
+			else if(value is Bool)
+				value = VariableType.BOOL;
+			else if(value is Float)
+				value = VariableType.FLOAT;
+			else if(value is Int)
+				value = VariableType.INT;
+			else throw "Undefined Variable Type.";
+		}
 	}
 
 	public function getName():String return name;
