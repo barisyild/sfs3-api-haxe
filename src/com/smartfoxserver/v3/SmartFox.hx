@@ -163,6 +163,21 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private var nodeId:String = null;
 
 	public function new() {
+		#if flash
+		if (haxe.Log.trace == null || Reflect.field(haxe.Log, "trace") == null) {
+			haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos):Void {
+				flash.Lib.trace(v);
+			};
+		}
+		// Always override to avoid Boot.getTrace() null stage issue
+		haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos):Void {
+			var msg = Std.string(v);
+			if (infos != null && infos.fileName != null && infos.fileName != "")
+				msg = infos.fileName + ":" + infos.lineNumber + ": " + msg;
+			flash.Lib.trace(msg);
+		};
+		#end
+
 		Logger.setLevel(LogLevel.DEBUG);
 		Logger.setShowPosition(true);
 
