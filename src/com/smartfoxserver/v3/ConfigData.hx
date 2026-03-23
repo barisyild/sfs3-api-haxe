@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.util.NetDebugLevel;
  * to the Server.
  * @see SmartFox#connect(ConfigData)
  */
+@:expose("SFS3.ConfigData")
 final class ConfigData
 {
     /** The host to connect to */
