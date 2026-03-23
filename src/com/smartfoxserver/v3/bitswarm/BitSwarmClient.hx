@@ -55,7 +55,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		controllersById = new Map<Int, IController>();
 		connSettings = new ConnSettings();
 		this.smartFox = smartFox;
-		connMode = #if js ConnectionMode.WEBSOCKET #else ConnectionMode.SOCKET #end;
+		connMode = #if (js && !nodejs) ConnectionMode.WEBSOCKET #else ConnectionMode.SOCKET #end;
 		cryptoKey = null;
 	}
 
