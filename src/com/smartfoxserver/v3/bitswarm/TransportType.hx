@@ -2,6 +2,7 @@ package com.smartfoxserver.v3.bitswarm;
 import com.smartfoxserver.v3.bitswarm.rdp.TxpMode;
 
 
+@:expose("SFS3.TransportType")
 enum TransportType {
     TCP;
     UDP;
