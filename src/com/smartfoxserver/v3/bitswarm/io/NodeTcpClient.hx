@@ -15,6 +15,7 @@ import js.node.Buffer;
 import js.node.Net;
 import js.node.net.Socket;
 import com.smartfoxserver.v3.entities.data.Queue;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 /**
  * TCP client for Node.js using hxnodejs (async, non-blocking).
