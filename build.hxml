@@ -23,6 +23,7 @@
 -D strict_language
 -lib air
 -swf-version 11.4
+--class-path src/override/flash
 -swf out/SFS3_API_AS3.swc
 --cmd copy out\SFS3_API_AS3.swc sample\as3\SimpleChat\SFS3_API_AS3.swc
 
