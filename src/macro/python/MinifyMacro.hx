@@ -1,4 +1,4 @@
-package;
+package macro.python;
 
 #if macro
 import haxe.macro.Context;
@@ -8,7 +8,7 @@ using StringTools;
 using haxe.macro.TypeTools;
 #end
 
-class PythonMinifyMacro {
+class MinifyMacro {
 	static final EXPOSE_PREFIX = "SFS3.";
 
 	public static function run() {
