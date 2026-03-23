@@ -163,6 +163,9 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private var nodeId:String = null;
 
 	public function new() {
+		Logger.setLevel(LogLevel.DEBUG);
+		Logger.setShowPosition(true);
+
 		this.log = LoggerFactory.getLogger(Type.getClass(this));
 		PORT_VALID_RANGE = 'Valid range is $MIN_PORT_VALUE..$MAX_PORT_VALUE';
 
