@@ -95,6 +95,49 @@ abstract PlatformInt64(js.lib.BigInt) from js.lib.BigInt to js.lib.BigInt {
     public static inline function ofString(s:String):PlatformInt64 return new PlatformInt64(js.lib.BigInt.fromString(s));
 }
 
+#elseif flash
+
+abstract PlatformInt64(Float) from Float to Float {
+    public inline function new(v:Float) this = v;
+
+    public var high(get, set):Int;
+    public var low(get, set):Int;
+
+    private inline function get_high():Int return Std.int(this / 4294967296.0);
+    private inline function get_low():Int  return Std.int(this - get_high() * 4294967296.0);
+
+    private inline function set_high(v:Int):Int {
+        this = v * 4294967296.0 + get_low();
+        return v;
+    }
+    private inline function set_low(v:Int):Int {
+        this = get_high() * 4294967296.0 + v;
+        return v;
+    }
+
+    public static inline function make(high:Int, low:Int):PlatformInt64
+        return new PlatformInt64(high * 4294967296.0 + low);
+
+    @:op(A + B) public static inline function add(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) + (b : Float);
+    @:op(A - B) public static inline function sub(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) - (b : Float);
+    @:op(A * B) public static inline function mul(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) * (b : Float);
+    @:op(A / B) public static inline function div(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return Std.int((a : Float) / (b : Float));
+    @:op(A % B) public static inline function mod(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) % (b : Float);
+
+    @:op(A == B) public static inline function eq (a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) == (b : Float);
+    @:op(A != B) public static inline function neq(a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) != (b : Float);
+    @:op(A >  B) public static inline function gt (a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) >  (b : Float);
+    @:op(A >= B) public static inline function gte(a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) >= (b : Float);
+    @:op(A <  B) public static inline function lt (a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) <  (b : Float);
+    @:op(A <= B) public static inline function lte(a:PlatformInt64, b:PlatformInt64):Bool return (a : Float) <= (b : Float);
+
+    public inline function toInt():Int       return Std.int(this);
+    public inline function toString():String return Std.string(this);
+
+    public static inline function fromInt(v:Int):PlatformInt64     return new PlatformInt64(v);
+    public static inline function ofString(s:String):PlatformInt64 return new PlatformInt64(Std.parseFloat(s));
+}
+
 #else
 @:access(haxe.Int64)
 // jvm, cpp, hl, cs, neko — haxe.Int64 primitive long'a derlenir
