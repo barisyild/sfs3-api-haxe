@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.requests.SubscribeRoomGroupRequest;
 import com.smartfoxserver.v3.util.SFSErrorCodes;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResSubscribeRoomGroup extends BaseResponseHandler
 {
@@ -19,7 +20,7 @@ class ResSubscribeRoomGroup extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		// ::: Success ::::::::::::::::::::::::::::::::::::::::::::::::
 		if (!sfso.containsKey(BaseRequest.KEY_ERROR_CODE))

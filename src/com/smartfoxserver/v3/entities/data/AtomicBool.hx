@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.entities.data;
 
-#if (target.atomics)
+#if (!js && target.atomics)
 typedef AtomicBool = haxe.atomic.AtomicBool;
 
 #elseif (target.threaded)

@@ -14,6 +14,7 @@ import com.smartfoxserver.v3.entities.managers.SFSGlobalUserManager;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.requests.JoinRoomRequest;
 import com.smartfoxserver.v3.util.SFSErrorCodes;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResJoinRoom extends BaseResponseHandler
 {
@@ -27,7 +28,7 @@ class ResJoinRoom extends BaseResponseHandler
 		var userManager:SFSGlobalUserManager = cast sfs.getUserManager();
 		
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		// set flag off
 		sfs.setJoining(false);

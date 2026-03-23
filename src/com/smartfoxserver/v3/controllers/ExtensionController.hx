@@ -5,6 +5,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.bitswarm.BitSwarmClient;
 import com.smartfoxserver.v3.requests.ExtensionRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ExtensionController extends BaseController
 {
@@ -21,7 +22,7 @@ class ExtensionController extends BaseController
     {
         var sfso:ISFSObject = resp.getContent();
 
-        var evtParams = new Map<String, Dynamic>();
+        var evtParams = new PlatformStringMap<Dynamic>();
         evtParams.set(EventParam.Cmd, sfso.getString(ExtensionRequest.KEY_CMD));
         evtParams.set(EventParam.ExtParams, sfso.getSFSObject(ExtensionRequest.KEY_PARAMS));
         evtParams.set(EventParam.TxType, resp.getTransportType());

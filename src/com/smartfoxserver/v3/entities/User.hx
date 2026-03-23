@@ -213,7 +213,7 @@ interface User
 	/**
 	 * Indicates if this <em>User</em> object represents the current client.
 	 */
-	function isItMe():Bool;
+	function getIsItMe():Bool;
 
 	/**
 	 * Retrieves all the User Variables of this user.

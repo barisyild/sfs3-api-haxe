@@ -1,12 +1,13 @@
 package com.smartfoxserver.v3.bitswarm.io.protocol;
 import haxe.io.Bytes;
+import haxe.io.BytesData;
 
 class RequestPacket {
     private final _header:PacketHeader;
-    private final _body:Bytes;
+    private final _body:BytesData;
     private final _txType:TransportType;
 
-    public function new(header:PacketHeader, body:Bytes, txType:TransportType) {
+    public function new(header:PacketHeader, body:BytesData, txType:TransportType) {
         this._header = header;
         this._body = body;
         this._txType = txType;
@@ -16,7 +17,7 @@ class RequestPacket {
         return _header;
     }
 
-    public function body():Bytes {
+    public function body():BytesData {
         return _body;
     }
 

@@ -62,7 +62,7 @@ class SetRoomVariablesRequest extends BaseRequest
 		var errors = new Array<String>();
 
 		// Make sure that the user is joined in the room where variables are going to be set
-		if (room != null && !room.isJoined()) 
+		if (room != null && !room.getJoined())
 			errors.push("You are not joined in the target room: " + room.getName());
 		
 		else if (sfs.getLastJoinedRoom() == null) 

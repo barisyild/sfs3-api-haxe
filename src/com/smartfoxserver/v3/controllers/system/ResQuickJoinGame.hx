@@ -7,6 +7,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.util.SFSErrorCodes;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResQuickJoinGame extends BaseResponseHandler
 {
@@ -18,7 +19,7 @@ class ResQuickJoinGame extends BaseResponseHandler
 	{
 		// NOTE: this is called only in case of error, when no Games to join where found
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		// Notify error
 		if (sfso.containsKey(BaseRequest.KEY_ERROR_CODE))

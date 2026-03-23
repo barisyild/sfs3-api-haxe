@@ -15,6 +15,7 @@ import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.entities.managers.SFSGlobalUserManager;
 import com.smartfoxserver.v3.requests.mmo.SetUserPositionRequest;
 import com.smartfoxserver.v3.entities.data.Vec3D;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResSetUserPosition extends BaseResponseHandler
 {
@@ -27,7 +28,7 @@ class ResSetUserPosition extends BaseResponseHandler
 		var userManager:SFSGlobalUserManager = cast sfs.getUserManager();
 		
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var roomId:Int = sfso.getInt(SetUserPositionRequest.KEY_ROOM);
 

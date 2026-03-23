@@ -16,6 +16,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import hx.concurrent.executor.Executor;
 import com.smartfoxserver.v3.bitswarm.io.SysParam;
 import hx.concurrent.executor.Schedule;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class BlueBoxClient implements IDispatchable
 {
@@ -192,7 +193,9 @@ class BlueBoxClient implements IDispatchable
                 sessId = data;
                 socketState = SocketState.Connected;
 
-                var params:Map<String, Dynamic> = [EventParam.Success => true, SysParam.IsReconnection => false];
+                var params:PlatformStringMap<Dynamic> = new PlatformStringMap<Dynamic>();
+                params.set(EventParam.Success, true);
+                params.set(SysParam.IsReconnection, false);
                 var connEvt = new BlueBoxEvent(BlueBoxEvent.Connected, params);
                 dispatchEvent(connEvt);
 
@@ -217,7 +220,8 @@ class BlueBoxClient implements IDispatchable
                 // Dispatch the event
                 if (binData != null)
                 {
-                    var parameters:Map<String, Dynamic> = [EventParam.Data => binData];
+                    var parameters:Map<String, Dynamic> = new PlatformStringMap<Dynamic>();
+                    parameters.set(EventParam.Data, binData);
                     dispatchEvent(new BlueBoxEvent(BlueBoxEvent.DataReceived, parameters));
                 }
             }
@@ -237,7 +241,8 @@ class BlueBoxClient implements IDispatchable
     {
         if (Date.now().getTime() > lastPollingTime + POLLING_TIMEOUT)
         {
-            var params:Map<String, Dynamic> = [EventParam.DisconnectionReason => ClientDisconnectionReason.UNKNOWN];
+            var params:PlatformStringMap<Dynamic> = new PlatformStringMap<Dynamic>();
+            params.set(EventParam.DisconnectionReason, ClientDisconnectionReason.UNKNOWN);
             dispatchEvent(new BlueBoxEvent(BlueBoxEvent.Disconnected, params));
 
             if (timeoutMonitorTask != null) {
@@ -292,7 +297,8 @@ class BlueBoxClient implements IDispatchable
                         trace("WARN: " + errorMsg);
                         socketState = SocketState.Disconnected;
 
-                        var params:Map<String, Dynamic> = [EventParam.ErrorMessage => "BlueBox connection failed"];
+                        var params:PlatformStringMap<Dynamic> = new PlatformStringMap<Dynamic>();
+                        params.set(EventParam.ErrorMessage, "BlueBox connection failed");
                         var connEvt = new BlueBoxEvent(BlueBoxEvent.Error, params);
                         dispatchEvent(connEvt);
                     }
@@ -316,7 +322,10 @@ class BlueBoxClient implements IDispatchable
                     trace("WARN: " + ex);
                     socketState = SocketState.Disconnected;
 
-                    var connEvt = new BlueBoxEvent(BlueBoxEvent.Error, [EventParam.ErrorMessage => "BlueBox connection failed"]);
+                    var params = new PlatformStringMap<Dynamic>();
+                    params.set(EventParam.ErrorMessage, "BlueBox connection failed");
+
+                    var connEvt = new BlueBoxEvent(BlueBoxEvent.Error, params);
                     dispatchEvent(connEvt);
                 }
                 else
@@ -336,10 +345,9 @@ class BlueBoxClient implements IDispatchable
         socketState = SocketState.Disconnected;
         shutDownRunningTasks();
 
-        var params:Map<String, Dynamic> = [
-            EventParam.DisconnectionReason => reason,
-            EventParam.ErrorMessage => errMessage
-        ];
+        var params:PlatformStringMap<Dynamic> = new PlatformStringMap();
+        params.set(EventParam.DisconnectionReason, reason);
+        params.set(EventParam.ErrorMessage, errMessage);
 
         dispatchEvent(new BlueBoxEvent(BlueBoxEvent.Disconnected, params));
     }

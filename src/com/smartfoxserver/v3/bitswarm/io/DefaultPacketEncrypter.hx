@@ -18,33 +18,33 @@ class DefaultPacketEncrypter implements IPacketEncrypter {
         this.bitSwarm = bitSwarmClient;
     }
 
-    public function encrypt(data:Bytes):Bytes {
+    public function encrypt(data:BytesData):BytesData {
         return execute(true, data);
     }
 
-    public function decrypt(data:Bytes):Bytes {
+    public function decrypt(data:BytesData):BytesData {
         return execute(false, data);
     }
 
     // ---------------------------------------------------------------------------------------------------
 
     #if crypto
-    private function execute(isEncrypt:Bool, data:Bytes):Bytes {
+    private function execute(isEncrypt:Bool, data:BytesData):BytesData {
         var ck:CryptoKey = bitSwarm.getCryptoKey();
         if (ck != null) {
             var iv:Bytes = ck.getInitVector();
             var skeySpec:Bytes = ck.getSecretKey();
             var aes = new Aes(skeySpec, iv);
             if (isEncrypt) {
-                return aes.encrypt(Mode.CBC, data, Padding.PKCS7);
+                return aes.encrypt(Mode.CBC, Bytes.ofData(data), Padding.PKCS7).getData();
             } else {
-                return aes.decrypt(Mode.CBC, data, Padding.PKCS7);
+                return aes.decrypt(Mode.CBC, Bytes.ofData(data), Padding.PKCS7).getData();
             }
         }
         throw new Exception("The current connection does not support encryption!");
     }
     #elseif jvm
-    private function execute(isEncrypt:Bool, data:Bytes):Bytes {
+    private function execute(isEncrypt:Bool, data:BytesData):BytesData {
         var ck:CryptoKey = bitSwarm.getCryptoKey();
         if (ck == null)
             throw new Exception("The current connection does not support encryption!");
@@ -54,11 +54,11 @@ class DefaultPacketEncrypter implements IPacketEncrypter {
         var keySpec = new javax.crypto.spec.SecretKeySpec(cast skeySpec.getData(), "AES");
         var ivSpec = new javax.crypto.spec.IvParameterSpec(cast iv.getData());
         cipher.init(isEncrypt ? javax.crypto.Cipher.ENCRYPT_MODE : javax.crypto.Cipher.DECRYPT_MODE, keySpec, ivSpec);
-        var result = cipher.doFinal(cast data.getData());
-        return Bytes.ofData(cast result);
+        var result = cipher.doFinal(cast data);
+        return cast result;
     }
     #elseif python
-    private function execute(isEncrypt:Bool, data:Bytes):Bytes {
+    private function execute(isEncrypt:Bool, data:BytesData):BytesData {
         var ck:CryptoKey = bitSwarm.getCryptoKey();
         if (ck == null)
             throw new Exception("The current connection does not support encryption!");
@@ -66,7 +66,7 @@ class DefaultPacketEncrypter implements IPacketEncrypter {
         var skeySpec:Bytes = ck.getSecretKey();
         var keyArr = skeySpec.getData();
         var ivArr = iv.getData();
-        var dataArr = data.getData();
+        var dataArr = data;
         var result:BytesData = null;
         python.Syntax.code("
         from Crypto.Cipher import AES
@@ -80,10 +80,10 @@ class DefaultPacketEncrypter implements IPacketEncrypter {
         else:
             {4} = unpad(cipher.decrypt(data), AES.block_size)
         ", keyArr, ivArr, dataArr, isEncrypt, result);
-        return Bytes.ofData(result);
+        return cast result;
     }
     #else
-    private function execute(isEncrypt:Bool, data:Bytes):Bytes {
+    private function execute(isEncrypt:Bool, data:BytesData):BytesData {
         throw new Exception("Encryption is not supported on this target. Add -lib crypto or use JVM/Python target.");
     }
     #end

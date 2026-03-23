@@ -8,6 +8,7 @@ import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.entities.managers.IUserManager;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResRoomLost extends BaseResponseHandler
 {
@@ -18,7 +19,7 @@ class ResRoomLost extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var rId:Int = sfso.getInt("r");
 		var room:Room = sfs.getRoomManager().getRoomById(rId);

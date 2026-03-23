@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.requests.PlayerToSpectatorRequest;
 import com.smartfoxserver.v3.util.SFSErrorCodes;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResPlayerToSpectator extends BaseResponseHandler
 {
@@ -20,7 +21,7 @@ class ResPlayerToSpectator extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		// ::: SUCCESS
 		// ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

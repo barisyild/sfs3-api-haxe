@@ -43,12 +43,12 @@ class SFSRoom implements Room
 	private var id:Int;
 	private var name:String;
 	private var groupId:String;
-	private var _isGame:Bool;
-	private var _isHidden:Bool;
-	private var _isJoined:Bool;
-	private var _isPasswordProtected:Bool;
-	private var _isManaged:Bool;
-	private var _isAudioStreamingAllowed:Bool;
+	private var isGame:Bool;
+	private var isHidden:Bool;
+	private var isJoined:Bool;
+	private var isPasswordProtected:Bool;
+	private var isManaged:Bool;
+	private var isAudioStreamingAllowed:Bool;
 	
 	private var variables:SynchronizedMap<String, RoomVariable>;
 	private var userManager:IUserManager;
@@ -94,7 +94,7 @@ class SFSRoom implements Room
 		
 		newRoom.setAudioStreamingAllowed(sfsa.getBool(9));
 
-		if (newRoom.isGame())
+		if (newRoom.getGame())
 		{
 			newRoom.setSpectatorCount(sfsa.getShort(10));
 			newRoom.setMaxSpectators(sfsa.getShort(11));
@@ -129,9 +129,9 @@ class SFSRoom implements Room
 		this.groupId = groupId;
 
 		// default flags
-		_isJoined = _isGame = _isHidden = false;
-		_isManaged = true;
-		_isAudioStreamingAllowed = false;
+		isJoined = isGame = isHidden = false;
+		isManaged = true;
+		isAudioStreamingAllowed = false;
 
 		// counters
 		_userCount = specCount = 0;
@@ -160,55 +160,55 @@ class SFSRoom implements Room
 		return groupId;
 	}
 
-	public function isJoined():Bool
+	public function getJoined():Bool
 	{
-		return _isJoined;
+		return isJoined;
 	}
 
-	public function isGame():Bool
+	public function getGame():Bool
 	{
-		return _isGame;
+		return isGame;
 	}
 
-	public function isHidden():Bool
+	public function getHidden():Bool
 	{
-		return _isHidden;
+		return isHidden;
 	}
 
-	public function isPasswordProtected():Bool
+	public function getPasswordProtected():Bool
 	{
-		return _isPasswordProtected;
+		return isPasswordProtected;
 	}
 
 	public function setPasswordProtected(passwordProtected:Bool):Void
 	{
-		_isPasswordProtected = passwordProtected;
+		isPasswordProtected = passwordProtected;
 	}
 
-	public function isManaged():Bool
+	public function getManaged():Bool
 	{
-		return _isManaged;
+		return isManaged;
 	}
 	
-	public function isAudioStreamingAllowed():Bool
+	public function getAudioStreamingAllowed():Bool
 	{
-		return _isAudioStreamingAllowed;
+		return isAudioStreamingAllowed;
 	}
 	
 	public function setAudioStreamingAllowed(value:Bool):Void
 	{
-		_isAudioStreamingAllowed = value;
+		isAudioStreamingAllowed = value;
 	}
 
 	public function getUserCount():Int
 	{
-		if (!_isJoined)
+		if (!isJoined)
 		{
 			return _userCount;
 		} else
 		{
 			// For game rooms, return only player count
-			if (_isGame)
+			if (isGame)
 			{
 				return getPlayerList().length;
 			}
@@ -227,13 +227,13 @@ class SFSRoom implements Room
 
 	public function getSpectatorCount():Int
 	{
-		if (!_isGame)
+		if (!isGame)
 		{
 			return 0;
 		}
 
 		// Joined Room? Dynamically calculate spectators
-		if (_isJoined)
+		if (isJoined)
 		{
 			return getSpectatorList().length;
 		}
@@ -256,22 +256,22 @@ class SFSRoom implements Room
 
 	public function setJoined(joined:Bool):Void
 	{
-		_isJoined = joined;
+		isJoined = joined;
 	}
 
 	public function setGame(game:Bool):Void
 	{
-		_isGame = game;
+		isGame = game;
 	}
 
 	public function setHidden(hidden:Bool):Void
 	{
-		_isHidden = hidden;
+		isHidden = hidden;
 	}
 
 	public function setManaged(managed:Bool):Void
 	{
-		_isManaged = managed;
+		isManaged = managed;
 	}
 
 	public function setUserCount(userCount:Int):Void

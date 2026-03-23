@@ -25,7 +25,7 @@ final class ConfigData
     public var httpsPort:Int 				= 8843;
 
     /** The amount of time (in milliseconds) after which the client should give up if there's no response from the server side */
-    public var tcpConnectionTimeout:Int 	= 2000; // Milliseconds
+    public var tcpConnectionTimeout:Int 	= 0; // Milliseconds
 
     /** The name of the Zone to connect to */
     public var zone:String;

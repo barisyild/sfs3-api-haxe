@@ -10,27 +10,27 @@ class Logger {
         return false;
     }
 
-    public function error(...data:Dynamic):Void {
+    public inline function error(...data:Dynamic):Void {
         debugTrace(...data);
     }
 
-    public function debug(...data:Dynamic):Void {
+    public inline function debug(...data:Dynamic):Void {
         debugTrace(...data);
     }
 
-    public function warn(...data:Dynamic):Void {
+    public inline function warn(...data:Dynamic):Void {
         debugTrace(...data);
     }
 
-    public function log(...data:Dynamic):Void {
+    public inline function log(...data:Dynamic):Void {
         debugTrace(...data);
     }
 
-    public function info(...data:Dynamic):Void {
+    public inline function info(...data:Dynamic):Void {
         debugTrace(...data);
     }
 
-    private function debugTrace(...data:Dynamic):Void {
+    private inline function debugTrace(...data:Dynamic):Void {
         var message = data;//;.join(' ');
         trace('[${Type.getClassName(clazz)}] ${message}');
     }

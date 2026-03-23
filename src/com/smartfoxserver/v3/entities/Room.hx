@@ -53,7 +53,7 @@ interface Room
 	 *
 	 * @see com.smartfoxserver.v3.requests.JoinRoomRequest
 	 */
-	function isJoined():Bool;
+	function getJoined():Bool;
 
 	/**
 	 * Indicates whether this is a Game Room or not.
@@ -62,7 +62,7 @@ interface Room
 	 * This flag must be set when creating the Room.</p>
 	 */
 
-	function isGame():Bool;
+	function getGame():Bool;
 
 	/**
 	 * Indicates whether this Room is hidden or not.
@@ -71,7 +71,7 @@ interface Room
 	 * <p><b>NOTE</b>: setting the <em>isHidden</em> property manually has no effect on the server and can disrupt the API functioning.
 	 * This flag must be set when creating the Room.</p>
 	 */
-	function isHidden():Bool;
+	function getHidden():Bool;
 
 	/**
 	 * Indicates whether this Room requires a password to be joined or not.
@@ -81,7 +81,7 @@ interface Room
 	 *
 	 * @see com.smartfoxserver.v3.requests.ChangeRoomPasswordStateRequest
 	 */
-	function isPasswordProtected():Bool;
+	function getPasswordProtected():Bool;
 
 	/**
 	 * @internal
@@ -91,7 +91,7 @@ interface Room
 	/**
 	 * @internal
 	 */
-	function isManaged():Bool;
+	function getManaged():Bool;
 
 	/**
 	 * Returns the current number of users in this Room.
@@ -282,7 +282,7 @@ interface Room
 	 * Indicates whether audio streaming is allowed in the Room.
 	 * @return true if streaming is allowed
 	 */
-	function isAudioStreamingAllowed():Bool;
+	function getAudioStreamingAllowed():Bool;
 	
 	/**
 	 * @see #isAudioStreamingAllowed() 

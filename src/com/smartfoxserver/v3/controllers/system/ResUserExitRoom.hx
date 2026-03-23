@@ -7,6 +7,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.User;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResUserExitRoom extends BaseResponseHandler
 {
@@ -17,7 +18,7 @@ class ResUserExitRoom extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var rId:Int = sfso.getInt("r");
 		var uId:Int = sfso.getInt("u");
@@ -30,7 +31,7 @@ class ResUserExitRoom extends BaseResponseHandler
 			sfs.getUserManager().removeUser(user);
 
 			// If I have left a room I need to mark the room as NOT JOINED
-			if (user.isItMe() && room.isJoined())
+			if (user.getIsItMe() && room.getJoined())
 			{
 				// Turn of the Room's joined flag
 				room.setJoined(false);
@@ -42,7 +43,7 @@ class ResUserExitRoom extends BaseResponseHandler
 				/*
 				 * Room is NOT managed, we need to remove it
 				 */
-				if (!room.isManaged())
+				if (!room.getManaged())
 					sfs.getRoomManager().removeRoom(room);
 			}
 			

@@ -22,7 +22,7 @@ class SFSUser implements User
 	private var id:Int = -1;
 	private var privilegeId:Int = 0;
 	private var name:String;
-	private var _isItMe:Bool;
+	private var isItMe:Bool;
 	private var variables:SynchronizedMap<String, UserVariable>;
 	private var playerIdByRoomId:SynchronizedMap<Int, Int>;
 	private var userManager:IUserManager;
@@ -57,7 +57,7 @@ class SFSUser implements User
 	{
 		this.id = id;
 		this.name = name;
-		this._isItMe = isItMe;
+		this.isItMe = isItMe;
 		variables = SynchronizedMap.newStringMap();
 		playerIdByRoomId = SynchronizedMap.newIntMap();
 	}
@@ -165,9 +165,9 @@ class SFSUser implements User
 		return room.containsUser(this);
 	}
 
-	public function isItMe():Bool
+	public function getIsItMe():Bool
 	{
-		return _isItMe;
+		return isItMe;
 	}
 
 	public function getVariables():Array<UserVariable>
@@ -228,7 +228,7 @@ class SFSUser implements User
 	
 	public function toString():String
 	{
-		return '[User: $name, id: $id, isMe: $_isItMe]';
+		return '[User: $name, id: $id, isMe: $isItMe]';
 	}
 	
 	public function replaceVariables(vars:Array<UserVariable>):Void

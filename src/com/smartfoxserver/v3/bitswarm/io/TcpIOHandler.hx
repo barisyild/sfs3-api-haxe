@@ -13,20 +13,21 @@ import com.smartfoxserver.v3.bitswarm.io.protocol.ProtocolUtils;
 import com.smartfoxserver.v3.bitswarm.util.ByteUtils;
 import com.smartfoxserver.v3.util.NetDebugLevel;
 import com.smartfoxserver.v3.exceptions.IllegalStateException;
+import haxe.io.BytesData;
 
 class TcpBuffer {
-    public var bytes:Bytes;
+    public var bytes:BytesData;
     public var position:Int;
     public var capacity:Int;
     
     public function new(capacity:Int) {
         this.capacity = capacity;
-        this.bytes = Bytes.alloc(capacity);
+        this.bytes = Bytes.alloc(capacity).getData();
         this.position = 0;
     }
     
     public function put(data:Bytes, offset:Int, length:Int):Void {
-        this.bytes.blit(this.position, data, offset, length);
+        Bytes.ofData(this.bytes).blit(this.position, data, offset, length);
         this.position += length;
     }
     
@@ -108,6 +109,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 		if (pendingPacket.getHeader().isBigSized()) {
 			if (data.length >= ProtocolUtils.INT32_BYTE_SIZE) {
 				var buff = new BytesInput(data);
+				buff.bigEndian = true;
 				dataSize = buff.readInt32();
 			}
 			sizeBytes = ProtocolUtils.INT32_BYTE_SIZE;
@@ -158,7 +160,8 @@ class TcpIOHandler extends SpecializedIOHandler {
 		if (data.length >= remaining) {
 			sizeBuffer.put(data, 0, remaining);
 			
-			var bi = new BytesInput(sizeBuffer.bytes);
+			var bi = new BytesInput(Bytes.ofData(sizeBuffer.bytes));
+			bi.bigEndian = true;
 			var dataSize:Int = pendingPacket.getHeader().isBigSized() ? bi.readInt32() : bi.readUInt16();
 			
 			if (log.isDebugEnabled())
@@ -199,29 +202,31 @@ class TcpIOHandler extends SpecializedIOHandler {
 			if (log.isDebugEnabled())
 				log.debug("<<< PACKET COMPLETE >>>");
 			
-			var completedBytes = dataBuffer.bytes;
+			var completedBytesData:BytesData = dataBuffer.bytes;
+			var completedBytes:Bytes = Bytes.ofData(completedBytesData);
 			
 			if (pendingPacket.getHeader().isEncrypted()) {
-				completedBytes = ioHandler.getPacketEncrypter().decrypt(completedBytes);
+				completedBytesData = ioHandler.getPacketEncrypter().decrypt(completedBytesData);
 			}
 			
 			if (pendingPacket.getHeader().isCompressed()) {
 				var t1 = haxe.Timer.stamp();
-				var deflatedData = ioHandler.getPacketCompressor().uncompress(completedBytes);
+				var deflatedData = ioHandler.getPacketCompressor().uncompress(completedBytesData);
+				var deflatedBytes:Bytes = Bytes.ofData(deflatedData);
 				var t2 = haxe.Timer.stamp();
 				
 				if (log.isDebugEnabled()) {
-					var compRatio = 100 - Std.int((completedBytes.length * 100) / deflatedData.length);
+					var compRatio = 100 - Std.int((completedBytes.length * 100) / deflatedBytes.length);
 					var timeMs = (t2 - t1) * 1000;
-					log.debug('Original: ${completedBytes.length}, Deflated: ${deflatedData.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');
+					log.debug('Original: ${completedBytes.length}, Deflated: ${deflatedBytes.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');
 				}
-				
-				completedBytes = deflatedData;	
+
+				completedBytesData = deflatedData;
 			}
 			
 			state = WaitNewPacket;
 			
-			getCodec().onPacketRead(completedBytes, TransportType.TCP, pendingPacket.getHeader().isRaw());
+			getCodec().onPacketRead(completedBytesData, TransportType.TCP, pendingPacket.getHeader().isRaw());
 		} else {
 			dataBuffer.put(data, 0, data.length);
 			

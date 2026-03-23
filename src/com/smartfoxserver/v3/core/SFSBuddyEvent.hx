@@ -1,4 +1,5 @@
 package com.smartfoxserver.v3.core;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 /**
  * <em>SFSBuddyEvent</em> is the class representing all the events related to the Buddy List system dispatched by
@@ -159,7 +160,7 @@ class SFSBuddyEvent extends ApiEvent
 	 * @param	type	The type of event.
 	 * @param	args	An object containing the parameters of the event.
 	 */
-    public function new(type:String, args:Map<String, Dynamic> = null)
+    public function new(type:String, args:PlatformStringMap<Dynamic> = null)
     {
         super(type, args);
     }

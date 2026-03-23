@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.SFSRoom;
 import com.smartfoxserver.v3.requests.FindRoomsRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResFindRooms extends BaseResponseHandler 
 {
@@ -19,7 +20,7 @@ class ResFindRooms extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void 
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var roomListData:ISFSArray = sfso.getSFSArray(FindRoomsRequest.KEY_FILTERED_ROOMS);
 		var roomList = new Array<Room>();
@@ -30,7 +31,7 @@ class ResFindRooms extends BaseResponseHandler
 			var localRoom:Room = sfs.getRoomManager().getRoomById(theRoom.getId());
 			
 			if (localRoom != null)
-				theRoom.setJoined(localRoom.isJoined());
+				theRoom.setJoined(localRoom.getJoined());
 			
 			roomList.push(theRoom);
 		}

@@ -213,7 +213,7 @@ class CreateRoomRequest extends BaseRequest {
 		sfso.putString(KEY_NAME, settings.getName());
 		sfso.putString(KEY_GROUP_ID, settings.getGroupId());
 		sfso.putString(KEY_PASSWORD, settings.getPassword());
-		sfso.putBool(KEY_ISGAME, settings.isGame());
+		sfso.putBool(KEY_ISGAME, settings.getGame());
 		sfso.putShort(KEY_MAXUSERS, settings.getMaxUsers());
 		sfso.putShort(KEY_MAXSPECTATORS, settings.getMaxSpectators());
 		sfso.putShort(KEY_MAXVARS, settings.getMaxVariables());

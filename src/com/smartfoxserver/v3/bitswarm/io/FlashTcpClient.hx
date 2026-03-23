@@ -14,6 +14,7 @@ import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.net.Socket;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class FlashTcpClient extends BaseSocketClient {
 	private var tcpSocket:Socket;
@@ -105,7 +106,7 @@ class FlashTcpClient extends BaseSocketClient {
 
 		closeSocket();
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 

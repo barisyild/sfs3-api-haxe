@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.entities.invitation.Invitation;
 import com.smartfoxserver.v3.entities.invitation.SFSInvitation;
 import com.smartfoxserver.v3.requests.invitation.InviteUsersRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResInviteUsers extends BaseResponseHandler
 {
@@ -20,7 +21,7 @@ class ResInviteUsers extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		var inviter:User = null;
 
 		if (sfso.containsKey(InviteUsersRequest.KEY_USER_ID))

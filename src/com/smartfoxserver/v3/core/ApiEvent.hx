@@ -1,4 +1,5 @@
 package com.smartfoxserver.v3.core;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 /**
  * This is the base class of all the events dispatched by the SmartFoxServer 3
@@ -12,7 +13,7 @@ class ApiEvent {
     /**
 	 * Specifies the object containing the parameters of the event.
 	 */
-    private var params:Map<String, Dynamic>;
+    private var params:PlatformStringMap<Dynamic>;
 
     private var type:String;
     private var target:Dynamic;
@@ -80,7 +81,7 @@ class ApiEvent {
     /**
 	 * @internal
 	 */
-    public function setParams(arguments:Map<String, Dynamic>):Void {
+    public function setParams(arguments:PlatformStringMap<Dynamic>):Void {
         this.params = arguments;
     }
 
@@ -91,7 +92,7 @@ class ApiEvent {
 	 * @return A <em>Map&lt;String, Object&gt;</em> containing the parameters of the
 	 *         event.
 	 */
-    public function getParams():Map<String, Dynamic> {
+    public function getParams():PlatformStringMap<Dynamic> {
         return params;
     }
 

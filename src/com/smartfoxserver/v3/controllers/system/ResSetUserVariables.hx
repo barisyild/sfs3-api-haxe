@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v3.entities.variables.UserVariable;
 import com.smartfoxserver.v3.requests.SetUserVariablesRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResSetUserVariables extends BaseResponseHandler
 {
@@ -20,7 +21,7 @@ class ResSetUserVariables extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var uId:Int = sfso.getInt(SetUserVariablesRequest.KEY_USER);
 		var varListData:ISFSArray = sfso.getSFSArray(SetUserVariablesRequest.KEY_VAR_LIST);

@@ -6,6 +6,7 @@ package com.smartfoxserver.v3.core;
  *
  * @see SysParam
  */
+@:expose("SFS3.EventParam")
 class EventParam
 {
     public static final Success:String = "success";

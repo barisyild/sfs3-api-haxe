@@ -26,6 +26,7 @@ import com.smartfoxserver.v3.core.IEventListener;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.util.ClientDisconnectionReason;
 import com.smartfoxserver.v3.util.NetDebugLevel;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class BitSwarmClient implements IBitSwarmClient {
 	private var controllersById:Map<Int, IController>;
@@ -54,7 +55,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		controllersById = new Map<Int, IController>();
 		connSettings = new ConnSettings();
 		this.smartFox = smartFox;
-		connMode = ConnectionMode.SOCKET;
+		connMode = #if js ConnectionMode.WEBSOCKET #else ConnectionMode.SOCKET #end;
 		cryptoKey = null;
 	}
 
@@ -110,7 +111,7 @@ class BitSwarmClient implements IBitSwarmClient {
 			evt = new BitSwarmEvent(BitSwarmEvent.CONNECTION_RESUME);
 		else {
 			getActiveSocketClient().destroy(null);
-			var params = new Map<String, Dynamic>();
+			var params = new PlatformStringMap<Dynamic>();
 			params.set(EventParam.DisconnectionReason, ClientDisconnectionReason.RECONNECTION_FAILURE);
 			evt = new BitSwarmEvent(BitSwarmEvent.DISCONNECT, params);
 		}
@@ -238,16 +239,16 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	public function isReconnecting():Bool {
-		return reconState != null && reconState.isPending();
+		return reconState != null && reconState.getPending();
 	}
 
 	/*
 	 * Tells SmartFox that a TCP connection was established
 	 */
 	private function onTcpConnect(evt:ApiEvent):Void {
-		var reconAttempt = (reconState != null && reconState.isPending());
+		var reconAttempt = (reconState != null && reconState.getPending());
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.Success, true);
 		params.set(SysParam.IsReconnection, reconAttempt);
 
@@ -268,7 +269,7 @@ class BitSwarmClient implements IBitSwarmClient {
 
 	private function onTcpError(evt:ApiEvent):Void {
 		// If there's an ongoing reconnection attempt, keep trying until it fails
-		if (reconState != null && reconState.isPending())
+		if (reconState != null && reconState.getPending())
 			attemptReconnection();
 		else {
 			// If we are allowed to use BlueBox try to connect
@@ -285,9 +286,9 @@ class BitSwarmClient implements IBitSwarmClient {
 	// ---------------------------------------------------------------------------------------
 
 	private function onWsConnect(evt:ApiEvent):Void {
-		var reconAttempt = (reconState != null && reconState.isPending());
+		var reconAttempt = (reconState != null && reconState.getPending());
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.Success, true);
 		params.set(SysParam.IsReconnection, reconAttempt);
 
@@ -307,7 +308,7 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	private function onWsError(evt:ApiEvent):Void {
-		if (reconState != null && reconState.isPending())
+		if (reconState != null && reconState.getPending())
 			attemptReconnection();
 		else
 			notifyConnectionError();
@@ -316,7 +317,7 @@ class BitSwarmClient implements IBitSwarmClient {
 	// ---------------------------------------------------------------------------------------
 
 	private function notifyConnectionError():Void {
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.Success, false);
 		var bse = new BitSwarmEvent(BitSwarmEvent.CONNECT, params);
 		dispatcher.dispatchEvent(bse);
@@ -383,10 +384,10 @@ class BitSwarmClient implements IBitSwarmClient {
 		// Calculate time left before the reconnection loop times out
 		var reconnectionMillis:Float = connSettings.reconnectionSeconds * 1000;
 		var nowMs:Float = Date.now().getTime();
-		var timeLeft:Float = (reconState.firstAttemptTime() + reconnectionMillis) - nowMs;
+		var timeLeft:Float = (reconState.getFirstAttemptTime() + reconnectionMillis) - nowMs;
 
 		if (timeLeft > 0) {
-			trace("Reconnection attempt:" + reconState.counter() + " - time left:" + (timeLeft / 1000) + " sec.");
+			trace("Reconnection attempt:" + reconState.getCounter() + " - time left:" + (timeLeft / 1000) + " sec.");
 
 			// Retry connection: pause and retry
 			#if (flash || js)
@@ -409,7 +410,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		else {
 			reconState = null;
 
-			var params = new Map<String, Dynamic>();
+			var params = new PlatformStringMap<Dynamic>();
 			params.set(EventParam.DisconnectionReason, ClientDisconnectionReason.UNKNOWN);
 			params.set(EventParam.ErrorMessage, "All reconnection attempts failed");
 

@@ -5,6 +5,7 @@ import com.smartfoxserver.v3.bitswarm.io.IResponse;
 import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.util.LagValue;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResPingPong extends BaseResponseHandler
 {
@@ -14,7 +15,7 @@ class ResPingPong extends BaseResponseHandler
 
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		evtParams.set(EventParam.LagValue, 
 						new LagValue
 						(

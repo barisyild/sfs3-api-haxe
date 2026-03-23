@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.ISmartFox;
 import com.smartfoxserver.v3.bitswarm.io.IResponse;
 import com.smartfoxserver.v3.core.ClusterEvent;
 import com.smartfoxserver.v3.core.EventParam;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResGameServerConnectionRequired extends BaseResponseHandler
 {
@@ -16,7 +17,7 @@ class ResGameServerConnectionRequired extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		
 		var host:String = sfso.getString("h");
 		var port:Int = sfso.getInt("p");

@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.SFSUser;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.requests.FindUsersRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResFindUsers extends BaseResponseHandler
 {
@@ -19,7 +20,7 @@ class ResFindUsers extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var userListData:ISFSArray = sfso.getSFSArray(FindUsersRequest.KEY_FILTERED_USERS);
 		var userList = new Array<User>();

@@ -39,6 +39,8 @@ import com.smartfoxserver.v3.bitswarm.io.SysParam;
 import com.smartfoxserver.v3.entities.managers.SFSGlobalUserManager;
 import com.smartfoxserver.v3.entities.managers.SFSRoomManager;
 import com.smartfoxserver.v3.entities.managers.SFSBuddyManager;
+import haxe.CallStack;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 using StringTools;
 
@@ -137,7 +139,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private var eventThreadPool:Executor;
 	private var scheduler:Executor;
 
-	private var _isJoining:AtomicBool = new AtomicBool(false);
+	private var _isJoining:AtomicBool;
 
 	private var sessionToken:String;
 	private var cfgData:ConfigData;
@@ -171,6 +173,8 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	private final function init():Void {
+		_isJoining = new AtomicBool(false);
+
 		dispatcher = new EventDispatcher(this);
 		bitSwarm = new BitSwarmClient(this);
 
@@ -198,7 +202,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		if (lagMonitor != null)
 			lagMonitor.stop();
 
-		_isJoining.store(false);
 		lastJoinedRoom = null;
 		sessionToken = null;
 		mySelf = null;
@@ -584,6 +587,8 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			}
 		}*/
 
+		cfgData.netDebugLevel = NetDebugLevel.PROTOCOL;
+
 		// Store globally
 		this.cfgData = cfgData;
 	}
@@ -772,7 +777,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 				bitSwarm.initCrypto();
 			else {
 				// Fire Conn success event
-				var data = new Map<String, Dynamic>();
+				var data = new PlatformStringMap<Dynamic>();
 				data.set(EventParam.Success, true);
 				dispatchEvent(new SFSEvent(SFSEvent.CONNECTION, data));
 			}
@@ -782,7 +787,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			var errorCode:Int = obj.getShort(BaseRequest.KEY_ERROR_CODE);
 			var errorMsg:String = SFSErrorCodes.getErrorMessage(errorCode, obj.getStringArray(BaseRequest.KEY_ERROR_PARAMS));
 
-			var params = new Map<String, Dynamic>();
+			var params = new PlatformStringMap<Dynamic>();
 			params.set(EventParam.Success, false);
 			params.set(EventParam.ErrorMessage, errorMsg);
 			params.set(EventParam.ErrorCode, errorCode);
@@ -800,8 +805,10 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			var req:HandshakeRequest = new HandshakeRequest(version.canonical(), isReconnection ? sessionToken : null, clientDetails);
 
 			try {
-				bitSwarm.send(req.getRequest());
+				var request = req.getRequest();
+				bitSwarm.send(request);
 			} catch (ex:Exception) {
+				trace(CallStack.toString(ex.stack));
 				log.error("Failed to send Handshake request", ex);
 			}
 		}

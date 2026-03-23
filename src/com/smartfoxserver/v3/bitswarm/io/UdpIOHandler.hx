@@ -18,29 +18,32 @@ class UdpIOHandler extends SpecializedIOHandler {
 		var headerByte = dataBuffer.readByte();
 		var header = ProtocolUtils.decodePacketHeader(headerByte);
 		
-		var remainingData = byteData.sub(dataBuffer.position, byteData.length - dataBuffer.position);
+		var remainingDataBytes = byteData.sub(dataBuffer.position, byteData.length - dataBuffer.position);
+		var remainingData = remainingDataBytes.getData();
 		
 		var dbgLvl = ioHandler.getBitSwarm().getNetDebugLevel();
 		if (dbgLvl == NetDebugLevel.PACKET || dbgLvl == NetDebugLevel.PROTOCOL) {
-			if (remainingData.length > hexDumpMaxSize) 
-				log.info('Incoming, $txType, Size: ${remainingData.length}, Dump omitted');
+			if (remainingDataBytes.length > hexDumpMaxSize)
+				log.info('Incoming, $txType, Size: ${remainingDataBytes.length}, Dump omitted');
 			else 
-				log.info('Incoming, $txType, \n${ByteUtils.hexDump(remainingData.getData())}');
+				log.info('Incoming, $txType, \n${ByteUtils.hexDump(remainingData)}');
 		}
 		
 		if (header.isEncrypted()) {
 			remainingData = ioHandler.getPacketEncrypter().decrypt(remainingData);
 		}
+		remainingDataBytes = Bytes.ofData(remainingData);
 		
 		if (header.isCompressed()) {
 			var t1 = haxe.Timer.stamp();
 			var deflatedData = ioHandler.getPacketCompressor().uncompress(remainingData);
+			var deflatedDataBytes:Bytes = Bytes.ofData(deflatedData);
 			var t2 = haxe.Timer.stamp();
 			
 			if (log.isDebugEnabled()) {
-				var compRatio = 100 - Std.int((remainingData.length * 100) / deflatedData.length);
+				var compRatio = 100 - Std.int((remainingDataBytes.length * 100) / deflatedDataBytes.length);
 				var timeMs = (t2 - t1) * 1000;
-				log.debug('Original: ${remainingData.length}, Deflated: ${deflatedData.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');
+				log.debug('Original: ${remainingDataBytes.length}, Deflated: ${deflatedDataBytes.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');
 			}
 			
 			remainingData = deflatedData;

@@ -13,6 +13,7 @@ import com.smartfoxserver.v3.entities.SFSUser;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.requests.GenericMessageRequest;
 import com.smartfoxserver.v3.requests.GenericMessageType;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResGenericMessage extends BaseResponseHandler
 {
@@ -50,7 +51,7 @@ class ResGenericMessage extends BaseResponseHandler
 
 	private function handlePublicMessage(sfso:ISFSObject):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var rId:Int = sfso.getInt(GenericMessageRequest.KEY_ROOM_ID);
 		var room:Room = sfs.getRoomManager().getRoomById(rId);
@@ -71,7 +72,7 @@ class ResGenericMessage extends BaseResponseHandler
 
 	private function handlePrivateMessage(sfso:ISFSObject):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		var senderId:Int = sfso.getInt(GenericMessageRequest.KEY_USER_ID);
 
 		// See if user exists locally
@@ -99,7 +100,7 @@ class ResGenericMessage extends BaseResponseHandler
 
 	private function handleBuddyMessage(sfso:ISFSObject):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		var senderId:Int = sfso.getInt(GenericMessageRequest.KEY_USER_ID);
 
 		var senderBuddy:Buddy = sfs.getBuddyManager().getBuddyById(senderId);
@@ -115,7 +116,7 @@ class ResGenericMessage extends BaseResponseHandler
 
 	private function handleModMessageEvent(sfso:ISFSObject, evt:String):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		evtParams.set(EventParam.Sender, SFSUser.fromSFSArray(sfso.getSFSArray(GenericMessageRequest.KEY_SENDER_DATA)));
 		evtParams.set(EventParam.Message, sfso.getString(GenericMessageRequest.KEY_MESSAGE));
@@ -127,7 +128,7 @@ class ResGenericMessage extends BaseResponseHandler
 
 	private function handleObjectMessage(sfso:ISFSObject):Void
 	{
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		var senderId:Int = sfso.getInt(GenericMessageRequest.KEY_USER_ID);
 
 		evtParams.set(EventParam.Sender, sfs.getUserManager().getUserById(senderId));

@@ -6,6 +6,7 @@ import com.smartfoxserver.v3.bitswarm.io.IResponse;
 import com.smartfoxserver.v3.bitswarm.io.SocketEvent;
 import com.smartfoxserver.v3.bitswarm.io.SysParam;
 import com.smartfoxserver.v3.requests.UdpInitRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResUdpInit extends BaseResponseHandler
 {
@@ -26,7 +27,7 @@ class ResUdpInit extends BaseResponseHandler
 		 *  the UDP handshake 
 		 */
 
-        var params = new Map<String, Dynamic>();
+        var params = new PlatformStringMap<Dynamic>();
         params.set(SysParam.RdpCfg, rdpTxCfg);
         params.set(SysParam.MaxUdpIdleSecs, sfso.getByte(UdpInitRequest.KEY_MAX_IDLE_SECS));
         params.set(SysParam.UdpKeepAlive, sfso.getBool(UdpInitRequest.KEY_UDP_KEEPALIVE));

@@ -13,6 +13,8 @@ import sys.net.Host;
 import sys.net.Socket;
 import com.smartfoxserver.v3.entities.data.Queue;
 import haxe.io.Eof;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
+import haxe.CallStack;
 
 
 class SysTcpClient extends BaseSocketClient {
@@ -87,7 +89,7 @@ class SysTcpClient extends BaseSocketClient {
 
 		closeSocket();
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 
@@ -142,7 +144,7 @@ class SysTcpClient extends BaseSocketClient {
 				if (socketState != SocketState.Disconnected)
 					disconnect(ClientDisconnectionReason.UNKNOWN, "Connection closed by remote host");
 			} catch (ex:Exception) {
-				log.warn("TCP Read Error: " + ex.message + ", State: " + Std.string(socketState));
+				log.warn("TCP Read Error: " + ex.message + ", State: " + Std.string(socketState), CallStack.toString(ex.stack));
 
 				/*
 				 * ------
@@ -170,11 +172,12 @@ class SysTcpClient extends BaseSocketClient {
 	private function writeLoop():Void {
 		while (socketState == SocketState.Connected) {
 			try {
-				// blocks for up to 100ms waiting for a message, then retries loop condition
 				var packet:Null<Bytes> = outPacketQ.pop();
 
-				if (packet == null)
+				if (packet == null) {
+					Sys.sleep(0.05);
 					continue;
+				}
 
 				/*
 				 *  Handle signal to exit the loop, this is triggered by the destroy method

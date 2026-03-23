@@ -1,4 +1,5 @@
 package com.smartfoxserver.v3.core;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 
 /**
@@ -1747,7 +1748,7 @@ s	 * <p>
 	 * @param type The type of event.
 	 * @param args An object containing the parameters of the event.
 	 */
-    public function new(type:String, args:Map<String, Dynamic> = null)
+    public function new(type:String, args:PlatformStringMap<Dynamic> = null)
     {
         super(type, args);
     }

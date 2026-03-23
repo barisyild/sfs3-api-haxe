@@ -11,6 +11,7 @@ import com.smartfoxserver.v3.entities.MMORoom;
 import com.smartfoxserver.v3.entities.variables.IMMOItemVariable;
 import com.smartfoxserver.v3.entities.variables.MMOItemVariable;
 import com.smartfoxserver.v3.requests.mmo.SetMMOItemVariables;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResSetMMOItemVariable extends BaseResponseHandler
 {
@@ -21,7 +22,7 @@ class ResSetMMOItemVariable extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 		
 		var roomId:Int = sfso.getInt(SetMMOItemVariables.KEY_ROOM_ID);
 		var mmoItemId:Int = sfso.getInt(SetMMOItemVariables.KEY_ITEM_ID);

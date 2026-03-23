@@ -65,7 +65,7 @@ class SFSRoomManager implements IRoomManager
 		var roomsInGroup = getRoomListFromGroup(groupId);
 		for (room in roomsInGroup)
 		{
-			if (!room.isJoined())
+			if (!room.getJoined())
 				removeRoom(room);
 			else
 				room.setManaged(false);
@@ -177,7 +177,7 @@ class SFSRoomManager implements IRoomManager
 			var rooms = new Array<Room>();
 			for (room in roomsById)
 			{
-				if (room.isJoined())
+				if (room.getJoined())
 					rooms.push(room);
 			}
 			return rooms;

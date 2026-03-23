@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.entities.managers.SFSGlobalUserManager;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResUserEnterRoom extends BaseResponseHandler
 {
@@ -21,7 +22,7 @@ class ResUserEnterRoom extends BaseResponseHandler
 		var userManager:SFSGlobalUserManager = cast sfs.getUserManager();
 		
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var room:Room = sfs.getRoomManager().getRoomById(sfso.getInt("r"));
 

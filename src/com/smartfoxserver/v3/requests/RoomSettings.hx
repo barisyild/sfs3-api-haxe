@@ -16,7 +16,7 @@ class RoomSettings
 	private var name:String;
 	private var password:String;
 	private var groupId:String;
-	private var _isGame:Bool;
+	private var isGame:Bool;
 	private var maxUsers:Int;
 	private var maxSpectators:Int;
 	private var maxVariables:Int;
@@ -40,7 +40,7 @@ class RoomSettings
 
 		this.name = name;
 		password = "";
-		_isGame = false;
+		isGame = false;
 		maxUsers = 10;
 		maxSpectators = 0;
 		maxVariables = 5;
@@ -91,9 +91,9 @@ class RoomSettings
 	 * <p/>
 	 * The default value is <code>false</code>
 	 */
-	public function isGame():Bool
+	public function getGame():Bool
 	{
-		return _isGame;
+		return isGame;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class RoomSettings
 	 */
 	public function setGame(game:Bool):RoomSettings
 	{
-		_isGame = game;
+		isGame = game;
 		return this;
 	}
 

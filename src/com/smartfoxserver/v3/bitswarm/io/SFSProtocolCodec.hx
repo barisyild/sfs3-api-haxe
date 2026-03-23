@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.data.ISFSObject;
 import com.smartfoxserver.v3.exceptions.SFSException;
 import com.smartfoxserver.v3.bitswarm.util.ByteUtils;
 import com.smartfoxserver.v3.entities.data.SFSObject;
+import haxe.io.BytesData;
 
 class SFSProtocolCodec implements IProtocolCodec
 {
@@ -24,7 +25,7 @@ class SFSProtocolCodec implements IProtocolCodec
         this.bitSwarm = handler.getBitSwarm();
     }
 
-    public function onPacketRead(buff:Bytes, txType:TransportType, isRaw:Bool):Void
+    public function onPacketRead(buff:BytesData, txType:TransportType, isRaw:Bool):Void
     {
         if (isRaw)
             onRawPacketRead(buff, txType);
@@ -32,8 +33,9 @@ class SFSProtocolCodec implements IProtocolCodec
             onStdPacketRead(buff, txType);
     }
 
-    private function onRawPacketRead(bytes:Bytes, txType:TransportType):Void
+    private function onRawPacketRead(bytesData:BytesData, txType:TransportType):Void
     {
+        var bytes = Bytes.ofData(bytesData);
         var input = new BytesInput(bytes);
         input.bigEndian = true;
         var ctrlId:Int = input.readByte();
@@ -46,12 +48,15 @@ class SFSProtocolCodec implements IProtocolCodec
         dispatchResponse(resp);
     }
 
-    private function onStdPacketRead(bytes:Bytes, txType:TransportType):Void
+    private function onStdPacketRead(bytesData:BytesData, txType:TransportType):Void
     {
+        var bytes = Bytes.ofData(bytesData);
         var buff = new BytesInput(bytes);
+        buff.bigEndian = true;
         var ctrlId:Int =  buff.readByte();
         var reqId = buff.readInt16();
-        var sfso:SFSObject = SFSObject.newFromBinaryData(bytes.getData());
+        var remaining = bytes.sub(3, bytes.length - 3); // TODO: Optimize
+        var sfso:SFSObject = SFSObject.newFromBinaryData(remaining.getData());
 
         // Debug
         var dbgLvl:NetDebugLevel = bitSwarm.getNetDebugLevel();

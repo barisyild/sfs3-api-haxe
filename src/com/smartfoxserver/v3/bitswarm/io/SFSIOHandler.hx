@@ -11,6 +11,7 @@ import haxe.io.BytesOutput;
 import com.smartfoxserver.v3.exceptions.SFSCodecException;
 import com.smartfoxserver.v3.entities.User;
 import com.smartfoxserver.v3.bitswarm.util.ByteUtils;
+import haxe.io.BytesData;
 class SFSIOHandler extends BaseIOHandler
 {
     public static final MAX_PACKET_DEBUG_LEN:Int = 1024;
@@ -71,7 +72,7 @@ class SFSIOHandler extends BaseIOHandler
 	 */
     public function onDataWrite(request:IRequest):Void
     {
-        var binData:Bytes = cast(request.getContent(), Bytes);
+        var binData:BytesData = cast request.getContent();
 
         /*
 		 * Prepend UserId if we're sending Raw packet via UDP
@@ -87,15 +88,17 @@ class SFSIOHandler extends BaseIOHandler
 
         // Prepend controller data (ctrlId [byte], actionId [short])
         binData = ProtocolUtils.encodeControllerData(binData, request.getControllerId(), request.getId());
+        var binDataBytes:Bytes = Bytes.ofData(binData);
 
         //--- Compress data if necessary ---------------------------------------------
         var isCompressed:Bool = false;
-        var originalSize:Int = binData.length;
+        var originalSize:Int = binDataBytes.length;
 
-        if (binData.length > getBitSwarm().getConnSettings().compressionThreshold)
+        if (binDataBytes.length > getBitSwarm().getConnSettings().compressionThreshold)
         {
-            var beforeCompression:Bytes = binData;
+            var beforeCompression:BytesData = binData;
             binData = packetCompressor().compress(binData);
+            binDataBytes = Bytes.ofData(binData);
 
             /*
 			 * Data might not have been compressed, if the compressor has an internal MAX limit
@@ -107,14 +110,14 @@ class SFSIOHandler extends BaseIOHandler
         }
 
         var maxMsgSize = getBitSwarm().getMaxMessageSize();
-        if (binData.length > maxMsgSize)
+        if (binDataBytes.length > maxMsgSize)
         {
             /*
 			 * The outgoing message is bigger than what the server allows us to send.
 			 * We should stop here and provide an error to the developer
 			 */
 
-            throw new SFSCodecException('Packet is too big: ${binData.length} bytes, server limit is: ${maxMsgSize} bytes');
+            throw new SFSCodecException('Packet is too big: ${binDataBytes.length} bytes, server limit is: ${maxMsgSize} bytes');
         }
 
         // Default size descriptor is short (UInt16)
@@ -124,7 +127,7 @@ class SFSIOHandler extends BaseIOHandler
 		 * UDP packet size > 64K? Not possible over the internet.
 		 * And likely not even in a local or loopback network
 		 */
-        if (binData.length > ProtocolUtils.UINT16_MAX_VALUE)
+        if (binDataBytes.length > ProtocolUtils.UINT16_MAX_VALUE)
             sizeBytes = ProtocolUtils.INT32_BYTE_SIZE;
 
         var txType = request.getTransport();
@@ -153,7 +156,7 @@ class SFSIOHandler extends BaseIOHandler
             if (isCompressed)
                 log.debug(' (cmp: ${originalSize} / ${byteData.length})');
 
-            if (binData.length < MAX_PACKET_DEBUG_LEN)
+            if (binDataBytes.length < MAX_PACKET_DEBUG_LEN)
                 log.info("Outgoing, {}, {}", request.getTransport(), ByteUtils.hexDump(byteData.getData()));
             else
                 log.info("Outgoing, {}, Size: {}, Dump omitted", request.getTransport(), byteData.length);
@@ -189,11 +192,12 @@ class SFSIOHandler extends BaseIOHandler
     private function finalizeTCPPacket(packet:RequestPacket):Bytes
     {
         var header:PacketHeader = packet.header();
-        var outBytes:Bytes = packet.body();
+        var outBytesData:BytesData = packet.body();
+        var outBytes:Bytes = Bytes.ofData(outBytesData);
 
         if (getBitSwarm().useEncryption() && !getBitSwarm().isReconnecting())
         {
-            outBytes = packetEncrypter().encrypt(outBytes);
+            outBytesData = packetEncrypter().encrypt(outBytesData);
             header.setEncrypted(true);
 
             /*
@@ -233,7 +237,7 @@ class SFSIOHandler extends BaseIOHandler
     private function finalizeUDPPacket(packet:RequestPacket):Bytes
     {
         var header:PacketHeader = packet.header();
-        var outBytes:Bytes = packet.body();
+        var outBytes:BytesData = packet.body();
 
         /*
 		 * Encryption does not apply to the UDP Handshake
@@ -251,7 +255,7 @@ class SFSIOHandler extends BaseIOHandler
         var packetBuffer:BytesOutput = new BytesOutput(); //ByteBuffer.allocate(1 + outBytes.length);
         packetBuffer.bigEndian = true;
         packetBuffer.writeByte(headerByte);
-        packetBuffer.write(outBytes);
+        packetBuffer.write(Bytes.ofData(outBytes));
 
         return packetBuffer.getBytes();
     }

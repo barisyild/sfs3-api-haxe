@@ -7,6 +7,7 @@ import com.smartfoxserver.v3.core.EventParam;
 import com.smartfoxserver.v3.core.SFSEvent;
 import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.User;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResUserLost extends BaseResponseHandler
 {
@@ -35,7 +36,7 @@ class ResUserLost extends BaseResponseHandler
 			// Fire one event in each room
 			for (room in joinedRooms)
 			{
-				var evtParams = new Map<String, Dynamic>();
+				var evtParams = new PlatformStringMap<Dynamic>();
 				evtParams.set(EventParam.User, user);
 				evtParams.set(EventParam.Room, room);
 				

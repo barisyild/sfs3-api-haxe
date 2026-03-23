@@ -23,6 +23,7 @@ import com.smartfoxserver.v3.bitswarm.rdp.RDPTransport;
 import com.smartfoxserver.v3.bitswarm.rdp.data.EndPoint;
 import com.smartfoxserver.v3.bitswarm.rdp.TxpMode;
 import com.smartfoxserver.v3.bitswarm.TransportType.TransportTypeTools;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class FlashUdpClient extends BaseUdpSocketClient {
 	private static final MAX_RETRY:Int = 3;
@@ -112,7 +113,7 @@ class FlashUdpClient extends BaseUdpSocketClient {
 	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		closeSocketAndCleanUp();
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 
@@ -205,7 +206,9 @@ class FlashUdpClient extends BaseUdpSocketClient {
 
 		serverEndPoint = new EndPoint(udpSocket, serverHost);
 
-		var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, [EventParam.Success => true]);
+        var params = new PlatformStringMap<Dynamic>();
+        params.set(EventParam.Success, true);
+		var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, params);
 		bitSwarm.getDispatcher().dispatchEvent(initEvt);
 
 		lastUdpPacketTime = Timer.stamp();
@@ -246,7 +249,9 @@ class FlashUdpClient extends BaseUdpSocketClient {
 			socketState = SocketState.Disconnected;
 			connectionAttemptCount = 0;
 
-			var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, [EventParam.Success => false]);
+            var params = new PlatformStringMap<Dynamic>();
+            params.set(EventParam.Success, false);
+			var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, params);
 			bitSwarm.getDispatcher().dispatchEvent(initEvt);
 		}
 	}

@@ -24,6 +24,7 @@ import sys.net.UdpSocket;
 import sys.net.Address;
 import com.smartfoxserver.v3.entities.data.Queue;
 import haxe.Timer;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class SysUdpClient extends BaseUdpSocketClient {
 	// MTU is ~1500 bytes, 2KB buffer is enough
@@ -101,7 +102,7 @@ class SysUdpClient extends BaseUdpSocketClient {
 	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		closeSocketAndCleanUp();
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 
@@ -188,7 +189,9 @@ class SysUdpClient extends BaseUdpSocketClient {
 
 		serverEndPoint = new EndPoint(udpSocket, serverHost);
 
-		var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, [EventParam.Success => true]);
+		var params = new PlatformStringMap<Dynamic>();
+		params.set(EventParam.Success, true);
+		var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, params);
 		bitSwarm.getDispatcher().dispatchEvent(initEvt);
 
 		// Update timestamp
@@ -234,7 +237,9 @@ class SysUdpClient extends BaseUdpSocketClient {
 			socketState = SocketState.Disconnected;
 			connectionAttemptCount = 0;
 
-			var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, [EventParam.Success => false]);
+			var params = new PlatformStringMap<Dynamic>();
+			params.set(EventParam.Success, false);
+			var initEvt = new BitSwarmEvent(BitSwarmEvent.UDP_CONNECT, params);
 			bitSwarm.getDispatcher().dispatchEvent(initEvt);
 		}
 	}

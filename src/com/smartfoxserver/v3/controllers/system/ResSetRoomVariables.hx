@@ -10,6 +10,7 @@ import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.entities.variables.RoomVariable;
 import com.smartfoxserver.v3.entities.variables.SFSRoomVariable;
 import com.smartfoxserver.v3.requests.SetRoomVariablesRequest;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResSetRoomVariables extends BaseResponseHandler
 {
@@ -20,7 +21,7 @@ class ResSetRoomVariables extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		var rId:Int = sfso.getInt(SetRoomVariablesRequest.KEY_VAR_ROOM);
 		var varListData:ISFSArray = sfso.getSFSArray(SetRoomVariablesRequest.KEY_VAR_LIST);

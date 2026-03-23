@@ -2,9 +2,9 @@ package com.smartfoxserver.v3.bitswarm;
 
 class ReconnectionState
 {
-    private var _isPending:Bool;
-    private var _firstAttemptTime:Int;
-    private var _counter:Int;
+    private var isPending:Bool;
+    private var firstAttemptTime:Int;
+    private var counter:Int;
 
     /*
 	 * @param isPending 				true if a reconnection is ongoing
@@ -16,33 +16,33 @@ class ReconnectionState
         if(firstAttemptTime == null)
             firstAttemptTime = Std.int(Date.now().getTime());
 
-        this._isPending = isPending;
-        this._firstAttemptTime = firstAttemptTime;
-        this._counter = counter;
+        this.isPending = isPending;
+        this.firstAttemptTime = firstAttemptTime;
+        this.counter = counter;
     }
 
-    public function isPending():Bool
+    public function getPending():Bool
     {
-        return _isPending;
+        return isPending;
     }
 
-    public function firstAttemptTime():Int
+    public function getFirstAttemptTime():Int
     {
-        return _firstAttemptTime;
+        return firstAttemptTime;
     }
 
-    public function counter():Int
+    public function getCounter():Int
     {
-        return _counter;
+        return counter;
     }
 
     public function incCounter():Void
     {
-        _counter++;
+        counter++;
     }
 
     public function toString():String
     {
-        return '{ Pending: ${_isPending}, Counter: ${_counter} }';
+        return '{ Pending: ${isPending}, Counter: ${counter} }';
     }
 }

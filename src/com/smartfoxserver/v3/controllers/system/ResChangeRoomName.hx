@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.entities.Room;
 import com.smartfoxserver.v3.requests.BaseRequest;
 import com.smartfoxserver.v3.requests.ChangeRoomNameRequest;
 import com.smartfoxserver.v3.util.SFSErrorCodes;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class ResChangeRoomName extends BaseResponseHandler
 {
@@ -19,7 +20,7 @@ class ResChangeRoomName extends BaseResponseHandler
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
 		var sfso:ISFSObject = resp.getContent();
-		var evtParams = new Map<String, Dynamic>();
+		var evtParams = new PlatformStringMap<Dynamic>();
 
 		// ::: SUCCESS
 		if (!sfso.containsKey(BaseRequest.KEY_ERROR_CODE))

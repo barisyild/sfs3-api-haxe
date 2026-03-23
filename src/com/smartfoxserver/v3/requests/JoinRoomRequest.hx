@@ -60,6 +60,7 @@ class JoinRoomRequest extends BaseRequest
 	 */
 	public static final KEY_AS_SPECTATOR:String = "sp";
 
+	private var roomId:Int = -1;
 	private var name:String;
 	private var pass:String;
 	private var roomIdToLeave:Null<Int>;
@@ -85,10 +86,10 @@ class JoinRoomRequest extends BaseRequest
 			this.name = cast id;
 		
 		else if (Std.isOfType(id, Int)) 
-			this.id = cast id;
+			this.roomId = cast id;
 		
 		else if (Std.isOfType(id, Room)) 
-			this.id = (cast id:Room).getId();
+			this.roomId = (cast id:Room).getId();
 
 		this.pass = pass;
 		this.roomIdToLeave = roomIdToLeave;
@@ -100,8 +101,7 @@ class JoinRoomRequest extends BaseRequest
 	 */
 	public function validate(sfs:ISmartFox):Void
 	{
-		// Missing room id
-		if (id < 0 && name == null) 
+		if (roomId < 0 && name == null) 
 			throw new SFSValidationException("JoinRoomRequest Error", ["Missing Room id or name, you should provide at least one"]);
 	}
 
@@ -110,8 +110,8 @@ class JoinRoomRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		if (id > -1) 
-			sfso.putInt(KEY_ROOM_ID, id);
+		if (roomId > -1) 
+			sfso.putInt(KEY_ROOM_ID, roomId);
 		
 		else if (name != null) 
 			sfso.putString(KEY_ROOM_NAME, name);

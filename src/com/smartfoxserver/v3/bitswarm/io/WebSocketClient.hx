@@ -11,6 +11,7 @@ import com.smartfoxserver.v3.util.WebServices;
 import haxe.Exception;
 import haxe.io.Bytes;
 import haxe.net.WebSocket;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 class WebSocketClient extends BaseSocketClient {
 	private var ws:WebSocket = null;
@@ -88,7 +89,7 @@ class WebSocketClient extends BaseSocketClient {
 
 		closeSocket();
 
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.DisconnectionReason, reason);
 		params.set(EventParam.ErrorMessage, errMessage);
 

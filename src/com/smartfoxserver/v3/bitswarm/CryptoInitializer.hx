@@ -11,6 +11,7 @@ import com.smartfoxserver.v3.core.IDispatchable;
 import com.smartfoxserver.v3.util.WebServices;
 import haxe.crypto.Base64;
 import com.smartfoxserver.v3.exceptions.IllegalStateException;
+import com.smartfoxserver.v3.entities.data.PlatformStringMap;
 
 /*
  * Some of the methods here are not referenced directly in this project but they are used
@@ -119,7 +120,7 @@ class CryptoInitializer implements IDispatchable
 			var ck = new CryptoKey(binKeys);
 			storage.setKey(ck);
 			
-			var params = new Map<String, Dynamic>();
+			var params = new PlatformStringMap<Dynamic>();
 			params.set(EventParam.Success, true);
 			params.set(SysParam.SessionToken, newToken);
 			
@@ -135,7 +136,7 @@ class CryptoInitializer implements IDispatchable
 	{
 		log.warn("SSL Init Error: " + message);
 		
-		var params = new Map<String, Dynamic>();
+		var params = new PlatformStringMap<Dynamic>();
 		params.set(EventParam.Success, false);
 		params.set(EventParam.ErrorMessage, message);
 		
