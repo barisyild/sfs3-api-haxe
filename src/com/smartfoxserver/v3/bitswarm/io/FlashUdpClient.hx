@@ -18,6 +18,7 @@ import flash.events.DatagramSocketDataEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.net.DatagramSocket;
+import com.smartfoxserver.v3.bitswarm.rdp.TransportConfig;
 
 import com.smartfoxserver.v3.bitswarm.rdp.RDPTransport;
 import com.smartfoxserver.v3.bitswarm.rdp.data.EndPoint;
@@ -190,8 +191,9 @@ class FlashUdpClient extends BaseUdpSocketClient {
 		this.maxUdpIdleSecs = evt.getParam(SysParam.MaxUdpIdleSecs);
 		this.udpKeepAlive = evt.getParam(SysParam.UdpKeepAlive);
 
-		var rdpTxCfg = evt.getParam(SysParam.RdpCfg);
-		rdpTx = new RDPTransport(rdpTxCfg);
+		var rdpTxCfg:TransportConfig = evt.getParam(SysParam.RdpCfg);
+		rdpTxCfg.threadPool = bitSwarm.getThreadPool();
+rdpTx = new RDPTransport(rdpTxCfg);
 		rdpTx.setIncomingDataHandler(function(data:Bytes, sender:EndPoint, mode:TxpMode) {
 			triggerOnDataEvent(data, TransportTypeTools.fromRdpMode(mode));
 		});

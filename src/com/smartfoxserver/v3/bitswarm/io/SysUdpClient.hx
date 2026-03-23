@@ -25,6 +25,7 @@ import sys.net.Address;
 import com.smartfoxserver.v3.entities.data.Queue;
 import haxe.Timer;
 import com.smartfoxserver.v3.entities.data.PlatformStringMap;
+import com.smartfoxserver.v3.bitswarm.rdp.TransportConfig;
 
 class SysUdpClient extends BaseUdpSocketClient {
 	// MTU is ~1500 bytes, 2KB buffer is enough
@@ -173,7 +174,8 @@ class SysUdpClient extends BaseUdpSocketClient {
 		this.maxUdpIdleSecs = evt.getParam(SysParam.MaxUdpIdleSecs);
 		this.udpKeepAlive = evt.getParam(SysParam.UdpKeepAlive);
 
-		var rdpTxCfg = evt.getParam(SysParam.RdpCfg);
+		var rdpTxCfg:TransportConfig = evt.getParam(SysParam.RdpCfg);
+		rdpTxCfg.threadPool = bitSwarm.getThreadPool();
 		rdpTx = new RDPTransport(rdpTxCfg);
 		rdpTx.setIncomingDataHandler(function(data:Bytes, sender:EndPoint, mode:TxpMode) {
 			triggerOnDataEvent(data, TransportTypeTools.fromRdpMode(mode));
