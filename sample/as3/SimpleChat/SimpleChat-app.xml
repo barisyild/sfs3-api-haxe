@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application xmlns="http://ns.adobe.com/air/application/51.0">
+    <id>com.smartfoxserver.v3.samples.SimpleChat</id>
+    <versionNumber>1.0.0</versionNumber>
+    <filename>SimpleChat</filename>
+
+    <name>SmartFoxServer 3 - Simple Chat</name>
+    <description>SFS3 Simple Chat example for Adobe AIR</description>
+
+    <initialWindow>
+        <content>SimpleChat.swf</content>
+        <title>SmartFoxServer 3 Examples - Simple Chat</title>
+        <systemChrome>standard</systemChrome>
+        <transparent>false</transparent>
+        <visible>true</visible>
+        <width>920</width>
+        <height>600</height>
+        <minimizable>true</minimizable>
+        <maximizable>true</maximizable>
+        <resizable>true</resizable>
+        <minSize>800 520</minSize>
+    </initialWindow>
+</application>
