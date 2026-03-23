@@ -91,10 +91,10 @@ class SystemController extends BaseController
 
                 else
                 {
-                    var handlerClass:Class<IResponseHandler> = cast Type.getClass(RES_HANDLERS_PACKAGE + resHandlerName);
+				    var handlerClass = Type.resolveClass(RES_HANDLERS_PACKAGE + resHandlerName);
                     if(handlerClass == null)
                         throw new ClassNotFoundException("Handler class not found: " + RES_HANDLERS_PACKAGE + resHandlerName);
-                    resHandler = Type.createInstance(handlerClass, []);
+                    resHandler = cast Type.createInstance(handlerClass, []);
                     responseHandlerCache.set(resHandlerName, resHandler);
                 }
 
@@ -104,7 +104,7 @@ class SystemController extends BaseController
 
             catch (e:ClassNotFoundException)
             {
-                log.warn('Cannot instantiate handler for eventId: ${resp.getId()}, ${resHandlerName}, Class: ${RES_HANDLERS_PACKAGE}.${resHandlerName}');
+                log.warn('Cannot instantiate handler for eventId: ${resp.getId()}, ${resHandlerName}, Class: ${RES_HANDLERS_PACKAGE}${resHandlerName}');
             }
             catch (ex:Exception)
             {
