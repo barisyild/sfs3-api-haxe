@@ -1,0 +1,15 @@
+{
+  "name": "sfs3-simplechat-electron",
+  "version": "1.0.0",
+  "description": "SmartFoxServer 3 Simple Chat (Electron + Node.js)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "websocket": "^1.0.35"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0"
+  }
+}

@@ -6,3 +6,6 @@ notes.txt
 *.iml
 out
 sample/python/*/SFS3_API_PY.py
+sample/nodejs/*/SFS3_API_Node.js
+sample/js/*/SFS3_API_JS.js
+node_modules

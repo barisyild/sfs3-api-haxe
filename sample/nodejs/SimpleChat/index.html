@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SmartFoxServer 3 Examples - Simple Chat</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; color: #333; display: flex; flex-direction: column; height: 100vh; }
+
+  /* Header */
+  .header { display: flex; align-items: center; justify-content: space-between; background: #f0f0f0; padding: 8px 12px; border-bottom: 1px solid #ddd; }
+  .header-left { font-weight: 600; }
+  .header-right { color: #666; font-size: 13px; }
+  .controls { display: flex; gap: 6px; align-items: center; }
+  .controls input[type="text"] { width: 100px; padding: 4px 6px; border: 1px solid #bbb; border-radius: 3px; }
+  .controls button { padding: 4px 12px; border: 1px solid #aaa; border-radius: 3px; background: #fff; cursor: pointer; }
+  .controls button:hover:not(:disabled) { background: #e8e8e8; }
+  .controls button:disabled { opacity: 0.5; cursor: default; }
+  .controls select { padding: 4px 6px; border: 1px solid #bbb; border-radius: 3px; }
+  .controls .separator { width: 1px; height: 20px; background: #ccc; margin: 0 4px; }
+  .controls .status-label { font-size: 12px; color: #666; }
+
+  /* Content */
+  .content { display: flex; flex: 1; padding: 8px; gap: 8px; min-height: 0; }
+
+  /* Chat */
+  .chat-panel { flex: 1; display: flex; flex-direction: column; border: 1px solid #ccc; border-radius: 4px; padding: 8px; }
+  .chat-panel h3 { font-size: 13px; color: #666; margin-bottom: 4px; }
+  .topic { font-size: 13px; color: #555; margin-bottom: 6px; }
+  .chat-history { flex: 1; overflow-y: auto; border: 1px solid #ddd; border-radius: 3px; padding: 6px; background: #fff; font-size: 13px; min-height: 0; }
+  .chat-history .system { color: #666; }
+  .chat-history .sender { font-weight: 700; }
+  .msg-row { display: flex; gap: 6px; margin-top: 6px; }
+  .msg-row input { flex: 1; padding: 4px 6px; border: 1px solid #bbb; border-radius: 3px; }
+  .topic-row { display: flex; gap: 6px; margin-top: 6px; align-items: center; }
+  .topic-row label { font-size: 13px; white-space: nowrap; }
+  .topic-row input { width: 140px; padding: 4px 6px; border: 1px solid #bbb; border-radius: 3px; }
+
+  /* Side panel */
+  .side-panel { width: 210px; display: flex; flex-direction: column; gap: 8px; }
+  .list-box { flex: 1; border: 1px solid #ccc; border-radius: 4px; padding: 6px; display: flex; flex-direction: column; }
+  .list-box h3 { font-size: 13px; color: #666; margin-bottom: 4px; }
+  .list-box ul { flex: 1; overflow-y: auto; list-style: none; font-size: 13px; min-height: 0; }
+  .list-box ul li { padding: 3px 4px; cursor: pointer; border-radius: 2px; }
+  .list-box ul li:hover { background: #f5f5f5; }
+  .list-box ul li.selected { background: #ff9933; color: #fff; }
+  .list-box ul li.placeholder { color: #999; cursor: default; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-left">SmartFoxServer 3™ massive multiplayer platform</span>
+  <div class="controls">
+    <select id="transportSelect">
+      <option value="tcp">TCP</option>
+      <option value="ws">WebSocket</option>
+    </select>
+    <button id="connectBtn">Connect</button>
+    <input type="text" id="username" value="Bax" placeholder="Username">
+    <button id="loginBtn" disabled>Login</button>
+    <button id="logoutBtn" disabled>Logout</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <div class="separator"></div>
+    <button id="initUdpBtn" disabled>Init UDP</button>
+    <button id="udpPingBtn" disabled>UDP Ping</button>
+    <span class="status-label" id="udpStatus">UDP: off</span>
+  </div>
+  <span class="header-right">SmartFoxServer 3 Examples | Simple Chat</span>
+</div>
+
+<div class="content">
+  <div class="chat-panel">
+    <div class="topic" id="topicLabel">Topic is '(not set)'</div>
+    <div class="chat-history" id="chatHistory"></div>
+    <div class="msg-row">
+      <input type="text" id="msgInput" placeholder="Type a message..." disabled>
+      <label style="font-size:13px; display:flex; align-items:center; gap:3px;"><input type="checkbox" id="useUdpCb" disabled> UDP</label>
+      <button id="sendBtn" disabled>Send</button>
+    </div>
+    <div class="topic-row">
+      <label>Chat topic:</label>
+      <input type="text" id="topicInput" value="Movies" disabled>
+      <button id="setTopicBtn" disabled>Set</button>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div class="list-box">
+      <h3>Rooms</h3>
+      <ul id="roomsList"><li class="placeholder">(connect and login to see rooms)</li></ul>
+    </div>
+    <div class="list-box">
+      <h3>Users</h3>
+      <ul id="usersList"><li class="placeholder">(no users)</li></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const SFS3 = require("./SFS3_API_Node.js").SFS3;
+
+const DEFAULT_HOST = "127.0.0.1";
+const DEFAULT_TCP_PORT = 9977;
+const DEFAULT_WS_PORT  = 8088;
+const DEFAULT_ZONE = "Playground";
+
+// DOM refs
+const $ = (id) => document.getElementById(id);
+const transportSel  = $("transportSelect");
+const connectBtn    = $("connectBtn");
+const loginBtn      = $("loginBtn");
+const logoutBtn     = $("logoutBtn");
+const disconnectBtn = $("disconnectBtn");
+const initUdpBtn    = $("initUdpBtn");
+const udpStatus     = $("udpStatus");
+const usernameInput = $("username");
+const chatHistory   = $("chatHistory");
+const msgInput      = $("msgInput");
+const sendBtn       = $("sendBtn");
+const topicLabel    = $("topicLabel");
+const topicInput    = $("topicInput");
+const setTopicBtn   = $("setTopicBtn");
+const roomsList     = $("roomsList");
+const usersList     = $("usersList");
+const useUdpCb      = $("useUdpCb");
+const udpPingBtn    = $("udpPingBtn");
+
+let sfs = null;
+let roomRefs = [];
+
+// --- Helpers ---
+function writeChat(text, cls) {
+  const div = document.createElement("div");
+  if (cls) div.className = cls;
+  div.textContent = text;
+  chatHistory.appendChild(div);
+  chatHistory.scrollTop = chatHistory.scrollHeight;
+}
+
+function writeChatHtml(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  chatHistory.appendChild(div);
+  chatHistory.scrollTop = chatHistory.scrollHeight;
+}
+
+function setConnected(connected) {
+  connectBtn.disabled    = connected;
+  transportSel.disabled  = connected;
+  loginBtn.disabled      = !connected;
+  logoutBtn.disabled     = true;
+  disconnectBtn.disabled = !connected;
+  initUdpBtn.disabled    = true;
+  udpStatus.textContent  = "UDP: off";
+  useUdpCb.checked       = false;
+  useUdpCb.disabled      = true;
+  udpPingBtn.disabled    = true;
+}
+
+function setLoggedIn(loggedIn) {
+  logoutBtn.disabled = !loggedIn;
+  initUdpBtn.disabled = !loggedIn;
+  if (!loggedIn) {
+    udpStatus.textContent = "UDP: off";
+  }
+  if (loggedIn) populateRooms();
+}
+
+function setChatEnabled(enabled) {
+  msgInput.disabled    = !enabled;
+  sendBtn.disabled     = !enabled;
+  topicInput.disabled  = !enabled;
+  setTopicBtn.disabled = !enabled;
+}
+
+function populateRooms() {
+  roomRefs = [];
+  roomsList.innerHTML = "";
+  if (!sfs) return;
+  const rm = sfs.getRoomManager();
+  if (!rm) return;
+  const rooms = rm.getRoomList();
+  if (!rooms || rooms.length === 0) {
+    roomsList.innerHTML = '<li class="placeholder">(no rooms)</li>';
+    return;
+  }
+  for (const r of rooms) {
+    roomRefs.push(r);
+    const li = document.createElement("li");
+    li.textContent = `${r.getName()}  (${r.getUserCount()}/${r.getMaxUsers()})`;
+    li.addEventListener("click", () => onRoomSelect(r, li));
+    roomsList.appendChild(li);
+  }
+}
+
+function populateUsers() {
+  usersList.innerHTML = "";
+  if (!sfs) { usersList.innerHTML = '<li class="placeholder">(no connection)</li>'; return; }
+  const room = sfs.getLastJoinedRoom();
+  if (!room) { usersList.innerHTML = '<li class="placeholder">(no room)</li>'; return; }
+  const users = room.getUserList();
+  if (!users || users.length === 0) { usersList.innerHTML = '<li class="placeholder">(no users)</li>'; return; }
+  for (const u of users) {
+    const li = document.createElement("li");
+    li.textContent = u.getName() + (u.getIsItMe() ? " (you)" : "");
+    usersList.appendChild(li);
+  }
+}
+
+function showRoomTopic(room) {
+  if (!room || !room.containsVariable("topic")) {
+    topicLabel.textContent = "Topic is '(not set)'";
+    return;
+  }
+  const v = room.getVariable("topic");
+  const val = v ? v.getValue() : null;
+  topicLabel.textContent = `Topic is '${val || ""}'`;
+}
+
+// --- SFS Event Handlers ---
+function onConnection(evt) {
+  const success = evt.getParam(SFS3.EventParam.Success);
+  if (success) {
+    setConnected(true);
+    writeChat("Connected to SmartFoxServer 3.", "system");
+  } else {
+    const msg = evt.getParam(SFS3.EventParam.ErrorMessage) || "Connection failed";
+    setConnected(false);
+    writeChat("Connection failed: " + msg, "system");
+  }
+}
+
+function onConnectionLost(evt) {
+  const reason = evt.getParam(SFS3.EventParam.DisconnectionReason);
+  sfs = null;
+  setConnected(false);
+  setLoggedIn(false);
+  setChatEnabled(false);
+  writeChat("Disconnected. " + (reason || ""), "system");
+}
+
+function onLogin(evt) {
+  setLoggedIn(true);
+  writeChat("Logged in.", "system");
+}
+
+function onLoginError(evt) {
+  const msg = evt.getParam(SFS3.EventParam.ErrorMessage) || "Login failed";
+  writeChat("Login error: " + msg, "system");
+}
+
+function onLogout(evt) {
+  setLoggedIn(false);
+  setChatEnabled(false);
+  roomRefs = [];
+  roomsList.innerHTML = '<li class="placeholder">(logout - select room after login)</li>';
+  usersList.innerHTML = '<li class="placeholder">(no users)</li>';
+  topicLabel.textContent = "Topic is '(not set)'";
+  writeChat("Logged out.", "system");
+}
+
+function onRoomJoin(evt) {
+  const room = evt.getParam(SFS3.EventParam.Room);
+  if (!room) return;
+  setChatEnabled(true);
+  writeChat(`You entered room '${room.getName()}'`, "system");
+  showRoomTopic(room);
+  const v = room.containsVariable("topic") ? room.getVariable("topic") : null;
+  topicInput.value = (v && v.getValue()) || "";
+  populateUsers();
+}
+
+function onRoomJoinError(evt) {
+  const msg = evt.getParam(SFS3.EventParam.ErrorMessage) || "Join failed";
+  writeChat("Room join error: " + msg, "system");
+}
+
+function onUserEnterRoom(evt) {
+  const u = evt.getParam(SFS3.EventParam.User);
+  populateUsers();
+  if (u && !u.getIsItMe()) writeChat(`User ${u.getName()} entered the room.`, "system");
+}
+
+function onUserExitRoom(evt) { populateUsers(); }
+function onUserCountChange(evt) { populateRooms(); }
+
+function onPublicMessage(evt) {
+  const sender = evt.getParam(SFS3.EventParam.Sender);
+  const message = evt.getParam(SFS3.EventParam.Message);
+  if (!sender || message == null) return;
+  const name = sender.getIsItMe() ? "You" : sender.getName();
+  writeChatHtml(`<span class="sender">${name} said:</span> ${message}`);
+}
+
+function onRoomVariablesUpdate(evt) {
+  const room = evt.getParam(SFS3.EventParam.Room);
+  const changed = evt.getParam(SFS3.EventParam.ChangedVars);
+  if (room && changed && changed.indexOf("topic") >= 0) {
+    showRoomTopic(room);
+    const v = room.containsVariable("topic") ? room.getVariable("topic") : null;
+    topicInput.value = (v && v.getValue()) || "";
+  }
+}
+
+function onUdpConnection(evt) {
+  const success = evt.getParam(SFS3.EventParam.Success);
+  if (success) {
+    udpStatus.textContent = "UDP: on";
+    initUdpBtn.disabled = true;
+    useUdpCb.disabled = false;
+    udpPingBtn.disabled = false;
+    writeChat("UDP connection established. You can now send via UDP.", "system");
+  } else {
+    const msg = evt.getParam(SFS3.EventParam.ErrorMessage) || "UDP init failed";
+    udpStatus.textContent = "UDP: failed";
+    useUdpCb.disabled = true;
+    useUdpCb.checked = false;
+    udpPingBtn.disabled = true;
+    writeChat("UDP init error: " + msg, "system");
+  }
+}
+
+function onUdpConnectionLost(evt) {
+  udpStatus.textContent = "UDP: off";
+  initUdpBtn.disabled = !(sfs && sfs.isConnected());
+  useUdpCb.disabled = true;
+  useUdpCb.checked = false;
+  udpPingBtn.disabled = true;
+  writeChat("UDP connection lost.", "system");
+}
+
+function onExtensionResponse(evt) {
+  const cmd = evt.getParam(SFS3.EventParam.Cmd);
+  const params = evt.getParam(SFS3.EventParam.ExtParams);
+
+  if (cmd === "udpPing" && params && params.containsKey("t")) {
+    const sent = Number(params.getLong("t"));
+    const rtt = Date.now() - sent;
+    writeChat(`[UDP Pong] RTT: ${rtt} ms`, "system");
+  } else if (cmd === "udpChat" && params && params.containsKey("msg")) {
+    const senderName = params.containsKey("sender") ? params.getString("sender") : "?";
+    const msg = params.getString("msg");
+    writeChatHtml(`<span class="sender">[UDP] ${senderName} said:</span> ${msg}`);
+  } else {
+    writeChat(`[ExtResponse] cmd='${cmd}' params=${params}`, "system");
+  }
+}
+
+function addListeners(sfs) {
+  sfs.addEventListener(SFS3.SFSEvent.CONNECTION, onConnection);
+  sfs.addEventListener(SFS3.SFSEvent.CONNECTION_LOST, onConnectionLost);
+  sfs.addEventListener(SFS3.SFSEvent.LOGIN, onLogin);
+  sfs.addEventListener(SFS3.SFSEvent.LOGIN_ERROR, onLoginError);
+  sfs.addEventListener(SFS3.SFSEvent.LOGOUT, onLogout);
+  sfs.addEventListener(SFS3.SFSEvent.ROOM_JOIN, onRoomJoin);
+  sfs.addEventListener(SFS3.SFSEvent.ROOM_JOIN_ERROR, onRoomJoinError);
+  sfs.addEventListener(SFS3.SFSEvent.USER_ENTER_ROOM, onUserEnterRoom);
+  sfs.addEventListener(SFS3.SFSEvent.USER_EXIT_ROOM, onUserExitRoom);
+  sfs.addEventListener(SFS3.SFSEvent.USER_COUNT_CHANGE, onUserCountChange);
+  sfs.addEventListener(SFS3.SFSEvent.PUBLIC_MESSAGE, onPublicMessage);
+  sfs.addEventListener(SFS3.SFSEvent.ROOM_VARIABLES_UPDATE, onRoomVariablesUpdate);
+  sfs.addEventListener(SFS3.SFSEvent.UDP_CONNECTION, onUdpConnection);
+  sfs.addEventListener(SFS3.SFSEvent.UDP_CONNECTION_LOST, onUdpConnectionLost);
+  sfs.addEventListener(SFS3.SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
+}
+
+// --- Room select ---
+function onRoomSelect(room, li) {
+  if (!sfs) return;
+  const current = sfs.getLastJoinedRoom();
+  if (current && current.getId() === room.getId()) return;
+  roomsList.querySelectorAll("li").forEach(el => el.classList.remove("selected"));
+  li.classList.add("selected");
+  sfs.send(new SFS3.JoinRoomRequest(room));
+}
+
+// --- Button actions ---
+connectBtn.addEventListener("click", () => {
+  sfs = new SFS3.SmartFox();
+  addListeners(sfs);
+  const cfg = new SFS3.ConfigData();
+  cfg.host = DEFAULT_HOST;
+  cfg.zone = DEFAULT_ZONE;
+
+  const transport = transportSel.value;
+  if (transport === "ws") {
+    cfg.useWebSocket = true;
+    cfg.httpPort = DEFAULT_WS_PORT;
+    cfg.port = DEFAULT_WS_PORT;
+  } else {
+    cfg.port = DEFAULT_TCP_PORT;
+  }
+
+  const proto = transport === "ws" ? "WebSocket" : "TCP";
+  const port = transport === "ws" ? cfg.httpPort : cfg.port;
+  connectBtn.disabled = true;
+  transportSel.disabled = true;
+  writeChat(`Connecting via ${proto} to ${cfg.host}:${port} ...`, "system");
+  try {
+    sfs.connect(cfg);
+  } catch (e) {
+    writeChat("Connect error: " + e, "system");
+    connectBtn.disabled = false;
+    transportSel.disabled = false;
+    sfs = null;
+  }
+});
+
+disconnectBtn.addEventListener("click", () => { if (sfs) sfs.disconnect(); });
+
+initUdpBtn.addEventListener("click", () => {
+  if (!sfs || !sfs.isConnected()) { writeChat("Connect and login first.", "system"); return; }
+  try {
+    sfs.connectUdp();
+    writeChat("Initializing UDP...", "system");
+  } catch (e) {
+    writeChat("UDP init error: " + e, "system");
+  }
+});
+
+udpPingBtn.addEventListener("click", () => {
+  if (!sfs || !sfs.isUdpConnected()) { writeChat("UDP not connected.", "system"); return; }
+  const params = new SFS3.SFSObject();
+  params.putLong("t", BigInt(Date.now()));
+  const room = sfs.getLastJoinedRoom();
+  sfs.send(new SFS3.ExtensionRequest("udpPing", params, room, SFS3.TransportType.UDP));
+  writeChat("[UDP Ping] Sent...", "system");
+});
+
+loginBtn.addEventListener("click", () => {
+  if (!sfs) return;
+  const user = (usernameInput.value || "").trim() || "Guest";
+  sfs.send(new SFS3.LoginRequest(user, "", DEFAULT_ZONE));
+});
+
+logoutBtn.addEventListener("click", () => { if (sfs) sfs.send(new SFS3.LogoutRequest()); });
+
+sendBtn.addEventListener("click", doSend);
+msgInput.addEventListener("keydown", (e) => { if (e.key === "Enter") doSend(); });
+
+function doSend() {
+  const msg = (msgInput.value || "").trim();
+  if (!msg) return;
+  if (!sfs || !sfs.getLastJoinedRoom()) { writeChat("Join a room first.", "system"); return; }
+
+  if (useUdpCb.checked && sfs.isUdpConnected()) {
+    const params = new SFS3.SFSObject();
+    params.putString("msg", msg);
+    const room = sfs.getLastJoinedRoom();
+    sfs.send(new SFS3.ExtensionRequest("udpChat", params, room, SFS3.TransportType.UDP));
+    writeChatHtml(`<span class="sender">[UDP] You said:</span> ${msg}`);
+  } else {
+    sfs.send(new SFS3.PublicMessageRequest(msg));
+  }
+  msgInput.value = "";
+}
+
+setTopicBtn.addEventListener("click", () => {
+  if (!sfs) return;
+  const room = sfs.getLastJoinedRoom();
+  if (!room) { writeChat("Join a room first.", "system"); return; }
+  const t = (topicInput.value || "").trim();
+  const v = new SFS3.SFSRoomVariable("topic", t || null);
+  sfs.send(new SFS3.SetRoomVariablesRequest([v], room));
+  if (t) writeChat(`Room topic set to '${t}'`, "system");
+});
+
+// Initial state
+setConnected(false);
+setChatEnabled(false);
+</script>
+</body>
+</html>
