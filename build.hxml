@@ -12,7 +12,7 @@
 --class-path src/macro/python
 --macro macro.python.MinifyMacro.run()
 -python out/SFS3_API_PY.py
---cmd npx shx cp out\SFS3_API_PY.py sample\python\SimpleChat\SFS3_API_PY.py
+--cmd npx shx cp out/SFS3_API_PY.py sample/python/SimpleChat/SFS3_API_PY.py
 
 --next
 -D strict_language
@@ -25,7 +25,7 @@
 -swf-version 11.4
 --class-path src/override/flash
 -swf out/SFS3_API_AS3.swc
---cmd npx shx cp out\SFS3_API_AS3.swc sample\as3\SimpleChat\SFS3_API_AS3.swc
+--cmd npx shx cp out/SFS3_API_AS3.swc sample/as3/SimpleChat/SFS3_API_AS3.swc
 
 --next
 -lib crypto
@@ -33,7 +33,7 @@
 -D untyped
 -D js-es=6
 --js out/SFS3_API_JS.js
---cmd npx shx cp out\SFS3_API_JS.js sample\js\SimpleChat\SFS3_API_JS.js
+--cmd npx shx cp out/SFS3_API_JS.js sample/js/SimpleChat/SFS3_API_JS.js
 
 --next
 -lib crypto
@@ -43,7 +43,7 @@
 -lib hxnodejs
 -D nodejs
 --js out/SFS3_API_Node.js
---cmd npx shx cp out\SFS3_API_Node.js sample\nodejs\SimpleChat\SFS3_API_Node.js
+--cmd npx shx cp out/SFS3_API_Node.js sample/nodejs/SimpleChat/SFS3_API_Node.js
 
 --next
 -lib crypto
@@ -51,4 +51,4 @@
 -D untyped
 --class-path src/override/cpp
 -cpp out/SFS3_API_CPP
---cmd npx shx cp cpp\include\SFS3_API.h out\SFS3_API_CPP\include\SFS3_API.h
+--cmd npx shx cp cpp/include/SFS3_API.h out/SFS3_API_CPP/include/SFS3_API.h
