@@ -47,6 +47,7 @@
 
 --next
 -lib crypto
+-lib hxcpp
 -D default_validation
 -D untyped
 --class-path src/override/cpp
