@@ -26,6 +26,7 @@ jobs:
           haxelib install hxjava
           haxelib git air https://github.com/tobil4sk/air
           haxelib install hxnodejs
+          haxelib install hxcpp
       - name: Build libraries
         run: haxe build.hxml
       - uses: actions/upload-artifact@v7
