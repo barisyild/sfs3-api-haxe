@@ -13,7 +13,6 @@ haxe build.hxml
 | File | Target |
 |------|--------|
 | `out/SFS3_API_PY.py` | Python |
-| `out/SFS3_API_JVM.jar` | JVM (Java/Kotlin) |
 | `out/SFS3_API_AS3.swc` | ActionScript 3 (Flash/AIR) |
 | `out/SFS3_API_JS.js` | Browser JavaScript |
 | `out/SFS3_API_Node.js` | Node.js |
@@ -23,7 +22,6 @@ haxe build.hxml
 | Target | TCP | UDP | WebSocket |
 |--------|-----|-----|-----------|
 | Python | YES | NO | YES |
-| JVM | YES | YES | YES |
 | AS3 (Flash/AIR) | YES | YES | YES |
 | Browser JS | NO | NO | YES |
 | Node.js | YES | YES | YES |
