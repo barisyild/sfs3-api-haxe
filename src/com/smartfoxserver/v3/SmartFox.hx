@@ -826,7 +826,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 				var request = req.getRequest();
 				bitSwarm.send(request);
 			} catch (ex:Exception) {
-				trace(CallStack.toString(ex.stack));
 				log.error("Failed to send Handshake request", ex);
 			}
 		}
