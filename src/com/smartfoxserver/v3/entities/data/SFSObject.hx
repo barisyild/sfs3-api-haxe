@@ -15,6 +15,11 @@ class SFSObject implements ISFSObject {
     private final serializer:ISFSDataSerializer = DefaultSFSDataSerializer.getInstance();
     private var dataHolder:Map<String, SFSDataWrapper> = new Map<String, SFSDataWrapper>();
 
+    public static function newFromObject(o:Dynamic, forceToNumber:Bool=false):SFSObject
+    {
+        return DefaultSFSDataSerializer.getInstance().genericObjectToSFSObject(o, forceToNumber);
+    }
+
     public static function newFromBinaryData(bytes:BytesData):SFSObject {
         return cast DefaultSFSDataSerializer.getInstance().binary2object(bytes);
     }

@@ -20,6 +20,7 @@ import com.smartfoxserver.v3.entities.data.PlatformInt64;
 import com.smartfoxserver.v3.util.TypeSafety;
 import com.smartfoxserver.v3.exceptions.IllegalArgumentException;
 import com.smartfoxserver.v3.exceptions.IllegalStateException;
+import Type.ValueType;
 
 class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private static var _instance:DefaultSFSDataSerializer;
@@ -373,6 +374,99 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
             throw new IllegalStateException("Object Key size: " + keyBytes.length + ", expected max 255 bytes.");
         buffer.writeByte(keyBytes.length);
         buffer.write(keyBytes);
+    }
+
+    public function genericObjectToSFSObject(obj:Dynamic, forceToNumber:Bool=false):SFSObject
+    {
+        var sfso:SFSObject = new SFSObject();
+        _scanGenericObject(obj, sfso, forceToNumber);
+
+        return sfso;
+    }
+
+    private function _scanGenericObject(obj:Dynamic, sfso:ISFSObject, forceToNumber:Bool=false):Void
+    {
+        for(key in Reflect.fields(obj))
+        {
+            var item:Dynamic = Reflect.field(obj,key);
+
+            if(item==null)
+                sfso.putNull(key);
+
+                /*
+			 * Hack to identify a generic object without using reflection
+			 * ADDENDUM:	there is a special case in which the Dynamic is actually an Array with one element as Dynamic
+			 * 				in such case an Array is recognized as Dynamic!
+			 */
+            else if(Type.typeof(item) == ValueType.TObject)
+            {
+                var subSfso:ISFSObject = new SFSObject();
+                sfso.putSFSObject(key, subSfso);
+
+                // Call recursively
+                _scanGenericObject(item, subSfso, forceToNumber);
+            }
+            else if(Std.isOfType(item, Array))
+                sfso.putSFSArray(key, genericArrayToSFSArray(item, forceToNumber));
+
+            else if(Std.isOfType(item, Bool))
+                sfso.putBool(key, item);
+
+            else if(Std.isOfType(item, Int) && !forceToNumber)
+                sfso.putInt(key, item);
+
+            else if(Std.isOfType(item, Float))
+                sfso.putDouble(key, item);
+
+            else if(Std.isOfType(item, String))
+                sfso.putString(key, item);
+
+        }
+    }
+
+    public function genericArrayToSFSArray(arr:Array<Dynamic>, forceToNumber:Bool=false):SFSArray
+    {
+        var sfsa:SFSArray = new SFSArray();
+        _scanGenericArray(arr, sfsa, forceToNumber);
+
+        return sfsa;
+    }
+
+    private function _scanGenericArray(arr:Array<Dynamic>, sfsa:ISFSArray, forceToNumber:Bool=false):Void
+    {
+        for(ii in 0...arr.length)
+        {
+            var item:Dynamic = arr[ii];
+
+            if(item==null)
+                sfsa.addNull();
+
+                // See notes for SFSObject
+            else if(Type.typeof(item) == ValueType.TObject)
+                sfsa.addSFSObject(genericObjectToSFSObject(item, forceToNumber));
+
+            else if(Std.isOfType(item, Array))
+            {
+                var subSfsa:ISFSArray = new SFSArray();
+                sfsa.addSFSArray(subSfsa);
+
+                // Call recursively
+                _scanGenericArray(item, subSfsa, forceToNumber);
+            }
+
+            else if(Std.isOfType(item, Bool))
+                sfsa.addBool(item);
+
+            else if(Std.isOfType(item, Int) && !forceToNumber)
+                sfsa.addInt(item);
+
+            else if(Std.isOfType(item, Float))
+                sfsa.addDouble(item);
+
+            else if(Std.isOfType(item, String))
+                sfsa.addString(item);
+
+        }
     }
 
     private function encodeObject(buffer:BytesOutput, typeId:SFSDataType, object:Dynamic):Void {
