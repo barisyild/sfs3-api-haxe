@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.entities.data;
 
-#if python
+#if (python && library)
 abstract PlatformInt64(Int) from Int to Int {
     public inline function new(v:Int) this = v;
 
@@ -48,7 +48,7 @@ abstract PlatformInt64(Int) from Int to Int {
     public static inline function ofString(s:String):PlatformInt64 return new PlatformInt64(Std.parseInt(s));
 }
 
-#elseif js
+#elseif (js && library)
 
 abstract PlatformInt64(js.lib.BigInt) from js.lib.BigInt to js.lib.BigInt {
     static final MASK32:js.lib.BigInt = js.lib.BigInt.fromString("4294967295");
@@ -101,7 +101,7 @@ abstract PlatformInt64(js.lib.BigInt) from js.lib.BigInt to js.lib.BigInt {
     public static inline function ofString(s:String):PlatformInt64 return new PlatformInt64(js.lib.BigInt.fromString(s));
 }
 
-#elseif flash
+#elseif (flash && library)
 
 abstract PlatformInt64(Float) from Float to Float {
     public inline function new(v:Float) this = v;
