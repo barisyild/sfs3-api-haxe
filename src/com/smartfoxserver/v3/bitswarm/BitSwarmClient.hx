@@ -263,11 +263,7 @@ class BitSwarmClient implements IBitSwarmClient {
 	}
 
 	private function onTcpData(evt:ApiEvent):Void {
-		try {
-			ioHandler.onDataRead(cast evt.getParams().get(EventParam.Data), TransportType.TCP);
-		} catch (ex:Exception) {
-			trace("TCP Read Error: " + ex.message);
-		}
+		ioHandler.onDataRead(cast evt.getParams().get(EventParam.Data), TransportType.TCP);
 	}
 
 	private function onTcpError(evt:ApiEvent):Void {
@@ -281,8 +277,9 @@ class BitSwarmClient implements IBitSwarmClient {
 				connect(cfgData);
 			}
 			// Nothing else to do, just notify the error at the top level
-			else
+			else {
 				notifyConnectionError();
+			}
 		}
 	}
 
