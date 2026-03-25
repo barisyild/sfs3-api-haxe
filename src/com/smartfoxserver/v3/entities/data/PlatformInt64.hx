@@ -23,6 +23,9 @@ abstract PlatformInt64(Int) from Int to Int {
     public static inline function make(high:Int, low:Int):PlatformInt64
         return new PlatformInt64(((high & 0xFFFFFFFF) << 32) | (low & 0xFFFFFFFF));
 
+    public static inline function ofInt(val:Int):PlatformInt64
+        return new PlatformInt64(val);
+
     // ── operators ────────────────────────────────────────────────────────────
     @:op(A + B) public static inline function add(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Int) + (b : Int);
     @:op(A - B) public static inline function sub(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Int) - (b : Int);
@@ -73,6 +76,9 @@ abstract PlatformInt64(js.lib.BigInt) from js.lib.BigInt to js.lib.BigInt {
         return new PlatformInt64((js.lib.BigInt.fromInt(high) << SHIFT32) | (js.lib.BigInt.fromInt(low) & MASK32));
     }
 
+    public static inline function ofInt(val:Int):PlatformInt64
+        return new PlatformInt64(js.lib.BigInt.fromInt(val));
+
     // ── operators ────────────────────────────────────────────────────────────
     @:op(A + B) public static inline function add(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : js.lib.BigInt) + (b : js.lib.BigInt);
     @:op(A - B) public static inline function sub(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : js.lib.BigInt) - (b : js.lib.BigInt);
@@ -118,6 +124,9 @@ abstract PlatformInt64(Float) from Float to Float {
     public static inline function make(high:Int, low:Int):PlatformInt64
         return new PlatformInt64(high * 4294967296.0 + low);
 
+    public static inline function ofInt(val:Int):PlatformInt64
+        return new PlatformInt64(val);
+
     @:op(A + B) public static inline function add(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) + (b : Float);
     @:op(A - B) public static inline function sub(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) - (b : Float);
     @:op(A * B) public static inline function mul(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return (a : Float) * (b : Float);
@@ -162,6 +171,9 @@ abstract PlatformInt64(haxe.Int64) from haxe.Int64 to haxe.Int64 {
 
     public static inline function make(high:Int, low:Int):PlatformInt64
     return new PlatformInt64(haxe.Int64.make(high, low));
+
+    public static inline function ofInt(val:Int):PlatformInt64
+        return new PlatformInt64(haxe.Int64.ofInt(val));
 
     // ── operators ────────────────────────────────────────────────────────────
     @:op(A + B) public static inline function add(a:PlatformInt64, b:PlatformInt64):PlatformInt64 return haxe.Int64.add(a, b);
