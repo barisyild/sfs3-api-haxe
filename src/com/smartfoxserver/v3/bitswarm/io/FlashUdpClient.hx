@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.bitswarm.io;
 
-#if (flash || openfl)
+#if (flash || (openfl && !html5))
 import com.smartfoxserver.v3.bitswarm.BitSwarmClient;
 import com.smartfoxserver.v3.bitswarm.BitSwarmEvent;
 import com.smartfoxserver.v3.bitswarm.SocketState;

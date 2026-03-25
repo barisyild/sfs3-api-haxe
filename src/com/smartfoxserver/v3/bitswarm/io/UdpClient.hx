@@ -1,6 +1,6 @@
 package com.smartfoxserver.v3.bitswarm.io;
 
-#if (flash || openfl)
+#if (flash || (openfl && !html5))
 typedef UdpClient = FlashUdpClient;
 #elseif nodejs
 typedef UdpClient = NodeUdpClient;
