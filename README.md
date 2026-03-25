@@ -16,6 +16,21 @@ haxe build.hxml
 | `out/SFS3_API_AS3.swc` | ActionScript 3 (Flash/AIR) |
 | `out/SFS3_API_JS.js` | Browser JavaScript |
 | `out/SFS3_API_Node.js` | Node.js |
+| `out/SFS3_API_CPP/` | C++ (hxcpp — native sources + `output.exe` stub) |
+
+## C++ (hxcpp)
+
+Requires **`hxcpp`** (`haxelib install hxcpp`) and a C++ toolchain (e.g. **Visual Studio** on Windows, **clang++/g++** on macOS/Linux).
+
+**Public C API:** [`cpp/include/SFS3_API.h`](cpp/include/SFS3_API.h) + [`cpp/src/SFS3_API.cpp`](cpp/src/SFS3_API.cpp) — a [Loreline-style](https://github.com/jeremyfa/loreline/blob/main/cpp/include/Loreline.h) C wrapper with:
+- **Lifecycle**: `SFS3_init/dispose/gc/update/registerThread` (hxcpp GC management)
+- **Opaque handles**: `SFS3_SmartFox*`, `SFS3_ConfigData*`, `SFS3_SFSObject*`, `SFS3_User*`, `SFS3_Room*`
+- **Type conversions**: `SFS3_String` (ref-counted), `SFS3_Value` (tagged union)
+- **Event callbacks**: `SFS3_addEventListener` with C function pointers + userData
+- **Requests**: `SFS3_sendLogin/Logout/JoinRoom/PublicMessage/ExtensionRequest/...`
+- **Data access**: `SFS3_SFSObject_putInt/getString/...`, `SFS3_SFSArray_add*/get*`
+
+See [`cpp/README.md`](cpp/README.md) for full usage example and compile/link instructions.
 
 ## Protocol Support
 
@@ -25,6 +40,7 @@ haxe build.hxml
 | AS3 (Flash/AIR) | YES | YES | YES |
 | Browser JS | NO | NO | YES |
 | Node.js | YES | YES | YES |
+| C++ (hxcpp) | YES | YES | YES |
 
 ## Flash/AIR (SWC + mxmlc)
 
