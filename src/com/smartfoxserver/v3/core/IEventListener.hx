@@ -1,3 +1,3 @@
 package com.smartfoxserver.v3.core;
 
-typedef IEventListener = ApiEvent->Void;
+typedef IEventListener<T:ApiEvent> = T->Void;

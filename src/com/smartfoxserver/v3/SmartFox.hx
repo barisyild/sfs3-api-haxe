@@ -462,7 +462,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 * @see SFSEvent
 	 * @see EventParam
 	 */
-	public function addEventListener(eventType:String, listener:IEventListener):Void {
+	public function addEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void {
 		dispatcher.addEventListener(eventType, listener);
 	}
 
@@ -474,7 +474,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 *
 	 * @see SFSEvent
 	 */
-	public function removeEventListener(eventType:String, listener:IEventListener):Void {
+	public function removeEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void {
 		dispatcher.removeEventListener(eventType, listener);
 	}
 

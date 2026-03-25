@@ -21,8 +21,8 @@ interface ISmartFox {
 	public function setExecutor(service:Executor):Void;
 	public function getScheduler():Executor;
 
-	public function addEventListener(eventType:String, listener:IEventListener):Void;
-	public function removeEventListener(eventType:String, listener:IEventListener):Void;
+	public function addEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void;
+	public function removeEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void;
 	public function removeAllEventListeners():Void;
 
 	public function getLastJoinedRoom():Room;

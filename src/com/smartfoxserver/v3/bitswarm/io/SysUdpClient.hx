@@ -50,7 +50,7 @@ class SysUdpClient extends BaseUdpSocketClient {
 	private var udpKeepAlive:Bool;
 	private var lastUdpPacketTime:Float;
 
-	private var udpHandEventListener:IEventListener;
+	private var udpHandEventListener:IEventListener<ApiEvent>;
 
 	private var rdpTx:RDPTransport;
 	private var serverEndPoint:EndPoint;

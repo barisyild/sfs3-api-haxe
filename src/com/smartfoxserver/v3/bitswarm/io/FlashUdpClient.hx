@@ -42,7 +42,7 @@ class FlashUdpClient extends BaseUdpSocketClient {
 	private var udpTimeoutTimer:Timer;
 	private var timeoutCheckTimer:Timer;
 
-	private var udpHandEventListener:IEventListener;
+	private var udpHandEventListener:IEventListener<ApiEvent>;
 
 	private var rdpTx:RDPTransport;
 	private var serverEndPoint:EndPoint;

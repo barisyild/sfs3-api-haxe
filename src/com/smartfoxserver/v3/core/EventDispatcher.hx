@@ -3,7 +3,7 @@ import hx.concurrent.collection.SynchronizedMap;
 import hx.concurrent.collection.CopyOnWriteArray;
 import haxe.Exception;
 class EventDispatcher {
-    private final listeners:SynchronizedMap<String, CopyOnWriteArray<IEventListener>>;
+    private final listeners:SynchronizedMap<String, CopyOnWriteArray<IEventListener<ApiEvent>>>;
     private final target:Dynamic;
     private final log:Logger;
 
@@ -15,23 +15,23 @@ class EventDispatcher {
         log = LoggerFactory.getLogger(Type.getClass(this));
     }
 
-    public function addEventListener(eventType:String, listener:IEventListener):Void
+    public function addEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void
     {
-        var list:CopyOnWriteArray<IEventListener> = listeners.get(eventType);
+        var list:CopyOnWriteArray<IEventListener<T>> = cast listeners.get(eventType);
 
         if (list == null)
         {
-            list = new CopyOnWriteArray<IEventListener>();
-            listeners.set(eventType, list);
+            list = new CopyOnWriteArray<IEventListener<T>>();
+            listeners.set(eventType, cast list);
         }
 
         if (!list.contains(listener))
             list.add(listener);
     }
 
-    public function removeEventListener(eventType:String, listener:IEventListener):Void
+    public function removeEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void
     {
-        var list:CopyOnWriteArray<IEventListener> = listeners.get(eventType);
+        var list:CopyOnWriteArray<IEventListener<T>> = cast listeners.get(eventType);
 
         if (list == null)
             return;
@@ -41,7 +41,7 @@ class EventDispatcher {
 
     public function dispatchEvent(evt:ApiEvent):Void
     {
-        var list:CopyOnWriteArray<IEventListener> = listeners.get(evt.getType());
+        var list:CopyOnWriteArray<IEventListener<ApiEvent>> = listeners.get(evt.getType());
 
         if (list == null)
             return;

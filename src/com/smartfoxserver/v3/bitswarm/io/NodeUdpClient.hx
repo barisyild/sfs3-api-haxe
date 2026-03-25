@@ -34,7 +34,7 @@ class NodeUdpClient extends BaseUdpSocketClient {
 	private var maxUdpIdleSecs:Float;
 	private var udpKeepAlive:Bool;
 	private var lastUdpPacketTime:Float;
-	private var udpHandEventListener:IEventListener;
+	private var udpHandEventListener:IEventListener<ApiEvent>;
 	private var rdpTx:RDPTransport;
 	private var serverEndPoint:EndPoint;
 	private var timeoutTimer:Null<Timer>;

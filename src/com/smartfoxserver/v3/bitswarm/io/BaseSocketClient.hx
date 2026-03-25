@@ -9,6 +9,7 @@ import com.smartfoxserver.v3.core.Logger;
 import com.smartfoxserver.v3.core.LoggerFactory;
 import haxe.io.Bytes;
 import hx.concurrent.executor.Executor;
+import com.smartfoxserver.v3.core.ApiEvent;
 
 abstract class BaseSocketClient implements ISocketClient {
 	private var log:Logger;
@@ -29,11 +30,11 @@ abstract class BaseSocketClient implements ISocketClient {
 
 	public function destroy(params:Dynamic):Void {}
 
-	public function addEventListener(eventType:String, listener:IEventListener):Void {
+	public function addEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void {
 		evtDispatcher.addEventListener(eventType, listener);
 	}
 
-	public function removeEventListener(eventType:String, listener:IEventListener):Void {
+	public function removeEventListener<T:ApiEvent>(eventType:String, listener:IEventListener<T>):Void {
 		evtDispatcher.removeEventListener(eventType, listener);
 	}
 
