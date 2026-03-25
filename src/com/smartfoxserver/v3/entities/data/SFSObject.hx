@@ -68,6 +68,11 @@ class SFSObject implements ISFSObject {
         return serializer.object2json(this.flatten());
     }
 
+    public function toObject():Dynamic
+    {
+        return DefaultSFSDataSerializer.getInstance().sfsObjectToGenericObject(this);
+    }
+
     public function getDump(?noFormat:Bool):String {
         if (noFormat == null || noFormat == false) {
             return this.size() == 0 ? "[ Empty SFSObject ]" : DefaultObjectDumpFormatter.prettyPrintDump(this.dump());

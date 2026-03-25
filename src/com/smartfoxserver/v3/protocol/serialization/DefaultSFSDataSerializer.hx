@@ -424,6 +424,48 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         }
     }
 
+    public function sfsObjectToGenericObject(sfso:ISFSObject):Dynamic
+    {
+        var obj:Dynamic = { };
+        _scanSFSObject(sfso, obj);
+
+        return obj;
+    }
+
+    private function _scanSFSObject(sfso:ISFSObject, obj:Dynamic):Void
+    {
+        var keys:Array<String>=sfso.getKeys();
+
+        for(key in keys)
+        {
+            var item:SFSDataWrapper = sfso.get(key);
+            var itemTypeId:SFSDataType = item.getTypeId();
+            var itemObject:Dynamic = item.getObject();
+
+            if(itemTypeId == SFSDataType.NULL)
+                Reflect.setField(obj,key, null);
+
+            else if(itemTypeId == SFSDataType.SFS_OBJECT)
+            {
+                var subObj:Dynamic = { };
+                Reflect.setField(obj, key, subObj);
+
+                // Call recursively
+                _scanSFSObject(cast(itemObject, ISFSObject), subObj);
+            }
+
+            else if(itemTypeId == SFSDataType.SFS_ARRAY)
+                Reflect.setField(obj,key, cast(itemObject, SFSArray).toArray());
+
+                // Skip CLASS types
+            //else if(itemTypeId == SFSDataType.CLASS)
+                //continue;
+
+            else
+                Reflect.setField(obj, key, itemObject);
+        }
+    }
+
     public function genericArrayToSFSArray(arr:Array<Dynamic>, forceToNumber:Bool=false):SFSArray
     {
         var sfsa:SFSArray = new SFSArray();
@@ -466,6 +508,45 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
             else if(Std.isOfType(item, String))
                 sfsa.addString(item);
 
+        }
+    }
+
+    public function sfsArrayToGenericArray(sfsa:ISFSArray):Array<Dynamic>
+    {
+        var arr:Array<Dynamic> = [];
+        _scanSFSArray(sfsa, arr);
+
+        return arr;
+    }
+
+    private function _scanSFSArray(sfsa:ISFSArray, arr:Array<Dynamic>):Void
+    {
+        for(ii in 0...sfsa.size())
+        {
+            var item:SFSDataWrapper = sfsa.getElementAt(ii);
+            var itemTypeId:SFSDataType = item.getTypeId();
+            var itemObject:Dynamic = item.getObject();
+            if(itemTypeId == SFSDataType.NULL)
+                arr.push(null);
+
+            else if(itemTypeId==SFSDataType.SFS_OBJECT)
+                arr.push(cast(itemObject, SFSObject).toObject());
+
+            else if(itemTypeId==SFSDataType.SFS_ARRAY)
+            {
+                var subArr:Array<Dynamic> = [];
+                arr.push(subArr);
+
+                // Call recursively
+                _scanSFSArray(cast(itemObject, ISFSArray), subArr);
+            }
+
+                // Skip CLASS types
+            //else if(itemTypeId==SFSDataType.CLASS)
+                //continue;
+
+            else
+                arr.push(itemObject);
         }
     }
 

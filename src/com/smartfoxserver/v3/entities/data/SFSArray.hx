@@ -68,6 +68,11 @@ class SFSArray implements ISFSArray {
         return this.serializer.array2binary(this);
     }
 
+    public function toArray():Array<Dynamic>
+    {
+        return DefaultSFSDataSerializer.getInstance().sfsArrayToGenericArray(this);
+    }
+
     public function toJson():String {
         return DefaultSFSDataSerializer.getInstance().array2json(this.flatten());
     }
