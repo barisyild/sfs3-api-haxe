@@ -17,6 +17,8 @@ interface ISFSArray {
 
     function toBinary():BytesData;
 
+    function toArray():Array<Dynamic>;
+
     function toJson():String;
 
     function getHexDump():String;

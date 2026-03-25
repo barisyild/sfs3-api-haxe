@@ -19,6 +19,8 @@ interface ISFSObject {
 
     function toJson():String;
 
+    function toObject():Dynamic;
+
     function getDump(?var1:Bool):String;
 
     function getHexDump():String;
