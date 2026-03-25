@@ -96,7 +96,11 @@ class ApiEvent {
         return params;
     }
 
-    public function getParam(name:String):Dynamic {
+    public function hasParam(name:String):Bool {
+        return params.exists(name);
+    }
+
+    public function getParam<T>(name:String):T {
         return params.get(name);
     }
 }
