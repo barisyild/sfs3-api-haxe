@@ -13,13 +13,13 @@ class NullUdpClient extends BaseUdpSocketClient {
 		super(bitSwarm);
 	}
 
-	public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {}
+	override public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {}
 
-	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {}
+	override public function disconnect(reason:String = "Manual", errMessage:String = null):Void {}
 
-	public function kill():Void {}
+	override public function kill():Void {}
 
-	public function write(data:Bytes, txType:TransportType = null):Void {}
+	override public function write(data:Bytes, txType:TransportType = null):Void {}
 
 	override public function init(params:Dynamic):Void {}
 

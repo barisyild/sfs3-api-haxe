@@ -24,7 +24,7 @@ class WebSocketClient extends BaseSocketClient {
 		cfg = bitSwarm.getSmartFox().getConfig();
 	}
 
-	public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
+	override public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
 		if (socketState != SocketState.Disconnected)
 			throw new Exception("Can't connect now, current state is: " + Std.string(socketState));
 
@@ -32,6 +32,18 @@ class WebSocketClient extends BaseSocketClient {
 		this.serverPort = port;
 		socketState = SocketState.Connecting;
 
+		#if (flash || openfl)
+		doConnect();
+		#elseif (target.threaded)
+		threadPool.submit(function():Void {
+			doConnect();
+		});
+		#else
+		doConnect();
+		#end
+	}
+
+	private function doConnect():Void {
 		try {
 			if (ws != null) {
 				ws.onopen = function() {};
@@ -68,9 +80,7 @@ class WebSocketClient extends BaseSocketClient {
 			#if (flash || openfl)
 			flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, onEnterFrame);
 			#elseif (target.threaded)
-			threadPool.submit(function():Void {
-				processLoop();
-			});
+			processLoop();
 			#end
 		} catch (ex:Dynamic) {
 			handleError(Std.string(ex));
@@ -83,7 +93,7 @@ class WebSocketClient extends BaseSocketClient {
 		evtDispatcher.removeAll();
 	}
 
-	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
+	override public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		if (socketState == SocketState.Disconnected)
 			throw new Exception("WebSocket connection is already closed");
 
@@ -96,7 +106,7 @@ class WebSocketClient extends BaseSocketClient {
 		evtDispatcher.dispatchEvent(new SocketEvent(SocketEvent.Disconnected, params));
 	}
 
-	public function kill():Void {
+	override public function kill():Void {
 		try {
 			closeSocket();
 		} catch (ex:Dynamic) {
@@ -104,7 +114,7 @@ class WebSocketClient extends BaseSocketClient {
 		}
 	}
 
-	public function write(data:Bytes, txType:TransportType = null):Void {
+	override public function write(data:Bytes, txType:TransportType = null):Void {
 		if (socketState == SocketState.Connected && ws != null) {
 			try {
 				ws.sendBytes(data);

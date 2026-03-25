@@ -53,7 +53,7 @@ class NodeUdpClient extends BaseUdpSocketClient {
 		bitSwarm.addEventListener(SocketEvent.UdpHandshake, udpHandEventListener);
 	}
 
-	public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
+	override public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
 		if (socketState != SocketState.Disconnected)
 			throw new Exception("Can't connect now, current state is: " + Std.string(socketState));
 
@@ -80,7 +80,7 @@ class NodeUdpClient extends BaseUdpSocketClient {
 		}
 	}
 
-	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
+	override public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		closeSocketAndCleanUp();
 
 		var params = new PlatformStringMap<Dynamic>();
@@ -101,11 +101,11 @@ class NodeUdpClient extends BaseUdpSocketClient {
 		evtDispatcher.removeAll();
 	}
 
-	public function kill():Void {
+	override public function kill():Void {
 		throw new Exception("kill() is not supported for UDP");
 	}
 
-	public function write(data:Bytes, txType:TransportType = null):Void {
+	override public function write(data:Bytes, txType:TransportType = null):Void {
 		if (txType == null) {
 			sendRaw(data);
 		} else {

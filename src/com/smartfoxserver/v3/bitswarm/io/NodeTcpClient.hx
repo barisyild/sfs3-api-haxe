@@ -35,7 +35,7 @@ class NodeTcpClient extends BaseSocketClient {
 		cfg = bitSwarm.getSmartFox().getConfig();
 	}
 
-	public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
+	override public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
 		if (socketState != SocketState.Disconnected)
 			throw new Exception("Can't connect now, current state is: " + Std.string(socketState));
 
@@ -117,7 +117,7 @@ class NodeTcpClient extends BaseSocketClient {
 		evtDispatcher.removeAll();
 	}
 
-	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
+	override public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		if (socketState == SocketState.Disconnected)
 			throw new Exception("TCP connection is already closed");
 		closeSocket();
@@ -127,7 +127,7 @@ class NodeTcpClient extends BaseSocketClient {
 		evtDispatcher.dispatchEvent(new SFSocketEvent(SFSocketEvent.Disconnected, params));
 	}
 
-	public function kill():Void {
+	override public function kill():Void {
 		try {
 			if (tcpSocket != null)
 				tcpSocket.destroy();
@@ -136,7 +136,7 @@ class NodeTcpClient extends BaseSocketClient {
 		}
 	}
 
-	public function write(data:Bytes, txType:TransportType = null):Void {
+	override public function write(data:Bytes, txType:TransportType = null):Void {
 		outPacketQ.push(data);
 		tryFlushWriteQueue();
 	}

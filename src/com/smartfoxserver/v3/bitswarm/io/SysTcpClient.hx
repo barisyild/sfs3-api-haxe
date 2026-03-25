@@ -32,7 +32,7 @@ class SysTcpClient extends BaseSocketClient {
 		cfg = bitSwarm.getSmartFox().getConfig();
 	}
 
-	public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
+	override public function connect(host:String, port:Int, timeoutMillis:Int = 0):Void {
 		if (socketState != SocketState.Disconnected)
 			throw new Exception("Can't connect now, current state is: " + Std.string(socketState));
 
@@ -41,6 +41,13 @@ class SysTcpClient extends BaseSocketClient {
 
 		socketState = SocketState.Connecting;
 
+		var _timeoutMillis = timeoutMillis;
+		threadPool.submit(function():Void {
+			doConnect(_timeoutMillis);
+		});
+	}
+
+	private function doConnect(timeoutMillis:Int):Void {
 		try {
 			tcpSocket = new Socket();
 			tcpSocket.setBlocking(true);
@@ -48,10 +55,11 @@ class SysTcpClient extends BaseSocketClient {
 			if (timeoutMillis > 0)
 				tcpSocket.setTimeout(timeoutMillis / 1000.0);
 
-			tcpSocket.connect(new Host(host), port);
+			var resolvedHost = new Host(serverHost);
+			tcpSocket.connect(resolvedHost, serverPort);
+			tcpSocket.setTimeout(0);
 			socketState = SocketState.Connected;
 
-			// Start reader / writer via thread pool executor
 			threadPool.submit(function():Void {
 				readLoop();
 			});
@@ -59,7 +67,6 @@ class SysTcpClient extends BaseSocketClient {
 				writeLoop();
 			});
 
-			// Connection success event
 			var evt = new SocketEvent(SocketEvent.Connected);
 			evtDispatcher.dispatchEvent(evt);
 		} catch (ex:Exception) {
@@ -67,7 +74,6 @@ class SysTcpClient extends BaseSocketClient {
 
 			log.warn("Connection to " + serverHost + ":" + serverPort + " failed -- Cause: " + ex.message);
 
-			// Connection failure event
 			var evt = new SocketEvent(SocketEvent.Error);
 			evt.getParams().set(EventParam.ErrorMessage, ex.message);
 			evtDispatcher.dispatchEvent(evt);
@@ -83,7 +89,7 @@ class SysTcpClient extends BaseSocketClient {
 		evtDispatcher.removeAll();
 	}
 
-	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
+	override public function disconnect(reason:String = "Manual", errMessage:String = null):Void {
 		if (socketState == SocketState.Disconnected)
 			throw new Exception("TCP connection is already closed");
 
@@ -100,9 +106,10 @@ class SysTcpClient extends BaseSocketClient {
 	 * Simulates an unexpected disconnection, by shutting down the tcp socket abruptly.
 	 * Useful to test the reconnection system.
 	 */
-	public function kill():Void {
+	override public function kill():Void {
 		try {
-			tcpSocket.close();
+			if (tcpSocket != null)
+				tcpSocket.close();
 		} catch (ex:Exception) {
 			log.warn("Unexpected socket error", ex);
 		}
@@ -111,7 +118,7 @@ class SysTcpClient extends BaseSocketClient {
 	/*
 	 * Add to the outgoing packet queue
 	 */
-	public function write(data:Bytes, txType:TransportType = null):Void {
+	override public function write(data:Bytes, txType:TransportType = null):Void {
 		outPacketQ.push(data);
 	}
 
@@ -186,7 +193,6 @@ class SysTcpClient extends BaseSocketClient {
 				if (packet.length == 0)
 					break;
 
-				// Write all bytes to the socket
 				var pos = 0;
 				var remaining = packet.length;
 

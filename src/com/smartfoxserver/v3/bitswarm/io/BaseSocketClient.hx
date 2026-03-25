@@ -2,10 +2,12 @@ package com.smartfoxserver.v3.bitswarm.io;
 
 import com.smartfoxserver.v3.bitswarm.BitSwarmClient;
 import com.smartfoxserver.v3.bitswarm.SocketState;
+import com.smartfoxserver.v3.bitswarm.TransportType;
 import com.smartfoxserver.v3.core.EventDispatcher;
 import com.smartfoxserver.v3.core.IEventListener;
 import com.smartfoxserver.v3.core.Logger;
 import com.smartfoxserver.v3.core.LoggerFactory;
+import haxe.io.Bytes;
 import hx.concurrent.executor.Executor;
 
 abstract class BaseSocketClient implements ISocketClient {
@@ -42,6 +44,14 @@ abstract class BaseSocketClient implements ISocketClient {
 	public function getDispatcher():EventDispatcher {
 		return evtDispatcher;
 	}
+
+	public function connect(host:String, port:Int, timeValue:Int = 0):Void {}
+
+	public function disconnect(reason:String = "Manual", errMessage:String = null):Void {}
+
+	public function kill():Void {}
+
+	public function write(data:Bytes, txType:TransportType = null):Void {}
 
 	public function isConnected():Bool {
 		return socketState == SocketState.Connected;
