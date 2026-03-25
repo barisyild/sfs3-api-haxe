@@ -10,22 +10,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, font as tkfont
 
 # SFS3 API (single file, long names)
-import SFS3_API_PY as _SFS3
-
-# SFS3 namespace (use SFS3.SmartFox, SFS3.ConfigData, etc.)
-class SFS3:
-    SmartFox = _SFS3.SmartFox
-    ConfigData = _SFS3.ConfigData
-    SFSEvent = _SFS3.SFSEvent
-    EventParam = _SFS3.EventParam
-    LoginRequest = _SFS3.LoginRequest
-    LogoutRequest = _SFS3.LogoutRequest
-    JoinRoomRequest = _SFS3.JoinRoomRequest
-    PublicMessageRequest = _SFS3.PublicMessageRequest
-    SetRoomVariablesRequest = _SFS3.SetRoomVariablesRequest
-    SFSRoomVariable = _SFS3.SFSRoomVariable
-    ExtensionRequest = _SFS3.ExtensionRequest
-    SFSObject = _SFS3.SFSObject
+import SFS3_API_PY as SFS3
 
 # Default connection
 DEFAULT_HOST = "127.0.0.1"
