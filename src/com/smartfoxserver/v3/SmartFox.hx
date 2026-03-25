@@ -767,6 +767,13 @@ class SmartFox implements ISmartFox implements IDispatchable {
 
 			resetState();
 		});
+		#else
+		stopExecutors();
+
+		handshakeComplete = false;
+		encryptionComplete = false;
+
+		resetState();
 		#end
 	}
 
@@ -876,5 +883,9 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			shutdownApi();
 
 		dispatcher.dispatchEvent(new SFSEvent(SFSEvent.CONNECTION, evt.getParams()));
+	}
+
+	public function dispose():Void {
+		shutdownApi();
 	}
 }
