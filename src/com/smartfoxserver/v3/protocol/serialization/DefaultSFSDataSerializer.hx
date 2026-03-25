@@ -523,7 +523,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     {
         for(ii in 0...sfsa.size())
         {
-            var item:SFSDataWrapper = sfsa.getElementAt(ii);
+            var item:SFSDataWrapper = sfsa.get(ii);
             var itemTypeId:SFSDataType = item.getTypeId();
             var itemObject:Dynamic = item.getObject();
             if(itemTypeId == SFSDataType.NULL)
