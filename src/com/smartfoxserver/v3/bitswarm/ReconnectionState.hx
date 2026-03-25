@@ -3,7 +3,7 @@ package com.smartfoxserver.v3.bitswarm;
 class ReconnectionState
 {
     private var isPending:Bool;
-    private var firstAttemptTime:Int;
+    private var firstAttemptTime:Float;
     private var counter:Int;
 
     /*
@@ -11,10 +11,10 @@ class ReconnectionState
 	 * @param firstAttemptTime			timestamp of first reconnection attempt
 	 * @param counter					keeps track of number of attempts
 	 */
-    public function new(isPending:Bool = true, firstAttemptTime:Null<Int> = null, counter:Int = 1)
+    public function new(isPending:Bool = true, firstAttemptTime:Null<Float> = null, counter:Int = 1)
     {
         if(firstAttemptTime == null)
-            firstAttemptTime = Std.int(Date.now().getTime());
+            firstAttemptTime = Date.now().getTime();
 
         this.isPending = isPending;
         this.firstAttemptTime = firstAttemptTime;
@@ -26,7 +26,7 @@ class ReconnectionState
         return isPending;
     }
 
-    public function getFirstAttemptTime():Int
+    public function getFirstAttemptTime():Float
     {
         return firstAttemptTime;
     }
