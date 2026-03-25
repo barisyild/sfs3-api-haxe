@@ -1,9 +1,9 @@
 package com.smartfoxserver.v3.entities.data;
 
 import com.smartfoxserver.v3.bitswarm.util.ByteUtils;
-import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.DefaultObjectDumpFormatter;
-import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.DefaultSFSDataSerializer;
-import com.smartfoxserver.v3.bitswarm.io.protocol.serialization.ISFSDataSerializer;
+import com.smartfoxserver.v3.protocol.serialization.DefaultObjectDumpFormatter;
+import com.smartfoxserver.v3.protocol.serialization.DefaultSFSDataSerializer;
+import com.smartfoxserver.v3.protocol.serialization.ISFSDataSerializer;
 import haxe.io.Bytes;
 import com.smartfoxserver.v3.exceptions.UnsupportedOperationException;
 import haxe.io.BytesData;

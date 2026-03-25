@@ -1,4 +1,4 @@
-package com.smartfoxserver.v3.bitswarm.io.protocol.serialization;
+package com.smartfoxserver.v3.protocol.serialization;
 
 import haxe.io.Bytes;
 import com.smartfoxserver.v3.entities.data.ISFSArray;
