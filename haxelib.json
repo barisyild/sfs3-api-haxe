@@ -1,0 +1,22 @@
+{
+    "name": "sfs3-api-haxe",
+    "license": "MIT",
+    "tags": [
+        "haxe",
+        "smartfoxserver-3",
+        "smartfoxserver"
+    ],
+    "description": "SmartFoxServer 3 client api for haxe",
+    "contributors": [
+		"barisyild"
+    ],
+    "releasenote": "release",
+    "version": "1.0.0",
+    "url": "https://github.com/barisyild/sfs3-api-haxe",
+    "dependencies": {
+        "haxe-crypto":"0.0.7",
+        "colyseus-websocket":"1.0.15",
+        "haxe-concurrent": "5.1.5"
+    },
+    "classPath": "src/"
+}
