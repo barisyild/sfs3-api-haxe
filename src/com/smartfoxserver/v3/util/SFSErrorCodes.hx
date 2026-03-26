@@ -91,10 +91,16 @@ class SFSErrorCodes {
         {
             for(j in 0...params.length)
             {
-                ss = StringTools.replace(ss, "%s", params[j]);
+                ss = replaceFirst(ss, "%s", params[j]);
             }
         }
 
         return ss;
+    }
+
+    private static function replaceFirst(s:String, search:String, replacement:String):String {
+        var index = s.indexOf(search);
+        if (index == -1) return s;
+        return s.substring(0, index) + replacement + s.substring(index + search.length);
     }
 }
