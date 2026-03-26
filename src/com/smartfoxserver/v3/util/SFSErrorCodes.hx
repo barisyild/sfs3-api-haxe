@@ -82,17 +82,16 @@ class SFSErrorCodes {
         return stringFormat(errorMap.get(code), params);
     }
 
-    private static function stringFormat(ss:String, params:Array<Dynamic>):String
+    private static function stringFormat(ss:String, params:Array<Dynamic> = null):String
     {
-        if(ss==null)
+        if(ss == null)
             return "";
 
-        if(params !=null)
+        if(params != null)
         {
             for(j in 0...params.length)
             {
-                var src:String = "{" + j + "}";
-                ss = StringTools.replace(ss,src, params[j]);
+                ss = StringTools.replace(ss, "%s", params[j]);
             }
         }
 
