@@ -152,7 +152,13 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private var lagMonitor:LagMonitor;
 
 	// Stores the custom client details about the runtime platform
-	private var clientDetails:String = "Haxe Client";
+	private var clientDetails:String =
+	#if js "JavaScript";
+	#elseif cpp "C++";
+	#elseif python "Python";
+	#elseif flash "Flash";
+	#else "Unknown";
+	#end
 	private var bitSwarm:BitSwarmClient;
 
 	// keep track of the connection status flags
