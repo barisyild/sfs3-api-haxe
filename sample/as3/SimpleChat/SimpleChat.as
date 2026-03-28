@@ -1,5 +1,6 @@
 package {
 
+import flash.display.MovieClip;
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.SimpleButton;
@@ -29,9 +30,10 @@ import com.smartfoxserver.v3.requests.ExtensionRequest;
 import com.smartfoxserver.v3.entities.variables.SFSRoomVariable;
 import com.smartfoxserver.v3.entities.data.SFSObject;
 import com.smartfoxserver.v3.bitswarm.TransportType;
+import com.smartfoxserver.v3.core.Logger;
 
 [SWF(width="920", height="600", backgroundColor="#ffffff", frameRate="30")]
-public class SimpleChat extends Sprite {
+public class SimpleChat extends MovieClip {
 
     private static const DEFAULT_HOST:String = "127.0.0.1";
     private static const DEFAULT_TCP_PORT:int = 9977;
@@ -99,6 +101,8 @@ public class SimpleChat extends Sprite {
     private var stageH:int = 600;
 
     public function SimpleChat() {
+		haxe.initSwc(this);
+	
         stage.align = StageAlign.TOP_LEFT;
         stage.scaleMode = StageScaleMode.NO_SCALE;
         stageW = stage.stageWidth;
@@ -699,6 +703,18 @@ public class SimpleChat extends Sprite {
 
     private function onConnect(e:MouseEvent):void {
         sfs = new SmartFox();
+		
+		/**
+		var ERROR = 0;
+		var WARN = 1;
+		var INFO = 2;
+		var DEBUG = 3;
+		**/
+		// Level enums will be improved.
+		
+		Logger.setLevel(3);
+		Logger.setShowPosition(false);
+		
         addSfsListeners();
 
         var cfg:ConfigData = new ConfigData();
