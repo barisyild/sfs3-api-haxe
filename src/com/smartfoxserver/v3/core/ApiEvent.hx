@@ -100,7 +100,7 @@ class ApiEvent {
         return params.exists(name);
     }
 
-    public function getParam<T>(name:String):T {
+    public function getParam(name:String):Dynamic {
         return params.get(name);
     }
 }
