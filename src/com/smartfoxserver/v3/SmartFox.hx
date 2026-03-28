@@ -170,9 +170,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 
 	public function new() {
 		#if flash
-		if(flash.Lib.current == null)
-			throw new Exception("Please call haxe.initSwc(); before instantiating the SmartFox class in Flash.");
-
 		haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos):Void {
 			flash.Lib.trace(v);
 		};

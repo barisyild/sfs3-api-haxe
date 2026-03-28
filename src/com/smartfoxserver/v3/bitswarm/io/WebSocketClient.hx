@@ -77,7 +77,7 @@ class WebSocketClient extends BaseSocketClient {
 				handleError(error);
 			};
 
-			#if (flash || openfl)
+			#if (!library && (flash || openfl))
 			flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, onEnterFrame);
 			#elseif (target.threaded)
 			processLoop();
@@ -142,7 +142,7 @@ class WebSocketClient extends BaseSocketClient {
 		evtDispatcher.dispatchEvent(evt);
 	}
 
-	#if (flash || openfl)
+	#if (!library && (flash || openfl))
 	private function onEnterFrame(e:flash.events.Event):Void {
 		if (ws != null)
 			ws.process();
@@ -159,7 +159,7 @@ class WebSocketClient extends BaseSocketClient {
 	private function closeSocket():Void {
 		socketState = SocketState.Disconnected;
 
-		#if (flash || openfl)
+		#if (!library && (flash || openfl))
 		flash.Lib.current.removeEventListener(flash.events.Event.ENTER_FRAME, onEnterFrame);
 		#end
 

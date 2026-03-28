@@ -101,8 +101,6 @@ public class SimpleChat extends MovieClip {
     private var stageH:int = 600;
 
     public function SimpleChat() {
-		haxe.initSwc(this);
-	
         stage.align = StageAlign.TOP_LEFT;
         stage.scaleMode = StageScaleMode.NO_SCALE;
         stageW = stage.stageWidth;
