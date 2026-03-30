@@ -85,6 +85,7 @@ class ReliableChannel extends BaseReliableChannel {
         channelLock.execute(function() {
             this.transport.addInBytes(data.buff.length);
             var bi = new BytesInput(data.buff);
+            bi.bigEndian = true;
             
             if (!data.header.isAck()) {
                 if (!data.header.isPing()) {

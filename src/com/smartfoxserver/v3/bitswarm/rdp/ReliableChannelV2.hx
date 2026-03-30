@@ -70,6 +70,7 @@ class ReliableChannelV2 extends BaseReliableChannel {
     private function processIncomingData(data:UDPData):Void {
         this.transport.addInBytes(data.buff.length);
         var bi = new BytesInput(data.buff);
+        bi.bigEndian = true;
 
         if (data.header.isAck()) {
             bi.position = 1;

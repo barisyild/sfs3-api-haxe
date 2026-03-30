@@ -15,6 +15,7 @@ class UdpIOHandler extends SpecializedIOHandler {
 	
 	public function handleRead(byteData:Bytes, txType:TransportType):Void {
 		var dataBuffer = new BytesInput(byteData);
+		dataBuffer.bigEndian = true;
 		var headerByte = dataBuffer.readByte();
 		var header = ProtocolUtils.decodePacketHeader(headerByte);
 		

@@ -49,6 +49,8 @@ class TransportConfig {
         var bytes:Bytes = Bytes.ofData(bytesData);
         var txCfg = new TransportConfig();
         var bi = new BytesInput(bytes);
+        bi.bigEndian = true;
+
         txCfg.reliableImpl = bi.readByte();
         txCfg.maxRtxAttempts = bi.readInt32();
         txCfg.rtxBaseTimeout = bi.readInt32();

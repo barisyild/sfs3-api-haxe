@@ -49,6 +49,7 @@ class ReliableChannelV3 extends BaseReliableChannel {
         this.transport.addInPacket();
         this.transport.addInBytes(data.buff.length);
         var bi = new BytesInput(data.buff);
+        bi.bigEndian = true;
 
         if (data.header.isAck()) {
             bi.position = 1;

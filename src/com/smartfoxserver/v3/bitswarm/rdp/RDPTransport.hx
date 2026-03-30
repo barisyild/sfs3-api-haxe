@@ -70,6 +70,7 @@ class RDPTransport implements ITransport {
 
     public function dataReceived(bytes:Bytes, sender:EndPoint):Void {
         var bi = new BytesInput(bytes);
+        bi.bigEndian = true;
         var header = PacketHeader.decode(bi);
         var udpData = new UDPData(header, bytes, sender);
         

@@ -18,6 +18,7 @@ class UnreliableChannel extends BaseChannel {
     public function dataReceived(data:UDPData):Void {
         var buff = data.buff;
         var bi = new BytesInput(buff);
+        bi.bigEndian = true;
         var seqId = bi.readInt32();
         var delta = seqId - this.lastDispatchedSeqId;
 

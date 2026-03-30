@@ -127,6 +127,7 @@ class FragManager {
 
         var fragId = this.fragIdGen.incrementAndGet() - 1;
         var sourceBuff = new BytesInput(packet.getData());
+        sourceBuff.bigEndian = true;
 
         for (i in 0...totFrags) {
             var fragBytesSize = this.cfg.mtu;
