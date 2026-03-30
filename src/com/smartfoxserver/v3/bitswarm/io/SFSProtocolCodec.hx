@@ -94,8 +94,8 @@ class SFSProtocolCodec implements IProtocolCodec
         request.setContent(sfso.toBinary());
 
         // Debug
-        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL)
-            log.info("Outgoing, {}, {}", request.getTransport(), sfso.getDump());
+        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL && log.isDebugEnabled())
+            log.debug("Outgoing, {}, {}", request.getTransport(), sfso.getDump());
 
         ioHandler.onDataWrite(request);
     }

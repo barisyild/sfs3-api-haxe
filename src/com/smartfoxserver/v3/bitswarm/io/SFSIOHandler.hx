@@ -156,10 +156,10 @@ class SFSIOHandler extends BaseIOHandler
             if (isCompressed)
                 log.debug(' (cmp: ${originalSize} / ${byteData.length})');
 
-            if (binDataBytes.length < MAX_PACKET_DEBUG_LEN)
-                log.info("Outgoing, {}, {}", request.getTransport(), ByteUtils.hexDump(byteData.getData()));
+            if (binDataBytes.length < MAX_PACKET_DEBUG_LEN && log.isDebugEnabled())
+                log.debug("Outgoing, {}, {}", request.getTransport(), ByteUtils.hexDump(byteData.getData()));
             else
-                log.info("Outgoing, {}, Size: {}, Dump omitted", request.getTransport(), byteData.length);
+                log.debug("Outgoing, {}, Size: {}, Dump omitted", request.getTransport(), byteData.length);
         }
         // --- DEBUG -------------------------------------------------------------------------------------------------
 
