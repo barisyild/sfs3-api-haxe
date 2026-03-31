@@ -16,21 +16,21 @@ import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 import flash.ui.Keyboard;
 
-import com.smartfoxserver.v3.SmartFox;
-import com.smartfoxserver.v3.ConfigData;
-import com.smartfoxserver.v3.core.SFSEvent;
-import com.smartfoxserver.v3.core.EventParam;
-import com.smartfoxserver.v3.core.ApiEvent;
-import com.smartfoxserver.v3.requests.LoginRequest;
-import com.smartfoxserver.v3.requests.LogoutRequest;
-import com.smartfoxserver.v3.requests.JoinRoomRequest;
-import com.smartfoxserver.v3.requests.PublicMessageRequest;
-import com.smartfoxserver.v3.requests.SetRoomVariablesRequest;
-import com.smartfoxserver.v3.requests.ExtensionRequest;
-import com.smartfoxserver.v3.entities.variables.SFSRoomVariable;
-import com.smartfoxserver.v3.entities.data.SFSObject;
-import com.smartfoxserver.v3.bitswarm.TransportType;
-import com.smartfoxserver.v3.core.Logger;
+import sfs3.client.SmartFox;
+import sfs3.client.ConfigData;
+import sfs3.client.core.SFSEvent;
+import sfs3.client.core.EventParam;
+import sfs3.client.core.ApiEvent;
+import sfs3.client.requests.LoginRequest;
+import sfs3.client.requests.LogoutRequest;
+import sfs3.client.requests.JoinRoomRequest;
+import sfs3.client.requests.PublicMessageRequest;
+import sfs3.client.requests.SetRoomVariablesRequest;
+import sfs3.client.requests.ExtensionRequest;
+import sfs3.client.entities.variables.SFSRoomVariable;
+import sfs3.client.entities.data.SFSObject;
+import sfs3.client.bitswarm.TransportType;
+import sfs3.client.core.Logger;
 
 [SWF(width="920", height="600", backgroundColor="#ffffff", frameRate="30")]
 public class SimpleChat extends MovieClip {
