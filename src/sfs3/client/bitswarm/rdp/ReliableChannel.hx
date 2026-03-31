@@ -64,7 +64,7 @@ class ReliableChannel extends BaseReliableChannel {
     public function destroy():Void {
         this.running = false;
         #if (openfl || flash)
-        flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+        flash.Lib.current.stage.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
         #end
     }
 
