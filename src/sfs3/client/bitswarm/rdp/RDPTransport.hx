@@ -75,7 +75,6 @@ class RDPTransport implements ITransport {
         var udpData = new UDPData(header, bytes, sender);
         
         if (header.isPing()) {
-            bi.position = 0; // reset
             var packet = PingPacket.decode(bi);
             this.handlePingPacket(packet, sender);
         } else {
