@@ -26,6 +26,7 @@
 --class-path src/override/flash
 -swf out/SFS3_API_AS3.swc
 --cmd npx shx cp out/SFS3_API_AS3.swc sample/as3/SimpleChat/SFS3_API_AS3.swc
+--cmd npx shx cp out/SFS3_API_AS3.swc sample/as3/TransportValidator/SFS3_API_AS3.swc
 
 --next
 -lib crypto

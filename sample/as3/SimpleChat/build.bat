@@ -23,7 +23,7 @@ echo Compiling SimpleChat.as ...
 REM Use -include-libraries (not -library-path) so mxmlc merges the whole SWC.
 REM -library-path only links reachable symbols; Haxe/SFS3 uses reflection and
 REM indirect types, so many SWC classes would be stripped from SimpleChat.swf.
-"!MXMLC!" SimpleChat.as -include-libraries+=SFS3_API_AS3.swc -output SimpleChat.swf
+"!MXMLC!" SimpleChat.as -include-libraries+=SFS3_API_AS3.swc -output SimpleChat.swf -advanced-telemetry
 if !errorlevel! neq 0 (
     echo.
     echo Compilation failed. Make sure AIR SDK is installed.
