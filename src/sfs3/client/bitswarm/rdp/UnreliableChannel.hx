@@ -19,11 +19,12 @@ class UnreliableChannel extends BaseChannel {
         var buff = data.buff;
         var bi = new BytesInput(buff);
         bi.bigEndian = true;
+        bi.position = 1; // skip RDP header byte
         var seqId = bi.readInt32();
         var delta = seqId - this.lastDispatchedSeqId;
 
         if (delta > 0) {
-            var packetData = bi.read(buff.length - 4); // Remaining bytes
+            var packetData = bi.read(buff.length - bi.position);
             var packet = new RDPacket(data.header, packetData, seqId, null);
             packet.setEndPoint(data.endPoint);
             this.lastDispatchedSeqId = seqId;
