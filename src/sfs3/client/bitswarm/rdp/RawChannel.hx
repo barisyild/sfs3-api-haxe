@@ -10,7 +10,7 @@ class RawChannel extends BaseChannel {
     }
 
     public function dataReceived(data:UDPData):Void {
-        var packetData = data.buff; // No need to slice buffer position like Java ByteBuffer, buff is already scaled
+        var packetData = data.buff.sub(1, data.buff.length - 1);
         var packet = new RDPacket(data.header, packetData, -1, null);
         packet.setEndPoint(data.endPoint);
         this.transport.addInBytes(packetData.length);
