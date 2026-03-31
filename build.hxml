@@ -2,8 +2,8 @@
 -lib colyseus-websocket
 -D library
 --class-path src
---macro "include('com.smartfoxserver')"
---macro "haxe.macro.Compiler.keep('com.smartfoxserver')"
+--macro "include('sfs3.client')"
+--macro "haxe.macro.Compiler.keep('sfs3.client')"
 -dce full
 
 --each

@@ -1,3 +1,3 @@
-using com.smartfoxserver.v3.bitswarm.TransportType.TransportTypeTools;
+using sfs3.client.bitswarm.TransportType.TransportTypeTools;
 using StringTools;
-using com.smartfoxserver.v3.tool.MathTool;
+using sfs3.client.tool.MathTool;
