@@ -220,7 +220,7 @@ class BlueBoxClient implements IDispatchable
                 // Dispatch the event
                 if (binData != null)
                 {
-                    var parameters:Map<String, Dynamic> = new PlatformStringMap<Dynamic>();
+                    var parameters:PlatformStringMap<Dynamic> = new PlatformStringMap<Dynamic>();
                     parameters.set(EventParam.Data, binData);
                     dispatchEvent(new BlueBoxEvent(BlueBoxEvent.DataReceived, parameters));
                 }
@@ -285,10 +285,13 @@ class BlueBoxClient implements IDispatchable
                 req.setParameter(SFS_HTTP, requestData);
 
                 req.onData = function(httpResponse:String) {
-                    if (bitswarm != null && bitswarm.isBBoxDebug())
-                        trace("INFO: BB Incoming: " + httpResponse);
+                    if (httpResponse.length > 0)
+                    {
+                        if (bitswarm != null && bitswarm.isBBoxDebug())
+                            trace("INFO: BB Incoming: " + httpResponse);
 
-                    onHttpResponse(httpResponse);
+                        onHttpResponse(httpResponse);
+                    }
                 };
 
                 req.onError = function(errorMsg:String) {
@@ -376,7 +379,7 @@ class BlueBoxClient implements IDispatchable
         if (bitswarm != null && bitswarm.isBBoxDebug())
             trace("INFO: BB Outgoing: " + request);
 
-        return StringTools.urlEncode(request);
+        return request;
     }
 
     private function toBase64String(bytes:Bytes):String
