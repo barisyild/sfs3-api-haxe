@@ -11,6 +11,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -33,6 +35,7 @@ jobs:
           haxelib git air https://github.com/tobil4sk/air
           haxelib install hxnodejs
           haxelib install hxcpp
+          haxelib install dox
       - name: Build libraries
         run: haxe build.hxml
       - uses: actions/upload-artifact@v7
@@ -83,3 +86,21 @@ jobs:
             -x "node_modules/*" \
             -x ".haxelib/*"
           haxelib submit sfs3-api.zip "$HAXELIB_PASSWORD" --always
+      - name: Generate API docs with dox
+        if: github.event_name == 'release' && github.event.action == 'published'
+        shell: bash
+        run: |
+          rm -rf docs
+          haxelib run dox -i src -o docs -in sfs3
+      - name: Setup Pages
+        if: github.event_name == 'release' && github.event.action == 'published'
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        if: github.event_name == 'release' && github.event.action == 'published'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'release' && github.event.action == 'published'
+        id: deployment
+        uses: actions/deploy-pages@v4
