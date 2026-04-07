@@ -70,3 +70,16 @@ jobs:
             out/SFS3_API_AS3.swc
             out/SFS3_API_JS.js
             out/SFS3_API_Node.js
+      - name: Publish package to Haxelib
+        if: github.event_name == 'release' && github.event.action == 'published' && secrets.HAXELIB_PASSWORD != ''
+        shell: bash
+        env:
+          HAXELIB_PASSWORD: ${{ secrets.HAXELIB_PASSWORD }}
+        run: |
+          zip -r sfs3-api.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "out/*" \
+            -x "node_modules/*" \
+            -x ".haxelib/*"
+          haxelib submit sfs3-api.zip "$HAXELIB_PASSWORD" --always
