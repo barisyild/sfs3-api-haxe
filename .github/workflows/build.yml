@@ -90,9 +90,9 @@ jobs:
         shell: bash
         run: |
           rm -rf docs
-          haxelib run dox -i src -o docs -in sfs3
-          mkdir -p docs/src
-          cp -R src/. docs/src/
+          mkdir -p docs/xml
+          haxe -D doc-gen -xml docs/xml/doc.xml --class-path src --macro "include('sfs3.client')" -js /tmp/dox-docs.js
+          haxelib run dox -i docs/xml -o docs -in sfs3.client --title "SFS3 API"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
