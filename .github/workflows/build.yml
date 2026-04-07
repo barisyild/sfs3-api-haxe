@@ -86,19 +86,3 @@ jobs:
             -x "node_modules/*" \
             -x ".haxelib/*"
           haxelib submit sfs3-api.zip "$HAXELIB_PASSWORD" --always
-      - name: Generate API docs with dox
-        shell: bash
-        run: |
-          rm -rf docs
-          mkdir -p docs/xml
-          haxe -D doc-gen -xml docs/xml/doc.xml --class-path src --macro "include('sfs3.client')" -js /tmp/dox-docs.js
-          haxelib run dox -i docs/xml -o docs -in sfs3.client --title "SFS3 API"
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
