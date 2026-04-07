@@ -44,14 +44,10 @@ jobs:
           haxelib install hxcpp
           haxelib install dox
 
-      - name: Generate XML docs
+      - name: Generate docs
         run: |
           mkdir -p docs/xml
-          haxe -xml docs/xml/doc.xml -D doc-gen --class-path src --macro "include('sfs3.client')" -js /tmp/dox-docs.js
-
-      - name: Generate HTML docs
-        run: |
-          haxelib run dox -i docs/xml -o docs --toplevel-package sfs3.client --title "SFS3 API"
+          haxe docs.hxml
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

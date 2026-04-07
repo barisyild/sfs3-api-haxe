@@ -1,0 +1,12 @@
+-lib haxe-concurrent
+-lib colyseus-websocket
+-lib crypto
+-lib dox
+-D library
+-D doc-gen
+-cp src
+--macro "include('sfs3.client')"
+--macro "haxe.macro.Compiler.keep('sfs3.client')"
+-xml docs/xml/doc.xml
+-js /tmp/dox-docs.js
+--cmd haxelib run dox -i docs/xml -o docs --toplevel-package sfs3.client --title "SFS3 API"
