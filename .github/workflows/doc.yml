@@ -1,0 +1,70 @@
+name: Generate and Deploy Docs
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Node.js dependencies
+        run: npm install -g shx
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+
+      - name: Install Haxe dependencies
+        run: |
+          haxelib install crypto
+          haxelib install colyseus-websocket
+          haxelib install haxe-concurrent
+          haxelib install hxjava
+          haxelib git air https://github.com/tobil4sk/air
+          haxelib install hxnodejs
+          haxelib install hxcpp
+          haxelib install dox
+
+      - name: Generate XML docs
+        run: |
+          mkdir -p docs/xml
+          haxe -xml docs/xml/doc.xml -D doc-gen --class-path src --macro "include('sfs3.client')" -js /tmp/dox-docs.js
+
+      - name: Generate HTML docs
+        run: |
+          haxelib run dox -i docs/xml -o docs --toplevel-package sfs3.client --title "SFS3 API"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
