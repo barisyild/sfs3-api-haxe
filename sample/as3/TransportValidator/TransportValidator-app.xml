@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application xmlns="http://ns.adobe.com/air/application/51.0">
+    <id>com.smartfoxserver.v3.samples.TransportValidator</id>
+    <versionNumber>1.0.0</versionNumber>
+    <filename>TransportValidator</filename>
+
+    <name>SmartFoxServer 3 - Transport Validator</name>
+    <description>SFS3 Transport type validation test</description>
+
+    <initialWindow>
+        <content>TransportValidator.swf</content>
+        <title>SFS3 Transport Validator</title>
+        <systemChrome>standard</systemChrome>
+        <transparent>false</transparent>
+        <visible>true</visible>
+        <width>900</width>
+        <height>700</height>
+        <minimizable>true</minimizable>
+        <maximizable>true</maximizable>
+        <resizable>true</resizable>
+    </initialWindow>
+</application>
