@@ -165,6 +165,9 @@ public:
     void sendExtensionRequest(const char* cmd, SFSObject* params = nullptr, int roomId = -1, int tx = -1) {
         ensure(); SFS3_sendExtensionRequest(h_, cmd, params ? params->handle() : nullptr, roomId, tx);
     }
+    void sendSetUserVariables(SFSObject* vars) {
+        ensure(); SFS3_sendSetUserVariables(h_, vars ? vars->handle() : nullptr);
+    }
     void sendSubscribeRoomGroup(const char* gid)   { ensure(); SFS3_sendSubscribeRoomGroup(h_, gid); }
     void sendUnsubscribeRoomGroup(const char* gid) { ensure(); SFS3_sendUnsubscribeRoomGroup(h_, gid); }
 

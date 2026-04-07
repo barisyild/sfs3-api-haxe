@@ -71,6 +71,7 @@ typedef struct SFS3_Event        SFS3_Event;
 typedef struct SFS3_User         SFS3_User;
 typedef struct SFS3_Room         SFS3_Room;
 typedef struct SFS3_Buddy        SFS3_Buddy;
+typedef struct SFS3_MMOItem      SFS3_MMOItem;
 typedef struct SFS3_SFSObject    SFS3_SFSObject;
 typedef struct SFS3_SFSArray     SFS3_SFSArray;
 
@@ -231,6 +232,16 @@ SFS3_PUBLIC SFS3_String     SFS3_Event_getString(SFS3_Event* evt, const char* ke
 SFS3_PUBLIC SFS3_User*      SFS3_Event_getUser(SFS3_Event* evt, const char* key);
 SFS3_PUBLIC SFS3_Room*      SFS3_Event_getRoom(SFS3_Event* evt, const char* key);
 SFS3_PUBLIC SFS3_SFSObject* SFS3_Event_getSFSObject(SFS3_Event* evt, const char* key);
+SFS3_PUBLIC double          SFS3_Event_getDouble(SFS3_Event* evt, const char* key);
+SFS3_PUBLIC int             SFS3_Event_getLagValue(SFS3_Event* evt);
+
+/* Event list accessors (for Array<User>, Array<IMMOItem>, Array<String> params) */
+SFS3_PUBLIC int             SFS3_Event_getUserListCount(SFS3_Event* evt, const char* key);
+SFS3_PUBLIC SFS3_User*      SFS3_Event_getUserAt(SFS3_Event* evt, const char* key, int index);
+SFS3_PUBLIC int             SFS3_Event_getMMOItemCount(SFS3_Event* evt, const char* key);
+SFS3_PUBLIC SFS3_MMOItem*   SFS3_Event_getMMOItemAt(SFS3_Event* evt, const char* key, int index);
+SFS3_PUBLIC int             SFS3_Event_getStringListCount(SFS3_Event* evt, const char* key);
+SFS3_PUBLIC SFS3_String     SFS3_Event_getStringListAt(SFS3_Event* evt, const char* key, int index);
 
 /* ── Event type constants ───────────────────────────────────────────────── */
 
@@ -283,6 +294,11 @@ SFS3_PUBLIC SFS3_SFSObject* SFS3_Event_getSFSObject(SFS3_Event* evt, const char*
 #define SFS3_PARAM_CHANGED_VARS       "changedVars"
 #define SFS3_PARAM_GROUP_ID           "groupId"
 #define SFS3_PARAM_NEW_ROOMS          "newRooms"
+#define SFS3_PARAM_ADDED_USERS        "addedUsers"
+#define SFS3_PARAM_REMOVED_USERS      "removedUsers"
+#define SFS3_PARAM_ADDED_ITEMS        "addedItems"
+#define SFS3_PARAM_REMOVED_ITEMS      "removedItems"
+#define SFS3_PARAM_LAG_VALUE          "lagValue"
 
 /* ── Requests ───────────────────────────────────────────────────────────── */
 
@@ -311,6 +327,22 @@ SFS3_PUBLIC bool        SFS3_User_isStandardUser(SFS3_User* user);
 SFS3_PUBLIC bool        SFS3_User_isModerator(SFS3_User* user);
 SFS3_PUBLIC bool        SFS3_User_isAdmin(SFS3_User* user);
 SFS3_PUBLIC bool        SFS3_User_isItMe(SFS3_User* user);
+
+/* User variable access (reads from server-synced UserVariable on the User) */
+SFS3_PUBLIC bool        SFS3_User_containsVariable(SFS3_User* user, const char* name);
+SFS3_PUBLIC int         SFS3_User_getVariable_int(SFS3_User* user, const char* name);
+SFS3_PUBLIC double      SFS3_User_getVariable_double(SFS3_User* user, const char* name);
+SFS3_PUBLIC bool        SFS3_User_getVariable_bool(SFS3_User* user, const char* name);
+SFS3_PUBLIC SFS3_String SFS3_User_getVariable_string(SFS3_User* user, const char* name);
+
+/* ── MMOItem ───────────────────────────────────────────────────────────── */
+
+SFS3_PUBLIC int         SFS3_MMOItem_getId(SFS3_MMOItem* item);
+SFS3_PUBLIC bool        SFS3_MMOItem_containsVariable(SFS3_MMOItem* item, const char* name);
+SFS3_PUBLIC int         SFS3_MMOItem_getVariable_int(SFS3_MMOItem* item, const char* name);
+SFS3_PUBLIC double      SFS3_MMOItem_getVariable_double(SFS3_MMOItem* item, const char* name);
+SFS3_PUBLIC bool        SFS3_MMOItem_getVariable_bool(SFS3_MMOItem* item, const char* name);
+SFS3_PUBLIC SFS3_String SFS3_MMOItem_getVariable_string(SFS3_MMOItem* item, const char* name);
 
 /* ── Room ───────────────────────────────────────────────────────────────── */
 

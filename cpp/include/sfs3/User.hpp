@@ -30,6 +30,12 @@ public:
     bool        isModerator()    const { return SFS3_User_isModerator(h_); }
     bool        isAdmin()        const { return SFS3_User_isAdmin(h_); }
     bool        isItMe()         const { return SFS3_User_isItMe(h_); }
+
+    bool        containsVariable(const char* name) const { return SFS3_User_containsVariable(h_, name); }
+    int         getVariableInt(const char* name)    const { return SFS3_User_getVariable_int(h_, name); }
+    double      getVariableDouble(const char* name) const { return SFS3_User_getVariable_double(h_, name); }
+    bool        getVariableBool(const char* name)   const { return SFS3_User_getVariable_bool(h_, name); }
+    std::string getVariableString(const char* name) const { return detail::toStr(SFS3_User_getVariable_string(h_, name)); }
 };
 
 } // namespace sfs3

@@ -38,16 +38,16 @@
 #include <com/smartfoxserver/v3/requests/SubscribeRoomGroupRequest.h>
 #include <com/smartfoxserver/v3/requests/UnsubscribeRoomGroupRequest.h>
 #include <com/smartfoxserver/v3/requests/SetRoomVariablesRequest.h>
+#include <com/smartfoxserver/v3/requests/SetUserVariablesRequest.h>
 #include <com/smartfoxserver/v3/entities/variables/SFSRoomVariable.h>
+#include <com/smartfoxserver/v3/entities/variables/SFSUserVariable.h>
 #include <com/smartfoxserver/v3/entities/SFSRoom.h>
 
 #include "SFS3_API.h"
 
 #include <algorithm>
-#include <condition_variable>
 #include <cstring>
 #include <cstdlib>
-#include <thread>
 #include <vector>
 #include <mutex>
 
@@ -80,15 +80,39 @@ static void sfs3_run_library() {
 }
 
 /*
- * Stack-boundary macros. Every API function that touches hxcpp objects
- * must bracket the hxcpp calls with these so the GC can walk the stack.
+ * Stack-boundary macros — nesting-safe.
+ *
+ * Every API function that touches hxcpp objects must bracket the hxcpp
+ * calls with SFS3_HX_BEGIN / SFS3_HX_END so the GC can walk the stack.
+ *
+ * Problem: if a user callback (dispatched from SFS3_update, which already
+ * holds HX_BEGIN) calls another SFS3 function (e.g. sendLogin), the inner
+ * SFS3_HX_END would call SetTopOfStack(nullptr) and deregister the thread
+ * from the GC while the outer block still accesses hxcpp objects.
+ *
+ * Fix: thread-local depth counter. Only the outermost pair actually
+ * calls SetTopOfStack; nested pairs are no-ops.
+ *
+ * The NOINLINE attribute prevents the compiler from inlining the caller
+ * and optimising away the stack variable whose address we hand to
+ * SetTopOfStack (pattern borrowed from the Loreline C++ bridge).
  */
-#define SFS3_HX_BEGIN \
-    int _sfs3_stack_ = 99; \
-    hx::SetTopOfStack(&_sfs3_stack_, true);
+#if defined(_MSC_VER)
+    #define SFS3_NOINLINE __declspec(noinline)
+#else
+    #define SFS3_NOINLINE __attribute__((noinline))
+#endif
 
-#define SFS3_HX_END \
-    hx::SetTopOfStack((int*)0, true);
+static thread_local int g_hxDepth = 0;
+
+#define SFS3_HX_BEGIN                                       \
+    int _sfs3_stack_ = 99;                                  \
+    if (g_hxDepth++ == 0)                                   \
+        hx::SetTopOfStack(&_sfs3_stack_, true);
+
+#define SFS3_HX_END                                         \
+    if (--g_hxDepth == 0)                                   \
+        hx::SetTopOfStack((int*)0, true);
 
 /* ── SFS3_String ────────────────────────────────────────────────────────── */
 
@@ -200,43 +224,34 @@ SFS3_Value SFS3_Value_fromString(SFS3_String val) {
 
 static bool g_sfs3_initialized = false;
 
-static std::mutex g_gcMtx;
-static std::condition_variable g_gcCv;
-static bool g_gcRunning = false;
-static std::thread g_gcThread;
-
-static void gcThreadFunc() {
-    int stackVar = 0;
-    hx::SetTopOfStack(&stackVar, true);
-    std::unique_lock<std::mutex> lk(g_gcMtx);
-    while (g_gcRunning) {
-        g_gcCv.wait_for(lk, std::chrono::seconds(15));
-        if (!g_gcRunning) break;
-        lk.unlock();
-        hx::InternalCollect(false, false);
-        lk.lock();
-    }
-    lk.unlock();
-    hx::SetTopOfStack(nullptr, true);
-}
+/*
+ * GC strategy: inline in SFS3_update(), no dedicated thread.
+ *
+ * A background GC thread calling InternalCollect triggers a stop-the-world
+ * pause that blocks ALL registered threads — including the main thread —
+ * until every Haxe Executor thread reaches a GC safe point.  If any
+ * Executor thread is stuck in blocking I/O (WebSocket processLoop /
+ * Socket read), the main thread freezes for seconds.
+ *
+ * Instead we accumulate wall-clock time and run a minor collection inside
+ * SFS3_update(), where the main thread is already in a safe state.
+ * The Executor threads may still trigger GC via allocation pressure,
+ * but those collections happen on threads that are already at safe points
+ * and do not artificially stall the main thread.
+ */
+static double g_gcAccum = 0.0;
+static constexpr double GC_INTERVAL_SEC = 15.0;
 
 void SFS3_init(void) {
     if (g_sfs3_initialized) return;
     g_sfs3_initialized = true;
     sfs3_set_top_of_stack();
     sfs3_run_library();
-
-    { std::lock_guard<std::mutex> lk(g_gcMtx); g_gcRunning = true; }
-    g_gcThread = std::thread(gcThreadFunc);
 }
 
 void SFS3_dispose(void) {
     if (!g_sfs3_initialized) return;
     g_sfs3_initialized = false;
-
-    { std::lock_guard<std::mutex> lk(g_gcMtx); g_gcRunning = false; }
-    g_gcCv.notify_one();
-    if (g_gcThread.joinable()) g_gcThread.detach();
 }
 
 void SFS3_gc(void) {
@@ -422,8 +437,7 @@ HX_END_LOCAL_FUNC1((void))
 
 /* ── SFS3_update — flushes pending events on the caller's (main) thread ── */
 
-void SFS3_update(double deltaSec) {
-    (void)deltaSec;
+SFS3_NOINLINE void SFS3_update(double deltaSec) {
     SFS3_HX_BEGIN
     std::vector<PendingEvent> batch;
     { std::lock_guard<std::mutex> lk(g_pendingMtx); batch.swap(g_pendingEvents); }
@@ -431,6 +445,12 @@ void SFS3_update(double deltaSec) {
         SFS3_Event evt;
         evt.hxEvt = (com::smartfoxserver::v3::core::ApiEvent_obj*)pe.hxEvtRoot;
         pe.entry->handler(pe.entry->sfsHandle, &evt, pe.entry->userData);
+    }
+
+    g_gcAccum += deltaSec;
+    if (g_gcAccum >= GC_INTERVAL_SEC) {
+        g_gcAccum = 0.0;
+        hx::InternalCollect(false, false);
     }
     SFS3_HX_END
 }
@@ -529,6 +549,164 @@ bool SFS3_User_isAdmin(SFS3_User* user) {
 bool SFS3_User_isItMe(SFS3_User* user) {
     if (!user) return false;
     return (bool)user->hxUser->__Field(HX_CSTRING("getIsItMe"), ::hx::paccDynamic)();
+}
+
+static ::Dynamic user_getVar(SFS3_User* user, const char* name) {
+    if (!user || !name) return null();
+    ::Dynamic v = user->hxUser->__Field(HX_CSTRING("getVariable"), ::hx::paccDynamic)(::String(name));
+    return v;
+}
+
+bool SFS3_User_containsVariable(SFS3_User* user, const char* name) {
+    if (!user || !name) return false;
+    return (bool)user->hxUser->__Field(HX_CSTRING("containsVariable"), ::hx::paccDynamic)(::String(name));
+}
+
+int SFS3_User_getVariable_int(SFS3_User* user, const char* name) {
+    ::Dynamic v = user_getVar(user, name);
+    if (v == null()) return 0;
+    return (int)v->__Field(HX_CSTRING("getIntValue"), ::hx::paccDynamic)();
+}
+
+double SFS3_User_getVariable_double(SFS3_User* user, const char* name) {
+    ::Dynamic v = user_getVar(user, name);
+    if (v == null()) return 0.0;
+    return (double)(Float)v->__Field(HX_CSTRING("getDoubleValue"), ::hx::paccDynamic)();
+}
+
+bool SFS3_User_getVariable_bool(SFS3_User* user, const char* name) {
+    ::Dynamic v = user_getVar(user, name);
+    if (v == null()) return false;
+    return (bool)v->__Field(HX_CSTRING("getBoolValue"), ::hx::paccDynamic)();
+}
+
+SFS3_String SFS3_User_getVariable_string(SFS3_User* user, const char* name) {
+    ::Dynamic v = user_getVar(user, name);
+    if (v == null()) return SFS3_String_create(nullptr);
+    ::String s = (::String)v->__Field(HX_CSTRING("getStringValue"), ::hx::paccDynamic)();
+    return wrap_string(s);
+}
+
+/* ── SFS3_MMOItem (thin wrapper) ────────────────────────────────────────── */
+
+struct SFS3_MMOItem {
+    ::Dynamic hxItem;
+};
+
+static ::Dynamic mmoitem_getVar(SFS3_MMOItem* item, const char* name) {
+    if (!item || !name) return null();
+    ::Dynamic v = item->hxItem->__Field(HX_CSTRING("getVariable"), ::hx::paccDynamic)(::String(name));
+    return v;
+}
+
+int SFS3_MMOItem_getId(SFS3_MMOItem* item) {
+    if (!item) return -1;
+    return (int)item->hxItem->__Field(HX_CSTRING("getId"), ::hx::paccDynamic)();
+}
+
+bool SFS3_MMOItem_containsVariable(SFS3_MMOItem* item, const char* name) {
+    if (!item || !name) return false;
+    return (bool)item->hxItem->__Field(HX_CSTRING("containsVariable"), ::hx::paccDynamic)(::String(name));
+}
+
+int SFS3_MMOItem_getVariable_int(SFS3_MMOItem* item, const char* name) {
+    ::Dynamic v = mmoitem_getVar(item, name);
+    if (v == null()) return 0;
+    return (int)v->__Field(HX_CSTRING("getIntValue"), ::hx::paccDynamic)();
+}
+
+double SFS3_MMOItem_getVariable_double(SFS3_MMOItem* item, const char* name) {
+    ::Dynamic v = mmoitem_getVar(item, name);
+    if (v == null()) return 0.0;
+    return (double)(Float)v->__Field(HX_CSTRING("getDoubleValue"), ::hx::paccDynamic)();
+}
+
+bool SFS3_MMOItem_getVariable_bool(SFS3_MMOItem* item, const char* name) {
+    ::Dynamic v = mmoitem_getVar(item, name);
+    if (v == null()) return false;
+    return (bool)v->__Field(HX_CSTRING("getBoolValue"), ::hx::paccDynamic)();
+}
+
+SFS3_String SFS3_MMOItem_getVariable_string(SFS3_MMOItem* item, const char* name) {
+    ::Dynamic v = mmoitem_getVar(item, name);
+    if (v == null()) return SFS3_String_create(nullptr);
+    ::String s = (::String)v->__Field(HX_CSTRING("getStringValue"), ::hx::paccDynamic)();
+    return wrap_string(s);
+}
+
+/* ── Event list accessors ───────────────────────────────────────────────── */
+
+static ::Dynamic evt_getArray(SFS3_Event* evt, const char* key) {
+    if (!evt || !key) return null();
+    ::Dynamic val = evt->hxEvt->getParam(::String(key));
+    return val;
+}
+
+double SFS3_Event_getDouble(SFS3_Event* evt, const char* key) {
+    if (!evt || !key) return 0.0;
+    ::Dynamic val = evt->hxEvt->getParam(::String(key));
+    if (val == null()) return 0.0;
+    return (double)(Float)val;
+}
+
+int SFS3_Event_getLagValue(SFS3_Event* evt) {
+    if (!evt) return 0;
+    ::Dynamic val = evt->hxEvt->getParam(::String("lagValue"));
+    if (val == null()) return 0;
+    Float avg = (Float)val->__Field(HX_CSTRING("average"), ::hx::paccDynamic);
+    return (int)avg;
+}
+
+int SFS3_Event_getUserListCount(SFS3_Event* evt, const char* key) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return 0;
+    return (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+}
+
+SFS3_User* SFS3_Event_getUserAt(SFS3_Event* evt, const char* key, int index) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return nullptr;
+    int len = (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+    if (index < 0 || index >= len) return nullptr;
+    ::Dynamic elem = arr->__GetItem(index);
+    if (elem == null()) return nullptr;
+    auto u = new SFS3_User();
+    u->hxUser = elem;
+    return u;
+}
+
+int SFS3_Event_getMMOItemCount(SFS3_Event* evt, const char* key) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return 0;
+    return (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+}
+
+SFS3_MMOItem* SFS3_Event_getMMOItemAt(SFS3_Event* evt, const char* key, int index) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return nullptr;
+    int len = (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+    if (index < 0 || index >= len) return nullptr;
+    ::Dynamic elem = arr->__GetItem(index);
+    if (elem == null()) return nullptr;
+    auto item = new SFS3_MMOItem();
+    item->hxItem = elem;
+    return item;
+}
+
+int SFS3_Event_getStringListCount(SFS3_Event* evt, const char* key) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return 0;
+    return (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+}
+
+SFS3_String SFS3_Event_getStringListAt(SFS3_Event* evt, const char* key, int index) {
+    ::Dynamic arr = evt_getArray(evt, key);
+    if (arr == null()) return SFS3_String_create(nullptr);
+    int len = (int)arr->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+    if (index < 0 || index >= len) return SFS3_String_create(nullptr);
+    ::Dynamic elem = arr->__GetItem(index);
+    if (elem == null()) return SFS3_String_create(nullptr);
+    return wrap_string((::String)elem);
 }
 
 /* ── SFS3_Room (thin wrapper) ───────────────────────────────────────────── */
@@ -995,7 +1173,7 @@ void SFS3_SmartFox_release(SFS3_SmartFox* sfs) {
     }
 }
 
-void SFS3_connect(SFS3_SmartFox* sfs, SFS3_ConfigData* cfg) {
+SFS3_NOINLINE void SFS3_connect(SFS3_SmartFox* sfs, SFS3_ConfigData* cfg) {
     if (!sfs || !cfg) return;
     SFS3_HX_BEGIN
     SFS_OBJ(sfs)->connect(
@@ -1003,14 +1181,14 @@ void SFS3_connect(SFS3_SmartFox* sfs, SFS3_ConfigData* cfg) {
     SFS3_HX_END
 }
 
-void SFS3_disconnect(SFS3_SmartFox* sfs) {
+SFS3_NOINLINE void SFS3_disconnect(SFS3_SmartFox* sfs) {
     if (!sfs) return;
     SFS3_HX_BEGIN
     SFS_OBJ(sfs)->disconnect();
     SFS3_HX_END
 }
 
-bool SFS3_isConnected(SFS3_SmartFox* sfs) {
+SFS3_NOINLINE bool SFS3_isConnected(SFS3_SmartFox* sfs) {
     if (!sfs) return false;
     SFS3_HX_BEGIN
     bool r = SFS_OBJ(sfs)->isConnected();
@@ -1116,7 +1294,7 @@ void SFS3_stopExecutors(SFS3_SmartFox* sfs) {
 
 /* ── Event listeners ────────────────────────────────────────────────────── */
 
-void SFS3_addEventListener(SFS3_SmartFox* sfs, const char* eventType,
+SFS3_NOINLINE void SFS3_addEventListener(SFS3_SmartFox* sfs, const char* eventType,
                            SFS3_EventHandler handler, void* userData) {
     if (!sfs || !eventType || !handler) return;
 
@@ -1285,7 +1463,7 @@ SFS3_Room* SFS3_getLastJoinedRoom(SFS3_SmartFox* sfs) {
 
 /* ── Requests ───────────────────────────────────────────────────────────── */
 
-void SFS3_sendLogin(SFS3_SmartFox* sfs, const char* userName, const char* password,
+SFS3_NOINLINE void SFS3_sendLogin(SFS3_SmartFox* sfs, const char* userName, const char* password,
                     const char* zoneName, SFS3_SFSObject* params) {
     if (!sfs) return;
     SFS3_HX_BEGIN
@@ -1299,7 +1477,7 @@ void SFS3_sendLogin(SFS3_SmartFox* sfs, const char* userName, const char* passwo
     SFS3_HX_END
 }
 
-void SFS3_sendLogout(SFS3_SmartFox* sfs) {
+SFS3_NOINLINE void SFS3_sendLogout(SFS3_SmartFox* sfs) {
     if (!sfs) return;
     SFS3_HX_BEGIN
     ::Dynamic req = com::smartfoxserver::v3::requests::LogoutRequest_obj::__new();
@@ -1307,7 +1485,7 @@ void SFS3_sendLogout(SFS3_SmartFox* sfs) {
     SFS3_HX_END
 }
 
-void SFS3_sendJoinRoom(SFS3_SmartFox* sfs, const char* roomName, const char* password,
+SFS3_NOINLINE void SFS3_sendJoinRoom(SFS3_SmartFox* sfs, const char* roomName, const char* password,
                        int roomIdToLeave, bool asSpectator) {
     if (!sfs || !roomName) return;
     SFS3_HX_BEGIN
@@ -1321,7 +1499,7 @@ void SFS3_sendJoinRoom(SFS3_SmartFox* sfs, const char* roomName, const char* pas
     SFS3_HX_END
 }
 
-void SFS3_sendJoinRoomById(SFS3_SmartFox* sfs, int roomId, const char* password,
+SFS3_NOINLINE void SFS3_sendJoinRoomById(SFS3_SmartFox* sfs, int roomId, const char* password,
                            int roomIdToLeave, bool asSpectator) {
     if (!sfs) return;
     SFS3_HX_BEGIN
@@ -1335,7 +1513,7 @@ void SFS3_sendJoinRoomById(SFS3_SmartFox* sfs, int roomId, const char* password,
     SFS3_HX_END
 }
 
-void SFS3_sendLeaveRoom(SFS3_SmartFox* sfs, int roomId) {
+SFS3_NOINLINE void SFS3_sendLeaveRoom(SFS3_SmartFox* sfs, int roomId) {
     if (!sfs) return;
     SFS3_HX_BEGIN
     ::Dynamic req = com::smartfoxserver::v3::requests::LeaveRoomRequest_obj::__new(
@@ -1345,7 +1523,7 @@ void SFS3_sendLeaveRoom(SFS3_SmartFox* sfs, int roomId) {
     SFS3_HX_END
 }
 
-void SFS3_sendPublicMessage(SFS3_SmartFox* sfs, const char* message,
+SFS3_NOINLINE void SFS3_sendPublicMessage(SFS3_SmartFox* sfs, const char* message,
                             SFS3_SFSObject* params, int targetRoomId) {
     if (!sfs || !message) return;
     SFS3_HX_BEGIN
@@ -1358,7 +1536,7 @@ void SFS3_sendPublicMessage(SFS3_SmartFox* sfs, const char* message,
     SFS3_HX_END
 }
 
-void SFS3_sendPrivateMessage(SFS3_SmartFox* sfs, const char* message,
+SFS3_NOINLINE void SFS3_sendPrivateMessage(SFS3_SmartFox* sfs, const char* message,
                              int recipientId, SFS3_SFSObject* params) {
     if (!sfs || !message) return;
     SFS3_HX_BEGIN
@@ -1370,7 +1548,7 @@ void SFS3_sendPrivateMessage(SFS3_SmartFox* sfs, const char* message,
     SFS3_HX_END
 }
 
-void SFS3_sendExtensionRequest(SFS3_SmartFox* sfs, const char* extCmd,
+SFS3_NOINLINE void SFS3_sendExtensionRequest(SFS3_SmartFox* sfs, const char* extCmd,
                                SFS3_SFSObject* params, int roomId, int txType) {
     if (!sfs || !extCmd) return;
     SFS3_HX_BEGIN
@@ -1384,7 +1562,7 @@ void SFS3_sendExtensionRequest(SFS3_SmartFox* sfs, const char* extCmd,
     SFS3_HX_END
 }
 
-void SFS3_sendSubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
+SFS3_NOINLINE void SFS3_sendSubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
     if (!sfs || !groupId) return;
     SFS3_HX_BEGIN
     ::Dynamic req = com::smartfoxserver::v3::requests::SubscribeRoomGroupRequest_obj::__new(
@@ -1394,7 +1572,7 @@ void SFS3_sendSubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
     SFS3_HX_END
 }
 
-void SFS3_sendUnsubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
+SFS3_NOINLINE void SFS3_sendUnsubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
     if (!sfs || !groupId) return;
     SFS3_HX_BEGIN
     ::Dynamic req = com::smartfoxserver::v3::requests::UnsubscribeRoomGroupRequest_obj::__new(
@@ -1404,7 +1582,7 @@ void SFS3_sendUnsubscribeRoomGroup(SFS3_SmartFox* sfs, const char* groupId) {
     SFS3_HX_END
 }
 
-void SFS3_sendObjectMessage(SFS3_SmartFox* sfs, SFS3_SFSObject* obj,
+SFS3_NOINLINE void SFS3_sendObjectMessage(SFS3_SmartFox* sfs, SFS3_SFSObject* obj,
                             int targetRoomId, const int* recipientIds, int recipientCount) {
     if (!sfs || !obj) return;
     SFS3_HX_BEGIN
@@ -1417,11 +1595,30 @@ void SFS3_sendObjectMessage(SFS3_SmartFox* sfs, SFS3_SFSObject* obj,
     SFS3_HX_END
 }
 
-/* Stub implementations for requests not yet bridged */
-void SFS3_sendSetUserVariables(SFS3_SmartFox* sfs, SFS3_SFSObject* vars) { (void)sfs; (void)vars; }
+SFS3_NOINLINE void SFS3_sendSetUserVariables(SFS3_SmartFox* sfs, SFS3_SFSObject* vars) {
+    if (!sfs || !vars) return;
+    SFS3_HX_BEGIN
+    ::Dynamic keys = vars->hxObj->__Field(HX_CSTRING("getKeys"), ::hx::paccDynamic)();
+    int count = (int)keys->__Field(HX_CSTRING("length"), ::hx::paccDynamic);
+    ::Array< ::Dynamic> varList = ::Array_obj< ::Dynamic>::__new(count);
+    for (int i = 0; i < count; i++) {
+        ::String key = (::String)keys->__GetItem(i);
+        ::Dynamic wrapper = vars->hxObj->__Field(HX_CSTRING("get"), ::hx::paccDynamic)(key);
+        ::Dynamic val = wrapper->__Field(HX_CSTRING("getObject"), ::hx::paccDynamic)();
+        int sfsType = (int)wrapper->__Field(HX_CSTRING("getTypeId"), ::hx::paccDynamic)();
+        int varType = 0;
+        if (sfsType >= 0 && sfsType <= 8) varType = sfsType;
+        auto uv = ::com::smartfoxserver::v3::entities::variables::SFSUserVariable_obj::__new(
+            key, val, (::Dynamic)varType);
+        varList[i] = uv;
+    }
+    auto req = ::com::smartfoxserver::v3::requests::SetUserVariablesRequest_obj::__new(varList);
+    SFS_OBJ(sfs)->send(req);
+    SFS3_HX_END
+}
 void SFS3_sendSetRoomVariables(SFS3_SmartFox* sfs, SFS3_SFSObject* vars, int roomId) { (void)sfs; (void)vars; (void)roomId; }
 
-void SFS3_sendSetRoomVariable_string(SFS3_SmartFox* sfs, const char* name, const char* value, int roomId) {
+SFS3_NOINLINE void SFS3_sendSetRoomVariable_string(SFS3_SmartFox* sfs, const char* name, const char* value, int roomId) {
     if (!sfs || !name || !value) return;
     SFS3_HX_BEGIN
     auto rv = ::com::smartfoxserver::v3::entities::variables::SFSRoomVariable_obj::__new(

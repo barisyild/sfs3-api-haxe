@@ -23,6 +23,7 @@
 #include "sfs3/Detail.hpp"
 #include "sfs3/User.hpp"
 #include "sfs3/Room.hpp"
+#include "sfs3/MMOItem.hpp"
 #include "sfs3/SFSObject.hpp"
 #include "sfs3/SFSArray.hpp"
 #include "sfs3/Event.hpp"

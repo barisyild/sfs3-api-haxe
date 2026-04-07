@@ -4,18 +4,37 @@ setlocal enabledelayedexpansion
 REM ══════════════════════════════════════════════════════════════════════
 REM  SFS3 C++ Static Library Builder  (MSVC)
 REM
+REM  Usage:
+REM    build_lib.bat           Static CRT (/MT), output SFS3_API.lib (normal)
+REM    build_lib.bat /MTd      Only SFS3_API.cpp as /MTd -> SFS3_APId.lib (hxcpp objs stay /MT;
+REM                            not usable alone with /MTd app — use for experiments only)
+REM
 REM  Prerequisites:
 REM    1. Run "haxe build.hxml" first so that out\SFS3_API_CPP\ exists.
 REM    2. Visual Studio 2022 installed (vcvars64 is called automatically).
 REM
 REM  Output:
 REM    out\SFS3_API_CPP\dist\SFS3_API.h    — public header (copy)
-REM    out\SFS3_API_CPP\dist\SFS3_API.lib  — combined static library
+REM    out\SFS3_API_CPP\dist\SFS3_API.lib  — combined static (Release /MT)
+REM    out\SFS3_API_CPP\dist\SFS3_APId.lib — combined static (Debug /MTd)
 REM ══════════════════════════════════════════════════════════════════════
 
 set ROOT=%~dp0..
 set OUT=%ROOT%\out\SFS3_API_CPP
 set DIST=%OUT%\dist
+
+set "MODE=RELEASE"
+set "CL_EXTRA=/MT /O2"
+set "OUT_LIB=SFS3_API.lib"
+set "OUT_OBJ=SFS3_API.obj"
+if /I "%~1"=="/MTd" set "MODE=DEBUG"
+if /I "%~1"=="debug" set "MODE=DEBUG"
+if /I "%~1"=="/debug" set "MODE=DEBUG"
+if "!MODE!"=="DEBUG" (
+  set "CL_EXTRA=/MTd /Zi /Od /D_DEBUG"
+  set "OUT_LIB=SFS3_APId.lib"
+  set "OUT_OBJ=SFS3_APId.obj"
+)
 
 REM ── Ensure x64 MSVC environment ──────────────────────────────────────
 where cl >nul 2>&1
@@ -80,9 +99,11 @@ if "!OBJ_DIR!"=="" (
     exit /b 1
 )
 
+echo [*] Mode          : !MODE!
 echo [*] hxcpp include : !HXCPP_INC!
 echo [*] HxcppConfig   : !HXCPP_CFG!
 echo [*] obj directory  : !OBJ_DIR!
+echo [*] Output lib     : !OUT_LIB!
 echo.
 
 REM ── Compile SFS3_API.cpp ────────────────────────────────────────────
@@ -90,7 +111,7 @@ echo [*] Compiling SFS3_API.cpp ...
 REM Copy the authoritative header first so every include path is up-to-date
 copy /Y "%ROOT%\cpp\include\SFS3_API.h" "%OUT%\include\SFS3_API.h" >nul 2>nul
 
-cl /nologo /c /EHsc /std:c++17 /O2 ^
+cl /nologo /c /EHsc /std:c++17 !CL_EXTRA! ^
     /DBUILDING_SFS3_API ^
     /FI"!HXCPP_CFG!" ^
     /I"%ROOT%\cpp\include" ^
@@ -98,7 +119,7 @@ cl /nologo /c /EHsc /std:c++17 /O2 ^
     /I"%OUT%\include" ^
     /I"!HXCPP_INC!" ^
     "%ROOT%\cpp\src\SFS3_API.cpp" ^
-    /Fo:"%OUT%\SFS3_API.obj"
+    /Fo:"%OUT%\!OUT_OBJ!"
 
 if errorlevel 1 (
     echo.
@@ -112,16 +133,16 @@ REM   correct paths and PCH references. We filter out __main__ and add
 REM   our bridge object.
 echo [*] Collecting object files ...
 set RSP=%OUT%\sfs3_lib.rsp
-echo "%OUT%\SFS3_API.obj" > "%RSP%"
+echo "%OUT%\!OUT_OBJ!" > "%RSP%"
 
 findstr /v /i "__main__" "%OBJ_DIR%\all_objs" >> "%RSP%"
 
 REM ── Create combined static library ─────────────────────────────────
-echo [*] Creating combined SFS3_API.lib ...
+echo [*] Creating combined !OUT_LIB! ...
 if not exist "%DIST%" mkdir "%DIST%"
 
 pushd "%OUT%"
-lib /nologo /OUT:"%DIST%\SFS3_API.lib" @"%RSP%"
+lib /nologo /OUT:"%DIST%\!OUT_LIB!" @"%RSP%"
 popd
 
 if errorlevel 1 (
@@ -145,7 +166,8 @@ echo.
 echo    %DIST%\SFS3_API.h
 echo    %DIST%\SFS3.hpp
 echo    %DIST%\sfs3\*.hpp
-echo    %DIST%\SFS3_API.lib
+echo    %DIST%\SFS3_API.lib   ^(Release /MT^)
+echo    %DIST%\SFS3_APId.lib  ^(Debug /MTd — run build_lib.bat /MTd^)
 echo.
 echo  Link example (MSVC):
 echo    cl /EHsc app.cpp /I"dist" ^
