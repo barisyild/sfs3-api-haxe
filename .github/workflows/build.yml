@@ -91,6 +91,8 @@ jobs:
         run: |
           rm -rf docs
           haxelib run dox -i src -o docs -in sfs3
+          mkdir -p docs/src
+          cp -R src/. docs/src/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
