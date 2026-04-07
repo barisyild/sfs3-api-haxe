@@ -87,20 +87,16 @@ jobs:
             -x ".haxelib/*"
           haxelib submit sfs3-api.zip "$HAXELIB_PASSWORD" --always
       - name: Generate API docs with dox
-        if: github.event_name == 'release' && github.event.action == 'published'
         shell: bash
         run: |
           rm -rf docs
           haxelib run dox -i src -o docs -in sfs3
       - name: Setup Pages
-        if: github.event_name == 'release' && github.event.action == 'published'
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
-        if: github.event_name == 'release' && github.event.action == 'published'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
       - name: Deploy to GitHub Pages
-        if: github.event_name == 'release' && github.event.action == 'published'
         id: deployment
         uses: actions/deploy-pages@v4
