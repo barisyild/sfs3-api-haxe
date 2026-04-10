@@ -51,5 +51,6 @@ jobs:
           haxelib install hxnodejs
           haxelib install hxcpp
           haxelib install dox
+          haxelib dev sfs3-api .
       - name: Build ${{ matrix.sample }} (${{ matrix.target }})
         run: cd ${{ matrix.sample }} && haxelib run lime build ${{ matrix.target }}
