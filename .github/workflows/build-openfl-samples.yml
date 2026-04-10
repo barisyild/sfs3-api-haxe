@@ -41,6 +41,7 @@ jobs:
       - uses: krdlab/setup-haxe@v1
       - name: Set up Haxelib dependencies
         run: |
+          haxelib install lime
           haxelib install crypto
           haxelib install colyseus-websocket
           haxelib install haxe-concurrent
