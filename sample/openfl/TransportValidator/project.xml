@@ -6,5 +6,5 @@
     <window width="920" height="600" fps="61" />
     <source path="src" />
     <haxelib name="openfl" />
-    <haxelib name="sfs3-api-haxe" />
+    <haxelib name="sfs3-api" />
 </project>
