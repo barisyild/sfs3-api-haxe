@@ -1,0 +1,53 @@
+name: Build Artifacts
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample:
+          - sample/openfl/SimpleChat
+          - sample/openfl/TransportValidator
+        target:
+          - neko
+          - js
+          - hl
+          - air
+          - flash
+          - cpp
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Setup Node.js dependencies
+        run: npm install -g shx
+      - uses: krdlab/setup-haxe@v1
+      - name: Set up Haxelib dependencies
+        run: |
+          haxelib install crypto
+          haxelib install colyseus-websocket
+          haxelib install haxe-concurrent
+          haxelib install hxjava
+          haxelib git air https://github.com/tobil4sk/air
+          haxelib install hxnodejs
+          haxelib install hxcpp
+          haxelib install dox
+      - name: Build ${{ matrix.sample }} (${{ matrix.target }})
+        run: cd ${{ matrix.sample }} && haxelib run lime build ${{ matrix.target }}
