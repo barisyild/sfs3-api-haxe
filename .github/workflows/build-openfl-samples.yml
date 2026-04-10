@@ -27,8 +27,8 @@ jobs:
           - neko
           - html5
           - hl
-          #- air
-          #- flash
+          #- air # TODO: Fix this
+          #- flash # TODO: Fix this
           - cpp
     steps:
       - uses: actions/checkout@v4
