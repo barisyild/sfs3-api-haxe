@@ -13,3 +13,4 @@ sample/nodejs/*/SFS3_API_Node.js
 sample/js/*/SFS3_API_JS.js
 sample/as3/*/SFS3_API_AS3.swc
 sample/as3/*/*.swf
+sample/openfl/*/Export
