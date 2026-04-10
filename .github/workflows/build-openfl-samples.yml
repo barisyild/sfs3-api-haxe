@@ -25,10 +25,10 @@ jobs:
           - sample/openfl/TransportValidator
         target:
           - neko
-          - js
+          - html5
           - hl
-          - air
-          - flash
+          #- air
+          #- flash
           - cpp
     steps:
       - uses: actions/checkout@v4
