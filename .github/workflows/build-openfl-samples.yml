@@ -42,6 +42,7 @@ jobs:
       - name: Set up Haxelib dependencies
         run: |
           haxelib install openfl
+          haxelib install lime
           haxelib install crypto
           haxelib install colyseus-websocket
           haxelib install haxe-concurrent
