@@ -520,7 +520,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 */
 	public function isConnected():Bool {
 		if (bitSwarm.isConnected() && handshakeComplete)
-			return cfgData.useSSL ? encryptionComplete : true;
+			return cfgData.useSSL && !cfgData.useWebSocket ? encryptionComplete : true;
 
 		return false;
 	}
@@ -795,7 +795,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			if (log.isDebugEnabled())
 				log.debug('Handshake response: tk => ${sessionToken}, ct => ${bitSwarm.getConnSettings().compressionThreshold}');
 
-			if (cfgData.useSSL)
+			if (cfgData.useSSL && !cfgData.useWebSocket)
 				bitSwarm.initCrypto();
 			else {
 				// Fire Conn success event
