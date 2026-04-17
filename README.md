@@ -1,3 +1,8 @@
+![GitHub stars](https://img.shields.io/github/stars/barisyild/sfs3-api-haxe)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![GitHub release](https://img.shields.io/github/v/release/barisyild/sfs3-api-haxe)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/barisyild/sfs3-api-haxe)
+
 # SFS3 API Haxe
 
 SmartFoxServer 3 client API written in Haxe, cross-compiled to multiple targets.

@@ -5,12 +5,20 @@ on:
   pull_request:
     branches:
       - master
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,6 +35,7 @@ jobs:
           haxelib git air https://github.com/tobil4sk/air
           haxelib install hxnodejs
           haxelib install hxcpp
+          haxelib install dox
       - name: Build libraries
         run: haxe build.hxml
       - uses: actions/upload-artifact@v7
@@ -54,3 +63,26 @@ jobs:
           name: SFS3_API_Node.js
           path: out/SFS3_API_Node.js
           if-no-files-found: error
+      - name: Upload Release Assets
+        if: github.event_name == 'release' && github.event.action == 'published'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            out/SFS3_API_JVM.jar
+            out/SFS3_API_PY.py
+            out/SFS3_API_AS3.swc
+            out/SFS3_API_JS.js
+            out/SFS3_API_Node.js
+      - name: Publish package to Haxelib
+        if: github.event_name == 'release' && github.event.action == 'published'
+        shell: bash
+        env:
+          HAXELIB_PASSWORD: ${{ secrets.HAXELIB_PASSWORD }}
+        run: |
+          zip -r sfs3-api.zip . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x "out/*" \
+            -x "node_modules/*" \
+            -x ".haxelib/*"
+          haxelib submit sfs3-api.zip "$HAXELIB_PASSWORD" --always

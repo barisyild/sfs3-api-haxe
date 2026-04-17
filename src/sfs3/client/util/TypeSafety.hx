@@ -101,7 +101,8 @@ class TypeSafety {
     }
 
     public static function checkByteArray(value:BytesData):Void {
-        var isByteArray:Bool = value is BytesData;
+        // TODO: Find a proper way to check if it's a byte array in all targets
+        var isByteArray:Bool = #if (hl || neko) true #else value is BytesData #end;
         #if python
         if(!isByteArray)
             isByteArray = python.Syntax.code("all(isinstance(x, int) and 0 <= x < 256 for x in {0})", value);

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+    <meta title="SimpleChat" package="sfs3.client.samples.simplechat" version="1.0.0" company="OpenFL" />
+    <app main="SimpleChat" path="Export" file="SimpleChat" />
+
+    <window width="920" height="600" fps="61" />
+    <source path="src" />
+    <haxelib name="openfl" />
+    <haxelib name="sfs3-api" />
+</project>

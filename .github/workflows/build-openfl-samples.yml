@@ -1,0 +1,56 @@
+name: Build OpenFL Samples
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample:
+          - sample/openfl/SimpleChat
+          - sample/openfl/TransportValidator
+        target:
+          - neko
+          - html5
+          - hl
+          #- air # TODO: Fix this
+          #- flash # TODO: Fix this
+          - cpp
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Setup Node.js dependencies
+        run: npm install -g shx
+      - uses: krdlab/setup-haxe@v1
+      - name: Set up Haxelib dependencies
+        run: |
+          haxelib install openfl
+          haxelib install lime
+          haxelib install crypto
+          haxelib install colyseus-websocket
+          haxelib install haxe-concurrent
+          haxelib install hxjava
+          haxelib git air https://github.com/tobil4sk/air
+          haxelib install hxnodejs
+          haxelib install hxcpp
+          haxelib install dox
+          haxelib dev sfs3-api .
+      - name: Build ${{ matrix.sample }} (${{ matrix.target }})
+        run: cd ${{ matrix.sample }} && haxelib run lime build ${{ matrix.target }}
