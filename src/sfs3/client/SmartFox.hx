@@ -736,7 +736,6 @@ class SmartFox implements ISmartFox implements IDispatchable {
 
 		_isJoining.store(false);
 		lastJoinedRoom = null;
-		sessionToken = null;
 		mySelf = null;
 	}
 
@@ -762,6 +761,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			handshakeComplete = false;
 			encryptionComplete = false;
 
+			sessionToken = null;
 			resetState();
 		});
 		#else
@@ -770,6 +770,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		handshakeComplete = false;
 		encryptionComplete = false;
 
+		sessionToken = null;
 		resetState();
 		#end
 	}
