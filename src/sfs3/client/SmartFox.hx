@@ -131,7 +131,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private final MAX_PORT_VALUE:Int = 65535;
 	private final PORT_VALID_RANGE:String;
 
-	private final version:ApiVersion = new ApiVersion(3, 0, 16, "beta");
+	private final version:ApiVersion = new ApiVersion(3, 0, 2, "beta");
 	private final CLIENT_TYPE_SEPARATOR:String = ':';
 	private var log:Logger;
 	private var dispatcher:EventDispatcher;
