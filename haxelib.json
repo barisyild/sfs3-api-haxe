@@ -10,8 +10,8 @@
     "contributors": [
 		"barisyild"
     ],
-    "releasenote": "release",
-    "version": "3.0.1",
+    "releasenote": "Fix sessionToken cleanup bug",
+    "version": "3.0.2",
     "url": "https://github.com/barisyild/sfs3-api-haxe",
     "dependencies": {
         "crypto": "1.3.0",
