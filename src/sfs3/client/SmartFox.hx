@@ -169,7 +169,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private var nodeId:String = null;
 
 	public function new() {
-		#if flash
+		#if (flash && library)
 		haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos):Void {
 			flash.Lib.trace(v);
 		};
