@@ -40,6 +40,7 @@ import sfs3.client.controllers.system.ResRoomLost;
 import sfs3.client.controllers.system.ResUserExitRoom;
 import sfs3.client.controllers.system.ResClientDisconnect;
 import sfs3.client.controllers.system.ResSetMMOItemVariable;
+import sfs3.client.core.Logger;
 
 typedef ResponseHandlerTypedef = {
     name:String,
@@ -113,7 +114,7 @@ class SystemController extends BaseController
 
     override public function handleMessage(resp:IResponse):Void
     {
-        if(log.isDebugEnabled())
+        if(Logger.isDebugEnabled())
             log.debug("System Request: " + getEvtName(resp.getId()) + " " + resp);
 
         var resHandlerTypedef:ResponseHandlerTypedef = responseHandlers.get(resp.getId());

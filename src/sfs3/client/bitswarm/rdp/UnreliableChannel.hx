@@ -4,6 +4,7 @@ import sfs3.client.bitswarm.rdp.data.RDPacket;
 import sfs3.client.bitswarm.rdp.data.UDPData;
 import haxe.io.BytesInput;
 import sfs3.client.exceptions.UnsupportedOperationException;
+import sfs3.client.core.Logger;
 
 class UnreliableChannel extends BaseChannel {
     private var lastDispatchedSeqId:Int = -1;
@@ -31,7 +32,7 @@ class UnreliableChannel extends BaseChannel {
             this.transport.addInBytes(packetData.length);
             this.transport.addInPacket();
             this.transport.getIncomingDataHandler()(packet.getData(), packet.getEndPoint(), TxpMode.UNRELIABLE_ORDERED);
-        } else if (this.log.isDebugEnabled()) {
+        } else if (Logger.isDebugEnabled()) {
             this.log.debug("Unreliable packet discarded: " + seqId);
         }
     }

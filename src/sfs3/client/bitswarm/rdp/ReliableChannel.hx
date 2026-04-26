@@ -9,6 +9,7 @@ import haxe.Timer;
 import haxe.io.BytesInput;
 import hx.concurrent.lock.RLock;
 import sfs3.client.exceptions.IllegalStateException;
+import sfs3.client.core.Logger;
 #if (openfl || flash)
 import flash.events.Event;
 #end
@@ -111,13 +112,13 @@ class ReliableChannel extends BaseReliableChannel {
                         return;
                     }
 
-                    if (this.log.isDebugEnabled()) {
+                    if (Logger.isDebugEnabled()) {
                         this.log.debug('Discarding packet with ID: ${packet.getSeqId()} -- lowest expected is: ${this.lowestSeqId}');
                     }
                     return;
                 }
 
-                if (this.log.isDebugEnabled()) {
+                if (Logger.isDebugEnabled()) {
                     this.log.debug("Handle PING");
                 }
                 return;
@@ -167,7 +168,7 @@ class ReliableChannel extends BaseReliableChannel {
                 for (k in this.packetBuffer.keys()) size++; // Count Map keys
 
                 if (size > this.transport.getCfg().packetBufferSize) {
-                    if (this.log.isDebugEnabled()) {
+                    if (Logger.isDebugEnabled()) {
                         this.log.debug('Packet buffer overflow (size: ${size})');
                     }
                     this.transport.getReliableErrorCallback()();
@@ -193,7 +194,7 @@ class ReliableChannel extends BaseReliableChannel {
         });
 
         if (unAcked == null) {
-            if (this.log.isDebugEnabled()) {
+            if (Logger.isDebugEnabled()) {
                 this.log.debug('Received ACK for: ${ackId} -- NotFound');
             }
         } else {
@@ -253,7 +254,7 @@ class ReliableChannel extends BaseReliableChannel {
             for (k in this.unAckedById.keys()) size++;
 
             if (size >= this.transport.getCfg().unACKBufferSize) {
-                if (this.log.isDebugEnabled()) {
+                if (Logger.isDebugEnabled()) {
                     this.log.debug('RTX buffer overflow, size: ${size}');
                 }
                 this.transport.getReliableErrorCallback()();
@@ -277,7 +278,7 @@ class ReliableChannel extends BaseReliableChannel {
                     if (item.isExpired()) {
                         item.retryOneMoreTime();
                         if (item.getRtxCount() < this.transport.getCfg().maxRtxAttempts) {
-                            if (this.log.isDebugEnabled()) {
+                            if (Logger.isDebugEnabled()) {
                                 this.log.debug('Resending packet #${item.getPacket().getSeqId()}');
                             }
                             item.setTimeStamp(Timer.stamp() * 1000.0);
@@ -287,7 +288,7 @@ class ReliableChannel extends BaseReliableChannel {
                             if (this.transport.getCfg().triggerReliableErrors) {
                                 this.transport.getReliableErrorCallback()();
                             }
-                            if (this.log.isDebugEnabled()) {
+                            if (Logger.isDebugEnabled()) {
                                 this.log.debug('Packet has failed all RTX attempts(${this.transport.getCfg().maxRtxAttempts}): ${item.getPacket()}');
                             }
                         }
@@ -348,18 +349,18 @@ class ReliableChannel extends BaseReliableChannel {
                                 for (item in frags) this.packetBuffer.remove(item.getSeqId());
 
                                 if (frags.length == expectedFrags) {
-                                    if (this.log.isDebugEnabled()) {
+                                    if (Logger.isDebugEnabled()) {
                                         this.log.debug('Dispatching expired fragment from packet buffer. FragId: ${fragId}');
                                     }
                                     var fullPacket = FragManager.rebuildPacket(frags);
                                     this.lowestSeqId = seqId + 1;
                                     this.dispatchPacket(fullPacket, frags.length);
-                                } else if (this.log.isDebugEnabled()) {
+                                } else if (Logger.isDebugEnabled()) {
                                     this.log.debug('Removing ${frags.length} incomplete frag(s) with id: ${fragId}');
                                 }
                             }
                         } else if (this.isExpired(packet)) {
-                            if (this.log.isDebugEnabled()) {
+                            if (Logger.isDebugEnabled()) {
                                 this.log.debug('Dispatching expired packet from buffer. Id: ${seqId}');
                             }
 

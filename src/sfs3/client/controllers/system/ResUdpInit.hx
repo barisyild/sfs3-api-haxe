@@ -7,6 +7,7 @@ import sfs3.client.bitswarm.io.SocketEvent;
 import sfs3.client.bitswarm.io.SysParam;
 import sfs3.client.requests.UdpInitRequest;
 import sfs3.client.entities.data.PlatformStringMap;
+import sfs3.client.core.Logger;
 
 class ResUdpInit extends BaseResponseHandler
 {
@@ -19,7 +20,7 @@ class ResUdpInit extends BaseResponseHandler
 		var sfso = resp.getContent();
 		var rdpTxCfg:TransportConfig = TransportConfig.deserialize(sfso.getByteArray(UdpInitRequest.KEY_RDP_CFG));
 		
-		if (log.isDebugEnabled())
+		if (Logger.isDebugEnabled())
 			log.debug("RDP Transport cfg:\n" + rdpTxCfg.toString());
 		
 		/*

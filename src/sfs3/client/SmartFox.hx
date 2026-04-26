@@ -793,7 +793,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			bitSwarm.setCompressionThreshold(obj.getInt(HandshakeRequest.KEY_COMPRESSION_THRESHOLD));
 			bitSwarm.setMaxMessageSize(obj.getInt(HandshakeRequest.KEY_MAX_MESSAGE_SIZE));
 
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug('Handshake response: tk => ${sessionToken}, ct => ${bitSwarm.getConnSettings().compressionThreshold}');
 
 			if (cfgData.useSSL && !cfgData.useWebSocket)

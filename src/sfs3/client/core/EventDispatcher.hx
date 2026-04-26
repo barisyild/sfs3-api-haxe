@@ -48,7 +48,7 @@ class EventDispatcher {
 
         evt.setTarget(this.target);
 
-        if (log.isDebugEnabled())
+        if (Logger.isDebugEnabled())
             log.debug("Dispatching event {} to {} listeners", evt.getType(), list.length);
 
         try

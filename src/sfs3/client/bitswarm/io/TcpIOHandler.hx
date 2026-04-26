@@ -14,6 +14,7 @@ import sfs3.client.bitswarm.util.ByteUtils;
 import sfs3.client.util.NetDebugLevel;
 import sfs3.client.exceptions.IllegalStateException;
 import haxe.io.BytesData;
+import sfs3.client.core.Logger;
 
 class TcpBuffer {
     public var bytes:BytesData;
@@ -60,7 +61,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 		
 		try {
 			while (data.length > 0) {
-				if (log.isDebugEnabled())
+				if (Logger.isDebugEnabled())
 					log.debug("ReadState: " + readState);
 				
 				switch (readState) {
@@ -114,7 +115,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 			}
 			sizeBytes = ProtocolUtils.INT32_BYTE_SIZE;
 			
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug('Big Sized Packet: ${dataSize == -1 ? "Unknown" : Std.string(dataSize)}');
 		} else {
 			if (data.length >= ProtocolUtils.INT16_BYTE_SIZE) {
@@ -122,7 +123,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 				var lsb = data.get(1) & 0xff;
 				dataSize = (msb * 256) + lsb;
 			}
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug('Small Sized Packet: ${dataSize == -1 ? "Unknown" : Std.string(dataSize)}');
 		}
 		
@@ -147,7 +148,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 	}
 	
 	private function handleDataSizeFragment(data:Bytes):ProcessedPacket {
-		if (log.isDebugEnabled())
+		if (Logger.isDebugEnabled())
 			log.debug("Handling DataSize fragment");
 		
 		var state:PacketReadState = WaitDataSizeFragment;
@@ -164,7 +165,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 			bi.bigEndian = true;
 			var dataSize:Int = pendingPacket.getHeader().isBigSized() ? bi.readInt32() : bi.readUInt16();
 			
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug('DataSize found: $dataSize');
 			
 			pendingPacket.getHeader().setExpectedLen(dataSize);
@@ -199,7 +200,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 				throw new IllegalStateException('Expected data size differs from the buffer capacity! Expected: ${pendingPacket.getHeader().getExpectedLen()}, Buffer size: ${dataBuffer.capacity}');
 			}
 			
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug("<<< PACKET COMPLETE >>>");
 			
 			var completedBytesData:BytesData = dataBuffer.bytes;
@@ -215,7 +216,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 				var deflatedBytes:Bytes = Bytes.ofData(deflatedData);
 				var t2 = haxe.Timer.stamp();
 				
-				if (log.isDebugEnabled()) {
+				if (Logger.isDebugEnabled()) {
 					var compRatio = 100 - Std.int((completedBytes.length * 100) / deflatedBytes.length);
 					var timeMs = (t2 - t1) * 1000;
 					log.debug('Original: ${completedBytes.length}, Deflated: ${deflatedBytes.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');
@@ -230,7 +231,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 		} else {
 			dataBuffer.put(data, 0, data.length);
 			
-			if (log.isDebugEnabled())
+			if (Logger.isDebugEnabled())
 				log.debug("Not enough data, store and wait fore more");
 		}
 		

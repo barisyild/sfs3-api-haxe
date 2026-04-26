@@ -7,6 +7,7 @@ import sfs3.client.bitswarm.TransportType;
 import sfs3.client.bitswarm.util.ByteUtils;
 import sfs3.client.bitswarm.io.protocol.ProtocolUtils;
 import sfs3.client.util.NetDebugLevel;
+import sfs3.client.core.Logger;
 
 class UdpIOHandler extends SpecializedIOHandler {
 	public function new(ioHandler:SFSIOHandler) {
@@ -41,7 +42,7 @@ class UdpIOHandler extends SpecializedIOHandler {
 			var deflatedDataBytes:Bytes = Bytes.ofData(deflatedData);
 			var t2 = haxe.Timer.stamp();
 			
-			if (log.isDebugEnabled()) {
+			if (Logger.isDebugEnabled()) {
 				var compRatio = 100 - Std.int((remainingDataBytes.length * 100) / deflatedDataBytes.length);
 				var timeMs = (t2 - t1) * 1000;
 				log.debug('Original: ${remainingDataBytes.length}, Deflated: ${deflatedDataBytes.length}, Comp. Ratio: $compRatio%, Time: ${timeMs}ms.');

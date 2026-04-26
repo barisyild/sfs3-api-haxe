@@ -64,7 +64,7 @@ class FragManager {
 
                 // Remove sublist
                 var removedList = this.fragBuffer.splice(originalPos, pos - originalPos);
-                if (this.log.isDebugEnabled()) {
+                if (Logger.isDebugEnabled()) {
                     this.log.debug('Removing broken fragment sequence: ${removedList}');
                 }
                 return originalPos;
