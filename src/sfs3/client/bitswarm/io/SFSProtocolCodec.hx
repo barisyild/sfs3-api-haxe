@@ -60,8 +60,8 @@ class SFSProtocolCodec implements IProtocolCodec
 
         // Debug
         var dbgLvl:NetDebugLevel = bitSwarm.getNetDebugLevel();
-        if (dbgLvl == NetDebugLevel.PROTOCOL)
-            log.info("Incoming, {}, {}", txType, sfso.getDump());
+        if (Logger.isDebugEnabled() && dbgLvl == NetDebugLevel.PROTOCOL)
+            log.debug("Incoming, {}, {}", txType, sfso.getDump());
 
         var resp:Response = new Response(ctrlId, reqId, sfso, txType, false);
         dispatchResponse(resp);

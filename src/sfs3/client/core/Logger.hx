@@ -43,7 +43,7 @@ class Logger {
         return showPosition;
     }
 
-    public function isDebugEnabled():Bool {
+    public static function isDebugEnabled():Bool {
         return (globalLevel : Int) >= (DEBUG : Int);
     }
 
