@@ -181,8 +181,13 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		this.log = LoggerFactory.getLogger(Type.getClass(this));
 		PORT_VALID_RANGE = 'Valid range is $MIN_PORT_VALUE..$MAX_PORT_VALUE';
 
+		#if webassembly
+		eventThreadPool = new hx.concurrent.executor.TimerExecutor(true); // General tasks
+		scheduler = new hx.concurrent.executor.TimerExecutor(true); // Scheduled tasks
+		#else
 		eventThreadPool = Executor.create(3); // General tasks
 		scheduler = Executor.create(2); // Scheduled tasks
+		#end
 
 		init();
 	}
