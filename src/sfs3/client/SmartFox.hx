@@ -758,7 +758,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	private function shutdownApi():Void {
-		#if sys
+		#if (sys && !webassembly)
 		sys.thread.Thread.create(() -> {
 			stopExecutors();
 			Sys.sleep(0.5);
