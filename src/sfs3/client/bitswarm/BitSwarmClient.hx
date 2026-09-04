@@ -390,7 +390,7 @@ class BitSwarmClient implements IBitSwarmClient {
 			trace("Reconnection attempt:" + reconState.getCounter() + " - time left:" + (timeLeft / 1000) + " sec.");
 
 			// Retry connection: pause and retry
-			#if (flash || js)
+			#if (flash || js || teavm)
 			haxe.Timer.delay(function() {
 				connect(cfgData);
 				reconState.incCounter();

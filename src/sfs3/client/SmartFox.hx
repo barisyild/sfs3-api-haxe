@@ -181,7 +181,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		this.log = LoggerFactory.getLogger(Type.getClass(this));
 		PORT_VALID_RANGE = 'Valid range is $MIN_PORT_VALUE..$MAX_PORT_VALUE';
 
-		#if webassembly
+		#if (webassembly || teavm)
 		eventThreadPool = new hx.concurrent.executor.TimerExecutor(true); // General tasks
 		scheduler = new hx.concurrent.executor.TimerExecutor(true); // Scheduled tasks
 		#else
@@ -758,7 +758,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	}
 
 	private function shutdownApi():Void {
-		#if (sys && !webassembly)
+		#if (sys && !webassembly && !teavm)
 		sys.thread.Thread.create(() -> {
 			stopExecutors();
 			Sys.sleep(0.5);
