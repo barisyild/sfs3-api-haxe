@@ -1,6 +1,6 @@
 package sfs3.client.bitswarm.io;
 
-#if (flash || (openfl && !html5))
+#if (air || (openfl && !html5 && !flash))
 import sfs3.client.bitswarm.BitSwarmClient;
 import sfs3.client.bitswarm.BitSwarmEvent;
 import sfs3.client.bitswarm.SocketState;

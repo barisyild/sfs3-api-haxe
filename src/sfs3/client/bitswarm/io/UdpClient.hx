@@ -1,7 +1,9 @@
 package sfs3.client.bitswarm.io;
 
-#if (flash || (openfl && !html5))
+#if (air || (openfl && !html5 && !flash))
 typedef UdpClient = FlashUdpClient;
+#elseif flash
+typedef UdpClient = NullUdpClient;
 #elseif nodejs
 typedef UdpClient = NodeUdpClient;
 #elseif js

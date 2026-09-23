@@ -131,7 +131,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	private final MAX_PORT_VALUE:Int = 65535;
 	private final PORT_VALID_RANGE:String;
 
-	private final version:ApiVersion = new ApiVersion(3, 0, 2, "beta");
+	private final version:ApiVersion = new ApiVersion(3, 1, 0, "beta");
 	private final CLIENT_TYPE_SEPARATOR:String = ':';
 	private var log:Logger;
 	private var dispatcher:EventDispatcher;
@@ -157,7 +157,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	#elseif cpp "C++";
 	#elseif python "Python";
 	#elseif flash "Flash";
-	#else "Unknown";
+	#else "JavaScript";
 	#end
 	private var bitSwarm:BitSwarmClient;
 
