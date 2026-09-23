@@ -51,14 +51,18 @@ class EventDispatcher {
         if (Logger.isDebugEnabled())
             log.debug("Dispatching event {} to {} listeners", evt.getType(), list.length);
 
-        try
+
+        for (listener in list)
         {
-            for (listener in list)
+            try
+            {
                 listener(evt);
-        }
-        catch (ex:Exception)
-        {
-            log.error("Error dispatching event {} ", evt.getType(), ex);
+            }
+            catch (ex:Exception)
+            {
+                log.error(ex.message, ex.stack, listener);
+                log.error("Error dispatching event {} ", evt.getType(), ex);
+            }
         }
     }
 
