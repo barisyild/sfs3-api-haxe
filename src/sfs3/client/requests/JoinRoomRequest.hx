@@ -114,10 +114,10 @@ class JoinRoomRequest extends BaseRequest
 			sfso.putInt(KEY_ROOM_ID, roomId);
 		
 		else if (name != null) 
-			sfso.putString(KEY_ROOM_NAME, name);
+			sfso.putShortString(KEY_ROOM_NAME, name);
 
 		if (pass != null) 
-			sfso.putString(KEY_PASS, pass);
+			sfso.putShortString(KEY_PASS, pass);
 
 		/*
 		 * roomIdToLeave:

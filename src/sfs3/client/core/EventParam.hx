@@ -35,6 +35,7 @@ class EventParam
     public static final ZoneName:String = "zoneName";
     public static final RoomList:String = "roomList";
     public static final OldName:String = "oldName";
+    public static final WasLastJoined:String = "wasLastJoined";
 
     public static final Sender:String = "sender";
     public static final Message:String = "message";

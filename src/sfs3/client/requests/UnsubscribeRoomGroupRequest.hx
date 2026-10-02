@@ -60,6 +60,6 @@ class UnsubscribeRoomGroupRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(KEY_GROUP_ID, groupId);
+		sfso.putShortString(KEY_GROUP_ID, groupId);
 	}
 }

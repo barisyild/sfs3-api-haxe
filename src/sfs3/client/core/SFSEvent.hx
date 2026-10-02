@@ -607,6 +607,11 @@ s	 * <p>
 	 * <td><em>Room</em></td>
 	 * <td>An object representing the Room that was left by a user.</td>
 	 * </tr>
+	 * <tr>
+	 * <td>wasLastJoined</td>
+	 * <td><em>Boolean</em></td>
+	 * <td><code>true</code> if the Room was left by the current user and it was the last joined Room.</td>
+	 * </tr>
 	 * </table>
 	 *
 	 * @see sfs3.client.requests.LeaveRoomRequest

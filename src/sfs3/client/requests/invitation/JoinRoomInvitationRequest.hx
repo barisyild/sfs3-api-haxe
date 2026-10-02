@@ -75,7 +75,7 @@ class JoinRoomInvitationRequest extends BaseRequest
 	public function execute(sfs:ISmartFox):Void
 	{
 		sfso.putInt(KEY_ROOM_ID, targetRoom.getId());
-		sfso.putStringArray(KEY_INVITED_NAMES, invitedUserNames);
+		sfso.putShortStringArray(KEY_INVITED_NAMES, invitedUserNames);
 		if (params != null) {
 		    sfso.putSFSObject(KEY_OPTIONAL_PARAMS, params);
         }

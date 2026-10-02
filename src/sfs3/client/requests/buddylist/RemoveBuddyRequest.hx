@@ -68,6 +68,6 @@ class RemoveBuddyRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(KEY_BUDDY_NAME, name);
+		sfso.putShortString(KEY_BUDDY_NAME, name);
 	}
 }

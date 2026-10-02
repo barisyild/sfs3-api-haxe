@@ -103,7 +103,7 @@ class BlockBuddyRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(BlockBuddyRequest.KEY_BUDDY_NAME, buddyName);
+		sfso.putShortString(BlockBuddyRequest.KEY_BUDDY_NAME, buddyName);
 		sfso.putBool(BlockBuddyRequest.KEY_BUDDY_BLOCK_STATE, blocked);
 	}
 

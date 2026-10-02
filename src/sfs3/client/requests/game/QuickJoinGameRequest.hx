@@ -125,7 +125,7 @@ class QuickJoinGameRequest extends BaseRequest
             for(item in whereToSearch) {
                 groupList.push(Std.string(item));
             }
-			sfso.putStringArray(KEY_GROUP_LIST, groupList);
+			sfso.putShortStringArray(KEY_GROUP_LIST, groupList);
         }
 
 		if (roomToLeave != null)

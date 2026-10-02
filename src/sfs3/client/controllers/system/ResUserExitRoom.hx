@@ -27,17 +27,22 @@ class ResUserExitRoom extends BaseResponseHandler
 
 		if (room != null && user != null)
 		{
+			var wasLastJoined:Bool = false;
+
 			room.removeUser(user);
 			sfs.getUserManager().removeUser(user);
 
 			// If I have left a room I need to mark the room as NOT JOINED
 			if (user.getIsItMe() && room.getJoined())
 			{
+				var lastJoinedRoom:Room = sfs.getLastJoinedRoom();
+				wasLastJoined = lastJoinedRoom != null && room.getId() == lastJoinedRoom.getId();
+
 				// Turn of the Room's joined flag
 				room.setJoined(false);
 
-				// Reset the lastJoinedRoom reference if no Room is currently joined
-				if (sfs.getJoinedRooms().length == 0)
+				// Reset the lastJoinedRoom reference if it was the Room just left, or if no Room is currently joined
+				if (wasLastJoined || sfs.getJoinedRooms().length == 0)
 					sfs.setLastJoinedRoom(null);
 
 				/*
@@ -49,6 +54,7 @@ class ResUserExitRoom extends BaseResponseHandler
 			
 			evtParams.set(EventParam.User, user);
 			evtParams.set(EventParam.Room, room);
+			evtParams.set(EventParam.WasLastJoined, wasLastJoined);
 
 			// Fire event
 			sfs.dispatchEvent(new SFSEvent(SFSEvent.USER_EXIT_ROOM, evtParams));

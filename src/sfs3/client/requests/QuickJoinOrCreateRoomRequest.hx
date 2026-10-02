@@ -6,6 +6,8 @@ import sfs3.client.ISmartFox;
 import sfs3.client.exceptions.SFSValidationException;
 import sfs3.client.entities.Room;
 import sfs3.client.entities.match.MatchExpression;
+import sfs3.client.requests.game.SFSGameSettings;
+import sfs3.client.requests.mmo.MMORoomSettings;
 
 /**
  * <p>
@@ -79,20 +81,27 @@ class QuickJoinOrCreateRoomRequest extends BaseRequest
 		if (groupList != null && groupList.length == 0)
 			errors.push("Empty list of groups to search");
 		 
-		if (settings == null)
+		if (settings != null)
+		{
+			if (Std.isOfType(settings, MMORoomSettings) || Std.isOfType(settings, SFSGameSettings))
+				errors.push("Only standard Rooms can be dynamically created when no match is found");
+			else
+			{
+				// Validate the Room Settings
+				try
+				{
+					createRoomRequest.validate(sfs);
+				}
+				catch (err:SFSValidationException)
+				{
+					for (e in err.getErrors()) {
+						errors.push(e);
+					}
+				}
+			}
+		}
+		else
 			errors.push("No Room settings provided");
-		 
-		// Validate the Room Settings
-		try 
-		{
-			createRoomRequest.validate(sfs);
-		}
-		catch (err:SFSValidationException) 
-		{
-            for (e in err.getErrors()) {
-			    errors.push(e);
-            }
-		}
 		
 		if (errors.length > 0) 
 			throw new SFSValidationException("QuickJoinOrCreateRoom request error", errors);
@@ -108,7 +117,7 @@ class QuickJoinOrCreateRoomRequest extends BaseRequest
 		
 		// Populate the data needed by the server
 		sfso.putSFSArray(KEY_MATCH_EXPRESSION, exp.toSFSArray());
-		sfso.putStringArray(KEY_GROUP_LIST, groupList);
+		sfso.putShortStringArray(KEY_GROUP_LIST, groupList);
 		sfso.putSFSObject(KEY_ROOM_SETTINGS, roomSettings);
 		
 		if (roomToLeave != null)

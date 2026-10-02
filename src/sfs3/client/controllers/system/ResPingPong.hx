@@ -15,13 +15,19 @@ class ResPingPong extends BaseResponseHandler
 
 	public function handleResponse(sfs:ISmartFox, resp:IResponse):Void
 	{
+		// Skip the response if no lag monitor exists (e.g. a PingPongRequest sent without enabling it)
+		var lagMonitor = sfs.getLagMonitor();
+
+		if (lagMonitor == null)
+			return;
+
 		var evtParams = new PlatformStringMap<Dynamic>();
 		evtParams.set(EventParam.LagValue, 
 						new LagValue
 						(
-							sfs.getLagMonitor().onPingPong(), 
-							sfs.getLagMonitor().getMinValue(), 
-							sfs.getLagMonitor().getMaxValue()
+							lagMonitor.onPingPong(),
+							lagMonitor.getMinValue(),
+							lagMonitor.getMaxValue()
 						));
 		
 		// Redispatch at the user level

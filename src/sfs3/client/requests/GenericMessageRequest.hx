@@ -339,7 +339,7 @@ class GenericMessageRequest extends BaseRequest
 
 			// Put the Room Group as String
 			case MessageRecipientMode.TO_GROUP:
-				sfso.putString(KEY_RECIPIENT, cast recipient);
+				sfso.putShortString(KEY_RECIPIENT, cast recipient);
 
 			// the TO_ZONE case does not need to pass any other params
 		}

@@ -210,9 +210,9 @@ class CreateRoomRequest extends BaseRequest {
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(KEY_NAME, settings.getName());
-		sfso.putString(KEY_GROUP_ID, settings.getGroupId());
-		sfso.putString(KEY_PASSWORD, settings.getPassword());
+		sfso.putShortString(KEY_NAME, settings.getName());
+		sfso.putShortString(KEY_GROUP_ID, settings.getGroupId());
+		sfso.putShortString(KEY_PASSWORD, settings.getPassword());
 		sfso.putBool(KEY_ISGAME, settings.getGame());
 		sfso.putShort(KEY_MAXUSERS, settings.getMaxUsers());
 		sfso.putShort(KEY_MAXSPECTATORS, settings.getMaxSpectators());

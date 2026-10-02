@@ -55,22 +55,21 @@ class PlayerToSpectatorRequest extends BaseRequest
 	{
 		var errors = new Array<String>();
 		
+		// If no Room provided, attempt to use last joined room or fail
 		if (room == null)
 		{
-			if (sfs.getLastJoinedRoom() != null)
-				room = sfs.getLastJoinedRoom();
-			else
-			{
+			room = sfs.getLastJoinedRoom();
+
+			if (room == null)
 				errors.push("A valid Room must be provided");
-				return;
-			}
 		}
 
-		if (!sfs.getJoinedRooms().contains(room))
+		// Room must be joined
+		if (room != null && !sfs.getJoinedRooms().contains(room))
 			errors.push("You are not joined in the target Room: " + room.getName());
 		
 		if (errors.length > 0)
-			throw new SFSValidationException("PlayerToSpecator request error", errors);
+			throw new SFSValidationException("PlayerToSpectator request error", errors);
 	}
 
 	/**

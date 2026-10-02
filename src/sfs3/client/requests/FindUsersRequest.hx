@@ -98,7 +98,7 @@ class FindUsersRequest extends BaseRequest
 				sfso.putInt(KEY_ROOM, (cast target:Room).getId());
 			
 			else if (Std.isOfType(target, String)) 
-				sfso.putString(KEY_GROUP, cast target);
+				sfso.putShortString(KEY_GROUP, cast target);
 		}
 
 		if (limit > 0)

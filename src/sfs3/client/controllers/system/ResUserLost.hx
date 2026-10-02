@@ -39,6 +39,7 @@ class ResUserLost extends BaseResponseHandler
 				var evtParams = new PlatformStringMap<Dynamic>();
 				evtParams.set(EventParam.User, user);
 				evtParams.set(EventParam.Room, room);
+				evtParams.set(EventParam.WasLastJoined, false); // Always false, as this path triggers exclusively for Users other than "me"
 				
 				sfs.dispatchEvent(new SFSEvent(SFSEvent.USER_EXIT_ROOM, evtParams));
 			}

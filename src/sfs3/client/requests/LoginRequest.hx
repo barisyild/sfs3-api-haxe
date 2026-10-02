@@ -103,8 +103,8 @@ class LoginRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(KEY_ZONE_NAME, zoneName);
-		sfso.putString(KEY_USER_NAME, userName);
+		sfso.putShortString(KEY_ZONE_NAME, zoneName);
+		sfso.putShortString(KEY_USER_NAME, userName);
 			
 		var useSSL:Bool = sfs.getConfig().useSSL;
 		
@@ -119,7 +119,7 @@ class LoginRequest extends BaseRequest
 		if (!useSSL && password.length > 0)
 			password = PasswordUtil.SHA256Password(sfs.getSessionToken() + password);
 		
-		sfso.putString(KEY_PASSWORD, password);
+		sfso.putShortString(KEY_PASSWORD, password);
 
 		// optional params
 		if (params != null)

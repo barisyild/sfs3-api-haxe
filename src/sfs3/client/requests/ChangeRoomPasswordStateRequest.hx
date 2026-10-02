@@ -76,6 +76,6 @@ class ChangeRoomPasswordStateRequest extends BaseRequest
 	public function execute(sfs:ISmartFox):Void
 	{
 		sfso.putInt(KEY_ROOM, room.getId());
-		sfso.putString(KEY_PASS, newPass);
+		sfso.putShortString(KEY_PASS, newPass);
 	}
 }

@@ -77,6 +77,6 @@ class ChangeRoomNameRequest extends BaseRequest
 	public function execute(sfs:ISmartFox):Void
 	{
 		sfso.putInt(KEY_ROOM, room.getId());
-		sfso.putString(KEY_NAME, newName);
+		sfso.putShortString(KEY_NAME, newName);
 	}
 }

@@ -284,6 +284,7 @@ SFS3_PUBLIC SFS3_String     SFS3_Event_getStringListAt(SFS3_Event* evt, const ch
 #define SFS3_PARAM_ERROR_CODE         "errorCode"
 #define SFS3_PARAM_USER               "user"
 #define SFS3_PARAM_ROOM               "room"
+#define SFS3_PARAM_WAS_LAST_JOINED    "wasLastJoined"
 #define SFS3_PARAM_SENDER             "sender"
 #define SFS3_PARAM_MESSAGE            "message"
 #define SFS3_PARAM_DATA               "data"

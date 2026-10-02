@@ -116,7 +116,7 @@ class ExtensionRequest extends BaseRequest
 	 */
 	public function execute(sfs:ISmartFox):Void
 	{
-		sfso.putString(KEY_CMD, extCmd);
+		sfso.putShortString(KEY_CMD, extCmd);
 		sfso.putSFSObject(KEY_PARAMS, params);
 		
 		if (room != null)

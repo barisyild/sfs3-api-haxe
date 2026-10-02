@@ -184,7 +184,7 @@ class CreateSFSGameRequest extends BaseRequest
 		// Searchable rooms
 		var searchableRooms:Array<String> = settings.getSearchableRooms();
 		if (searchableRooms != null) 
-			sfso.putStringArray(KEY_SEARCHABLE_ROOMS, searchableRooms);
+			sfso.putShortStringArray(KEY_SEARCHABLE_ROOMS, searchableRooms);
 
 		// Invitation params
 		if (settings.getInvitationParams() != null) 

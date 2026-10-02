@@ -84,7 +84,7 @@ class FindRoomsRequest extends BaseRequest
 		sfso.putSFSArray(KEY_EXPRESSION, matchExpr.toSFSArray());
 
 		if (groupId != null)
-			sfso.putString(KEY_GROUP, groupId);
+			sfso.putShortString(KEY_GROUP, groupId);
 
 		if (limit > 0)
 			sfso.putShort(KEY_LIMIT, limit);
