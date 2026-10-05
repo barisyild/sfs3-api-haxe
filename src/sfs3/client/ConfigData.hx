@@ -79,5 +79,7 @@ final class BlueBoxCfg
      */
     public var pollingRateMs:Int 		= 700;
 
+    public var forceBlueBox:Bool 		= false;
+
     public function new(){}
 }
