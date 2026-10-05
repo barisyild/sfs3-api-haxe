@@ -198,6 +198,7 @@ class SFSIOHandler extends BaseIOHandler
         if (getBitSwarm().useEncryption() && !getBitSwarm().isReconnecting())
         {
             outBytesData = packetEncrypter().encrypt(outBytesData);
+            outBytes = Bytes.ofData(outBytesData);
             header.setEncrypted(true);
 
             /*
