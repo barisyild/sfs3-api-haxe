@@ -3,7 +3,18 @@ package sfs3.client.bitswarm.bbox;
 import haxe.Exception;
 import haxe.crypto.Base64;
 import haxe.io.Bytes;
+#if openfl
+import openfl.events.Event;
+import openfl.events.HTTPStatusEvent;
+import openfl.events.IOErrorEvent;
+import openfl.events.SecurityErrorEvent;
+import openfl.net.URLLoader;
+import openfl.net.URLLoaderDataFormat;
+import openfl.net.URLRequest;
+import openfl.net.URLRequestMethod;
+#else
 import haxe.Http;
+#end
 
 import sfs3.client.core.ApiEvent;
 import sfs3.client.util.WebServices;
@@ -276,6 +287,9 @@ class BlueBoxClient implements IDispatchable
      */
     private function sendRequest(cmd:String, ?data:Bytes):Void
     {
+        #if openfl
+        sendOpenFLRequest(cmd, encodeRequest(cmd, data));
+        #else
         threadPool.submit(function() {
             try
             {
@@ -340,7 +354,69 @@ class BlueBoxClient implements IDispatchable
                 }
             }
         });
+        #end
     }
+
+    #if openfl
+    private function sendOpenFLRequest(cmd:String, requestData:String):Void
+    {
+        var request = new URLRequest(bbEndPoint);
+        request.method = URLRequestMethod.POST;
+        request.contentType = "application/x-www-form-urlencoded";
+        request.data = SFS_HTTP + "=" + StringTools.urlEncode(requestData);
+
+        var status:Int = 0;
+        var loader = new URLLoader();
+        loader.dataFormat = URLLoaderDataFormat.TEXT;
+        loader.addEventListener(HTTPStatusEvent.HTTP_STATUS, function(e:HTTPStatusEvent) {
+            status = e.status;
+        });
+        loader.addEventListener(Event.COMPLETE, function(e:Event) {
+            var httpResponse:String = loader.data;
+            if (httpResponse != null && httpResponse.length > 0)
+            {
+                if (bitswarm != null && bitswarm.isBBoxDebug())
+                    trace("INFO: BB Incoming: " + httpResponse);
+
+                onHttpResponse(httpResponse);
+            }
+        });
+        loader.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent) {
+            onRequestError(cmd, 'HTTP $status: ${e.text}');
+        });
+        loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, function(e:SecurityErrorEvent) {
+            onRequestError(cmd, e.text);
+        });
+
+        try
+        {
+            loader.load(request);
+        }
+        catch (ex:Dynamic)
+        {
+            onRequestError(cmd, Std.string(ex));
+        }
+    }
+
+    private function onRequestError(cmd:String, errorMsg:String):Void
+    {
+        if (socketState == SocketState.Connecting)
+        {
+            trace("WARN: " + errorMsg);
+            socketState = SocketState.Disconnected;
+
+            var params:PlatformStringMap<Dynamic> = new PlatformStringMap<Dynamic>();
+            params.set(EventParam.ErrorMessage, "BlueBox connection failed");
+            dispatchEvent(new BlueBoxEvent(BlueBoxEvent.Error, params));
+        }
+        else
+        {
+            trace("WARN: BlueBox Request error: " + cmd + " -> " + errorMsg);
+            socketState = SocketState.Disconnected;
+            onHttpError(new Exception(errorMsg));
+        }
+    }
+    #end
 
     private function handleConnectionLost(reason:String, errMessage:String):Void
     {
