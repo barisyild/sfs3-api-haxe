@@ -27,6 +27,7 @@ import sfs3.client.requests.HandshakeRequest;
 import sfs3.client.requests.BaseRequest;
 import sfs3.client.entities.data.ISFSObject;
 import sfs3.client.bitswarm.BitSwarmClient;
+import sfs3.client.bitswarm.ConnectionMode;
 import sfs3.client.entities.User;
 import sfs3.client.entities.Room;
 import sfs3.client.bitswarm.io.SFSIOHandler;
@@ -525,9 +526,13 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 */
 	public function isConnected():Bool {
 		if (bitSwarm.isConnected() && handshakeComplete)
-			return cfgData.useSSL && !cfgData.useWebSocket ? encryptionComplete : true;
+			return requiresProtocolEncryption() ? encryptionComplete : true;
 
 		return false;
+	}
+
+	private function requiresProtocolEncryption():Bool {
+		return cfgData.useSSL && bitSwarm.getConnectionMode() != ConnectionMode.WEBSOCKET;
 	}
 
 	/**
@@ -801,7 +806,7 @@ class SmartFox implements ISmartFox implements IDispatchable {
 			if (Logger.isDebugEnabled())
 				log.debug('Handshake response: tk => ${sessionToken}, ct => ${bitSwarm.getConnSettings().compressionThreshold}');
 
-			if (cfgData.useSSL && !cfgData.useWebSocket)
+			if (requiresProtocolEncryption())
 				bitSwarm.initCrypto();
 			else {
 				// Fire Conn success event

@@ -312,6 +312,10 @@ class BitSwarmClient implements IBitSwarmClient {
 	private function onWsError(evt:ApiEvent):Void {
 		if (reconState != null && reconState.getPending())
 			attemptReconnection();
+		else if (cfgData.blueBox.isActive) {
+			connMode = ConnectionMode.HTTP;
+			connectBlueBox(cfgData.host, cfgData.httpPort);
+		}
 		else
 			notifyConnectionError();
 	}
