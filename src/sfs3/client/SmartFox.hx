@@ -791,6 +791,8 @@ class SmartFox implements ISmartFox implements IDispatchable {
 		if (obj.containsKey(HandshakeRequest.KEY_RECONNECTION_TOKEN)) {
 			var reconToken = obj.getBool(HandshakeRequest.KEY_RECONNECTION_TOKEN);
 
+			sessionToken = obj.getString(HandshakeRequest.KEY_SESSION_TOKEN);
+
 			bitSwarm.completeReconnection(reconToken);
 			return;
 		}
