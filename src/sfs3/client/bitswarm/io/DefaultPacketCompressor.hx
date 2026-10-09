@@ -7,6 +7,10 @@ import haxe.zip.Uncompress;
 #end
 import haxe.Exception;
 import haxe.io.BytesData;
+#if js
+import js.lib.Promise;
+import js.lib.Uint8Array;
+#end
 
 class DefaultPacketCompressor implements IPacketCompressor {
     public function new() {}
@@ -36,6 +40,17 @@ class DefaultPacketCompressor implements IPacketCompressor {
         }
         #end
     }
+
+    #if js
+    public function compressAsync(data:BytesData):Promise<BytesData> {
+        var supported:Bool = js.Syntax.code("typeof CompressionStream === 'function'");
+        if (!supported)
+            return Promise.resolve(data);
+
+        var bytes:Uint8Array = new Uint8Array(data, 0, Bytes.ofData(data).length);
+        return js.Syntax.code("new Response(new Blob([{0}]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer()", bytes);
+    }
+    #end
 
     #if python
     private function compressPython(data:Bytes):Bytes {

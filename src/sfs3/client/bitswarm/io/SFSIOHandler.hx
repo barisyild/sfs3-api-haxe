@@ -12,6 +12,7 @@ import sfs3.client.exceptions.SFSCodecException;
 import sfs3.client.entities.User;
 import sfs3.client.bitswarm.util.ByteUtils;
 import haxe.io.BytesData;
+import haxe.Exception;
 class SFSIOHandler extends BaseIOHandler
 {
     public static final MAX_PACKET_DEBUG_LEN:Int = 1024;
@@ -20,6 +21,10 @@ class SFSIOHandler extends BaseIOHandler
     private final tcpHandler:TcpIOHandler;
     private final udpHandler:UdpIOHandler;
     private final codec:IProtocolCodec;
+    #if js
+    private final writeQueue:Array<{request:IRequest, data:BytesData, compress:Bool}> = [];
+    private var compressing:Bool = false;
+    #end
 
     public function new(bitSwarm:BitSwarmClient)
     {
@@ -88,26 +93,76 @@ class SFSIOHandler extends BaseIOHandler
 
         // Prepend controller data (ctrlId [byte], actionId [short])
         binData = ProtocolUtils.encodeControllerData(binData, request.getControllerId(), request.getId());
-        var binDataBytes:Bytes = Bytes.ofData(binData);
 
         //--- Compress data if necessary ---------------------------------------------
-        var isCompressed:Bool = false;
-        var originalSize:Int = binDataBytes.length;
+        var compress:Bool = Bytes.ofData(binData).length > getBitSwarm().getConnSettings().compressionThreshold;
 
-        if (binDataBytes.length > getBitSwarm().getConnSettings().compressionThreshold)
+        #if js
+        if (compress || compressing || writeQueue.length > 0)
         {
-            var beforeCompression:BytesData = binData;
-            binData = packetCompressor().compress(binData);
-            binDataBytes = Bytes.ofData(binData);
-
-            /*
-			 * Data might not have been compressed, if the compressor has an internal MAX limit
-			 * With this check we verify that compression has really taken place
-			 * If the new byte data is still pointing to the old byte[], compression was not added
-			 */
-            if (binData != beforeCompression)
-                isCompressed = true;
+            writeQueue.push({request: request, data: binData, compress: compress});
+            flushWriteQueue();
+            return;
         }
+
+        writePacket(request, binData, binData);
+        #else
+        writePacket(request, binData, compress ? packetCompressor().compress(binData) : binData);
+        #end
+    }
+
+    #if js
+    private function flushWriteQueue():Void
+    {
+        while (!compressing && writeQueue.length > 0)
+        {
+            var next = writeQueue.shift();
+            if (!next.compress)
+            {
+                writeQueuedPacket(next.request, next.data, next.data);
+                continue;
+            }
+
+            compressing = true;
+            packetCompressor().compressAsync(next.data).then(function(compressed:BytesData):Void
+            {
+                writeQueuedPacket(next.request, next.data, compressed);
+                compressing = false;
+                flushWriteQueue();
+            }, function(error:Dynamic):Void
+            {
+                log.warn("Packet compression failed, sending it uncompressed: " + Std.string(error));
+                writeQueuedPacket(next.request, next.data, next.data);
+                compressing = false;
+                flushWriteQueue();
+            });
+        }
+    }
+
+    private function writeQueuedPacket(request:IRequest, original:BytesData, binData:BytesData):Void
+    {
+        try
+        {
+            writePacket(request, original, binData);
+        }
+        catch (ex:Exception)
+        {
+            log.warn(ex.message, ex);
+        }
+    }
+    #end
+
+    private function writePacket(request:IRequest, original:BytesData, binData:BytesData):Void
+    {
+        var binDataBytes:Bytes = Bytes.ofData(binData);
+        var originalSize:Int = Bytes.ofData(original).length;
+
+        /*
+         * Data might not have been compressed, if the compressor has an internal MAX limit
+         * With this check we verify that compression has really taken place
+         * If the new byte data is still pointing to the old byte[], compression was not added
+         */
+        var isCompressed:Bool = binData != original;
 
         var maxMsgSize = getBitSwarm().getMaxMessageSize();
         if (binDataBytes.length > maxMsgSize)
