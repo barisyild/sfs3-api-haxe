@@ -221,7 +221,7 @@ class SFSIOHandler extends BaseIOHandler
         if (header.isBigSized())
             packetBuffer.writeInt32(outBytes.length);
         else
-            packetBuffer.writeInt16(outBytes.length);
+            packetBuffer.writeUInt16(outBytes.length);
 
         packetBuffer.write(outBytes);
 
