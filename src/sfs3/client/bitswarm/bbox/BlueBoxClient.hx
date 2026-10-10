@@ -128,7 +128,7 @@ class BlueBoxClient implements IDispatchable
         this.dispatcher.removeAll();
     }
 
-    public function connect(host:String, port:Int):Void
+    public function connect(host:String, port:Int, useSSL:Bool = false):Void
     {
         if (isConnecting())
             throw new Exception("A connection attempt is already ongoing");
@@ -138,12 +138,7 @@ class BlueBoxClient implements IDispatchable
 
         this.socketState = SocketState.Connecting;
 
-        /*
-        * NOTE we always use HTTP even when using protocol encryption This is because
-        * packets are already encrypted at the wire-level If used HTTPS we would
-        * encrypt packets twice, which is more resource intensive and adds latency
-        */
-        bbUrl = 'http://${host}:${port}/${BB_SERVLET}';
+        bbUrl = (useSSL ? "https" : "http") + '://${host}:${port}/${BB_SERVLET}';
         bbEndPoint = bbUrl;
 
         // Init HttpClient

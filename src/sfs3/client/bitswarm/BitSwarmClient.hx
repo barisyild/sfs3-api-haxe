@@ -96,7 +96,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		else if (connMode == ConnectionMode.WEBSOCKET)
 			connectWs(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
 		else
-			connectBlueBox(cfgData.host, cfgData.httpPort);
+			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
 	}
 
 	/*
@@ -157,7 +157,7 @@ class BitSwarmClient implements IBitSwarmClient {
 
 		bbClient.setPollSpeed(getConfigData().blueBox.pollingRateMs);
 
-		bbClient.connect(host, port);
+		bbClient.connect(host, port, cfgData.useSSL);
 	}
 
 	private function connectWs(host:String, port:Int):Void {
@@ -314,7 +314,7 @@ class BitSwarmClient implements IBitSwarmClient {
 			attemptReconnection();
 		else if (cfgData.blueBox.isActive) {
 			connMode = ConnectionMode.HTTP;
-			connectBlueBox(cfgData.host, cfgData.httpPort);
+			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
 		}
 		else
 			notifyConnectionError();
