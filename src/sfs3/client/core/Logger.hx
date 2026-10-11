@@ -47,29 +47,39 @@ class Logger {
         return (globalLevel : Int) >= (DEBUG : Int);
     }
 
-    public function error(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+    public #if no_traces inline #end function error(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+        #if !no_traces
         if((globalLevel : Int) >= (ERROR : Int))
             output(ERROR, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
+        #end
     }
 
-    public function warn(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+    public #if no_traces inline #end function warn(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+        #if !no_traces
         if((globalLevel : Int) >= (WARN : Int))
             output(WARN, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
+        #end
     }
 
-    public function info(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+    public #if no_traces inline #end function info(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+        #if !no_traces
         if((globalLevel : Int) >= (INFO : Int))
             output(INFO, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
+        #end
     }
 
-    public function debug(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+    public #if no_traces inline #end function debug(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+        #if !no_traces
         if((globalLevel : Int) >= (DEBUG : Int))
             output(DEBUG, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
+        #end
     }
 
-    public function log(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+    public #if no_traces inline #end function log(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
+        #if !no_traces
         if((globalLevel : Int) >= (INFO : Int))
             output(INFO, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
+        #end
     }
 
     private static function collect(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic):Array<Dynamic> {

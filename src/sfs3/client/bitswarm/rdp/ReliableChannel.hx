@@ -296,7 +296,7 @@ class ReliableChannel extends BaseReliableChannel {
                 }
             });
         } catch (ex:Dynamic) {
-            this.log.warn("Exception in RTX Loop: " + ex);
+            this.log.warn("Exception in RTX Loop:", ex);
         }
         #if (flash || js)
         haxe.Timer.delay(rtxLoop, RTX_LOOP_PAUSE);
@@ -372,7 +372,7 @@ class ReliableChannel extends BaseReliableChannel {
                 });
             });
         } catch (ex:Dynamic) {
-            this.log.warn("Unexpected error: " + ex);
+            this.log.warn("Unexpected error:", ex);
         }
 
         #if (flash || js)

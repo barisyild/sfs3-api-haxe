@@ -266,7 +266,7 @@ class ReliableChannelV2 extends BaseReliableChannel {
                 }
             });
         } catch (ex:Dynamic) {
-            this.log.warn("Exception in RTX Loop: " + ex);
+            this.log.warn("Exception in RTX Loop:", ex);
         }
     }
 
