@@ -96,7 +96,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		else if (connMode == ConnectionMode.WEBSOCKET)
 			connectWs(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
 		else
-			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
+			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort, cfgData.useSSL);
 	}
 
 	/*
@@ -141,7 +141,7 @@ class BitSwarmClient implements IBitSwarmClient {
 		tcpClient.connect(host, port, timeoutMillis);
 	}
 
-	private function connectBlueBox(host:String, port:Int):Void {
+	private function connectBlueBox(host:String, port:Int, useSSL:Bool):Void {
 		if (bbClient != null) {
 			if (bbClient.isConnected())
 				throw new Exception("An active connection already exists");
@@ -157,7 +157,7 @@ class BitSwarmClient implements IBitSwarmClient {
 
 		bbClient.setPollSpeed(getConfigData().blueBox.pollingRateMs);
 
-		bbClient.connect(host, port, cfgData.useSSL);
+		bbClient.connect(host, port, useSSL);
 	}
 
 	private function connectWs(host:String, port:Int):Void {
@@ -314,7 +314,7 @@ class BitSwarmClient implements IBitSwarmClient {
 			attemptReconnection();
 		else if (cfgData.blueBox.isActive) {
 			connMode = ConnectionMode.HTTP;
-			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort);
+			connectBlueBox(cfgData.host, cfgData.useSSL ? cfgData.httpsPort : cfgData.httpPort, cfgData.useSSL);
 		}
 		else
 			notifyConnectionError();
