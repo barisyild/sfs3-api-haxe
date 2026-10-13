@@ -51,6 +51,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 		if (data.length == 0) 
 			throw new IllegalStateException("Got empty TCP packet: no readable bytes available!");
 
+		#if !no_traces
 		var dbgLvl = ioHandler.getBitSwarm().getNetDebugLevel();
 		if (dbgLvl == NetDebugLevel.PACKET || dbgLvl == NetDebugLevel.PROTOCOL) {
 			if (data.length > hexDumpMaxSize) 
@@ -58,6 +59,7 @@ class TcpIOHandler extends SpecializedIOHandler {
 			else 
 				log.info('Incoming, TCP, \n${ByteUtils.hexDump(data.getData())}');
 		}
+		#end
 		
 		try {
 			while (data.length > 0) {

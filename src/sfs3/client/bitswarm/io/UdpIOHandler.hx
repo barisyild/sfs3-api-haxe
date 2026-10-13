@@ -23,6 +23,7 @@ class UdpIOHandler extends SpecializedIOHandler {
 		var remainingDataBytes = byteData.sub(dataBuffer.position, byteData.length - dataBuffer.position);
 		var remainingData = remainingDataBytes.getData();
 		
+		#if !no_traces
 		var dbgLvl = ioHandler.getBitSwarm().getNetDebugLevel();
 		if (dbgLvl == NetDebugLevel.PACKET || dbgLvl == NetDebugLevel.PROTOCOL) {
 			if (remainingDataBytes.length > hexDumpMaxSize)
@@ -30,6 +31,7 @@ class UdpIOHandler extends SpecializedIOHandler {
 			else 
 				log.info('Incoming, $txType, \n${ByteUtils.hexDump(remainingData)}');
 		}
+		#end
 		
 		if (header.isEncrypted()) {
 			remainingData = ioHandler.getPacketEncrypter().decrypt(remainingData);

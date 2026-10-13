@@ -16,6 +16,7 @@ enum abstract LogLevel(Int) to Int from Int {
     }
 }
 
+#if no_traces @:using(sfs3.client.core.Logger.LoggerStrip) #end
 class Logger {
     private static var globalLevel:LogLevel = WARN;
     private static var showPosition:Bool = false;
@@ -43,43 +44,38 @@ class Logger {
         return showPosition;
     }
 
-    public static function isDebugEnabled():Bool {
+    public static #if no_traces inline #end function isDebugEnabled():Bool {
+        #if no_traces
+        return false;
+        #else
         return (globalLevel : Int) >= (DEBUG : Int);
+        #end
     }
 
-    public #if no_traces inline #end function error(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
-        #if !no_traces
+    #if !no_traces
+    public function error(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
         if((globalLevel : Int) >= (ERROR : Int))
             output(ERROR, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
-        #end
     }
 
-    public #if no_traces inline #end function warn(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
-        #if !no_traces
+    public function warn(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
         if((globalLevel : Int) >= (WARN : Int))
             output(WARN, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
-        #end
     }
 
-    public #if no_traces inline #end function info(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
-        #if !no_traces
+    public function info(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
         if((globalLevel : Int) >= (INFO : Int))
             output(INFO, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
-        #end
     }
 
-    public #if no_traces inline #end function debug(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
-        #if !no_traces
+    public function debug(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
         if((globalLevel : Int) >= (DEBUG : Int))
             output(DEBUG, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
-        #end
     }
 
-    public #if no_traces inline #end function log(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
-        #if !no_traces
+    public function log(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic, ?pos:haxe.PosInfos):Void {
         if((globalLevel : Int) >= (INFO : Int))
             output(INFO, collect(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9), pos);
-        #end
     }
 
     private static function collect(?a0:Dynamic, ?a1:Dynamic, ?a2:Dynamic, ?a3:Dynamic, ?a4:Dynamic, ?a5:Dynamic, ?a6:Dynamic, ?a7:Dynamic, ?a8:Dynamic, ?a9:Dynamic):Array<Dynamic> {
@@ -119,4 +115,21 @@ class Logger {
 
         haxe.Log.trace('[${level.toString()}] ${msg}', showPosition ? pos : null);
     }
+    #end
 }
+
+#if (no_traces || macro)
+/**
+ * Under no_traces the Logger methods are left out and calls resolve to these macros instead,
+ * which drop each call together with its arguments. An inline method with an empty body would
+ * still evaluate arguments the compiler cannot prove pure, such as a hex dump of every packet.
+ * The macro context does not see no_traces, hence the macro check.
+ */
+class LoggerStrip {
+    public static macro function error(self:haxe.macro.Expr, args:Array<haxe.macro.Expr>):haxe.macro.Expr return macro {};
+    public static macro function warn(self:haxe.macro.Expr, args:Array<haxe.macro.Expr>):haxe.macro.Expr return macro {};
+    public static macro function info(self:haxe.macro.Expr, args:Array<haxe.macro.Expr>):haxe.macro.Expr return macro {};
+    public static macro function debug(self:haxe.macro.Expr, args:Array<haxe.macro.Expr>):haxe.macro.Expr return macro {};
+    public static macro function log(self:haxe.macro.Expr, args:Array<haxe.macro.Expr>):haxe.macro.Expr return macro {};
+}
+#end

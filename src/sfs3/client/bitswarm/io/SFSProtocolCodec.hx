@@ -82,8 +82,10 @@ class SFSProtocolCodec implements IProtocolCodec
             throw new IllegalArgumentException("Invalid type: " + data.getClass() + ", expected byte[]");
 
         // Debug
+        #if !no_traces
         if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL)
             log.info("Outgoing, {}, {}", request.getTransport(), ByteUtils.hexDump(data));
+        #end
 
         ioHandler.onDataWrite(request);
     }

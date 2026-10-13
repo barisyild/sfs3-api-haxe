@@ -98,9 +98,12 @@ class WebSocketGeneric extends WebSocket {
         }
     }
 
-    private function _debug(msg:String, ?p:PosInfos):Void {
+    private #if no_traces inline #end function _debug(msg:String, ?p:PosInfos):Void {
+        // haxe.Log.trace is called directly, so no_traces would not remove it on its own
+        #if !no_traces
         if (!debug) return;
         haxe.Log.trace(msg, p);
+        #end
     }
 
     private function writeBytes(data:Bytes) {
