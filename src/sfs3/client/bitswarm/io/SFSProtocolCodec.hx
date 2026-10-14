@@ -10,6 +10,7 @@ import sfs3.client.entities.data.ISFSObject;
 import sfs3.client.exceptions.SFSException;
 import sfs3.client.bitswarm.util.ByteUtils;
 import sfs3.client.entities.data.SFSObject;
+import sfs3.client.bitswarm.io.protocol.ProtocolUtils;
 import haxe.io.BytesData;
 
 class SFSProtocolCodec implements IProtocolCodec
@@ -27,36 +28,36 @@ class SFSProtocolCodec implements IProtocolCodec
 
     public function onPacketRead(buff:BytesData, txType:TransportType, isRaw:Bool):Void
     {
-        if (isRaw)
-            onRawPacketRead(buff, txType);
-        else
-            onStdPacketRead(buff, txType);
+        var bytes = Bytes.ofData(buff);
+        onPacketReadAt(bytes, 0, bytes.length, txType, isRaw);
     }
 
-    private function onRawPacketRead(bytesData:BytesData, txType:TransportType):Void
+    public function onPacketReadAt(bytes:Bytes, pos:Int, len:Int, txType:TransportType, isRaw:Bool):Void
     {
-        var bytes = Bytes.ofData(bytesData);
-        var input = new BytesInput(bytes);
+        var input = new BytesInput(bytes, pos, len);
         input.bigEndian = true;
+
+        if (isRaw)
+            onRawPacketRead(input, len, txType);
+        else
+            onStdPacketRead(input, txType);
+    }
+
+    private function onRawPacketRead(input:BytesInput, len:Int, txType:TransportType):Void
+    {
         var ctrlId:Int = input.readByte();
         var reqId:Int = input.readInt16();
-
-        var remainingLen = input.length - input.position;
-        var respData:Bytes = input.read(remainingLen);
+        var respData:Bytes = input.read(len - ProtocolUtils.CTRL_DATA_BYTE_SIZE);
 
         var resp:Response = new Response(ctrlId, reqId, respData, txType, true);
         dispatchResponse(resp);
     }
 
-    private function onStdPacketRead(bytesData:BytesData, txType:TransportType):Void
+    private function onStdPacketRead(input:BytesInput, txType:TransportType):Void
     {
-        var bytes = Bytes.ofData(bytesData);
-        var buff = new BytesInput(bytes);
-        buff.bigEndian = true;
-        var ctrlId:Int =  buff.readByte();
-        var reqId = buff.readInt16();
-        var remaining = bytes.sub(3, bytes.length - 3); // TODO: Optimize
-        var sfso:SFSObject = SFSObject.newFromBinaryData(remaining.getData());
+        var ctrlId:Int = input.readByte();
+        var reqId = input.readInt16();
+        var sfso:SFSObject = @:privateAccess SFSObject.newFromBinaryDataInput(input);
 
         // Debug
         var dbgLvl:NetDebugLevel = bitSwarm.getNetDebugLevel();

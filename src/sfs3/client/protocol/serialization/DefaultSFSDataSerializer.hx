@@ -40,6 +40,18 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         return b & 0xFF;
     }
 
+    private static inline function readUtf(buffer:BytesInput, len:Int):String {
+        #if flash
+        var data:flash.utils.ByteArray = @:privateAccess buffer.b;
+        var start:UInt = data.position;
+        var value = data.readUTFBytes(len);
+        data.position = start + len;
+        return value;
+        #else
+        return buffer.read(len).toString();
+        #end
+    }
+
     // --- Binary to Object ---
 
     public function binary2object(data:BytesData):ISFSObject {
@@ -73,11 +85,15 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function decodeSFSObject(buffer:BytesInput):ISFSObject {
-        var sfsObject = SFSObject.newInstance();
         var headerByte = buffer.readByte();
         if (headerByte != SFSDataType.SFS_OBJECT)
             throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_OBJECT + ", found: " + headerByte);
 
+        return decodeSFSObjectBody(buffer);
+    }
+
+    private function decodeSFSObjectBody(buffer:BytesInput):ISFSObject {
+        var sfsObject = SFSObject.newInstance();
         var size = buffer.readInt16();
         if (size < 0)
             throw new IllegalStateException("Can't decode SFSObject. Size is negative = " + size);
@@ -93,11 +109,15 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function decodeSFSArray(buffer:BytesInput):ISFSArray {
-        var sfsArray = SFSArray.newInstance();
         var headerByte = buffer.readByte();
         if (headerByte != SFSDataType.SFS_ARRAY)
             throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_ARRAY + ", found: " + headerByte);
 
+        return decodeSFSArrayBody(buffer);
+    }
+
+    private function decodeSFSArrayBody(buffer:BytesInput):ISFSArray {
+        var sfsArray = SFSArray.newInstance();
         var size = buffer.readInt16();
         if (size < 0)
             throw new IllegalStateException("Can't decode SFSArray. Size is negative = " + size);
@@ -117,8 +137,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     private function decodeSFSObjectKey(buffer:BytesInput):String {
         var keySize = buffer.readByte() & 0xFF;
-        var keyData = buffer.read(keySize);
-        return keyData.toString();
+        return readUtf(buffer, keySize);
     }
 
     private function decodeObject(buffer:BytesInput):SFSDataWrapper {
@@ -149,15 +168,11 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         if (headerByte == SFSDataType.VECTOR2_ARRAY) return binDecode_VECTOR2_ARRAY(buffer);
         if (headerByte == SFSDataType.VECTOR3_ARRAY) return binDecode_VECTOR3_ARRAY(buffer);
 
-        if (headerByte == SFSDataType.SFS_ARRAY) {
-            buffer.position = buffer.position - 1;
-            return new SFSDataWrapper(SFSDataType.SFS_ARRAY, decodeSFSArray(buffer));
-        }
+        if (headerByte == SFSDataType.SFS_ARRAY)
+            return new SFSDataWrapper(SFSDataType.SFS_ARRAY, decodeSFSArrayBody(buffer));
 
-        if (headerByte == SFSDataType.SFS_OBJECT) {
-            buffer.position = buffer.position - 1;
-            return new SFSDataWrapper(SFSDataType.SFS_OBJECT, decodeSFSObject(buffer));
-        }
+        if (headerByte == SFSDataType.SFS_OBJECT)
+            return new SFSDataWrapper(SFSDataType.SFS_OBJECT, decodeSFSObjectBody(buffer));
 
         throw new SFSCodecException("Unknown SFSDataType ID: " + headerByte);
     }
@@ -205,21 +220,18 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binDecode_STRING(buffer:BytesInput):SFSDataWrapper {
         var strLen = buffer.readInt16();
         if (strLen < 0) throw new SFSCodecException("Error decoding UtfString. Negative size: " + strLen);
-        var strData = buffer.read(strLen);
-        return new SFSDataWrapper(SFSDataType.STRING, strData.toString());
+        return new SFSDataWrapper(SFSDataType.STRING, readUtf(buffer, strLen));
     }
 
     private function binDecode_SHORT_STRING(buffer:BytesInput):SFSDataWrapper {
         var strLen = buffer.readByte() & 0xFF;
-        var strData = buffer.read(strLen);
-        return new SFSDataWrapper(SFSDataType.SHORT_STRING, strData.toString());
+        return new SFSDataWrapper(SFSDataType.SHORT_STRING, readUtf(buffer, strLen));
     }
 
     private function binDecode_TEXT(buffer:BytesInput):SFSDataWrapper {
         var strLen = buffer.readInt32();
         if (strLen < 0) throw new SFSCodecException("Error decoding Text. Negative size: " + strLen);
-        var strData = buffer.read(strLen);
-        return new SFSDataWrapper(SFSDataType.TEXT, strData.toString());
+        return new SFSDataWrapper(SFSDataType.TEXT, readUtf(buffer, strLen));
     }
 
     private function binDecode_VECTOR2(buffer:BytesInput):SFSDataWrapper {
@@ -297,8 +309,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         for (j in 0...arraySize) {
             var strLen = buffer.readInt16();
             if (strLen < 0) throw new SFSCodecException("Error decoding UtfStringArray element. Element has negative size: " + strLen);
-            var strData = buffer.read(strLen);
-            arr.push(strData.toString());
+            arr.push(readUtf(buffer, strLen));
         }
         return new SFSDataWrapper(SFSDataType.STRING_ARRAY, arr);
     }
@@ -308,8 +319,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arr = new Array<String>();
         for (j in 0...arraySize) {
             var strLen = buffer.readByte() & 0xFF;
-            var strData = buffer.read(strLen);
-            arr.push(strData.toString());
+            arr.push(readUtf(buffer, strLen));
         }
         return new SFSDataWrapper(SFSDataType.SHORT_STRING_ARRAY, arr);
     }

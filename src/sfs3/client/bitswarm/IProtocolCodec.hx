@@ -6,6 +6,7 @@ import haxe.io.BytesData;
 interface IProtocolCodec
 {
     public function onPacketRead(byteData:BytesData, txType:TransportType, isRaw:Bool):Void;
+    public function onPacketReadAt(bytes:Bytes, pos:Int, len:Int, txType:TransportType, isRaw:Bool):Void;
     public function onPacketWrite(request:IRequest):Void;
     public function getIOHandler():IOHandler;
 }
