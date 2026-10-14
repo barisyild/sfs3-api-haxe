@@ -38,10 +38,7 @@ class SFSUserManager implements IUserManager
 
 	public function containsUser(user:User):Bool
 	{
-		return globalLock.execute(() -> {
-			for (u in usersByName) if (u == user) return true;
-			return false;
-		});
+		return user != null && globalLock.execute(() -> usersById.get(user.getId()) == user);
 	}
 
 	public function getUserByName(userName:String):User
