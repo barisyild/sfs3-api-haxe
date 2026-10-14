@@ -52,6 +52,46 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         #end
     }
 
+    private static extern inline function readU8(buffer:BytesInput):Int {
+        #if flash
+        return (@:privateAccess buffer.b : flash.utils.ByteArray).readUnsignedByte();
+        #else
+        return buffer.readByte();
+        #end
+    }
+
+    private static extern inline function readI16(buffer:BytesInput):Int {
+        #if flash
+        return (@:privateAccess buffer.b : flash.utils.ByteArray).readShort();
+        #else
+        return buffer.readInt16();
+        #end
+    }
+
+    private static extern inline function readI32(buffer:BytesInput):Int {
+        #if flash
+        return (@:privateAccess buffer.b : flash.utils.ByteArray).readInt();
+        #else
+        return buffer.readInt32();
+        #end
+    }
+
+    private static extern inline function readF32(buffer:BytesInput):Float {
+        #if flash
+        return (@:privateAccess buffer.b : flash.utils.ByteArray).readFloat();
+        #else
+        return buffer.readFloat();
+        #end
+    }
+
+    private static extern inline function readF64(buffer:BytesInput):Float {
+        #if flash
+        return (@:privateAccess buffer.b : flash.utils.ByteArray).readDouble();
+        #else
+        return buffer.readDouble();
+        #end
+    }
+
     // --- Binary to Object ---
 
     public function binary2object(data:BytesData):ISFSObject {
@@ -69,7 +109,15 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binaryinput2object(data:BytesInput):ISFSObject {
         if (data.length < 3)
             throw new IllegalStateException("Can't decode an SFSObject. Byte data is insufficient. Size: " + data.length + " bytes");
+        #if flash
+        try {
+            return decodeSFSObject(data);
+        } catch (e:flash.errors.EOFError) {
+            throw new haxe.io.Eof();
+        }
+        #else
         return decodeSFSObject(data);
+        #end
     }
 
     public function binary2array(data:BytesData):SFSArray {
@@ -81,11 +129,19 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
             throw new IllegalStateException("Can't decode an SFSArray. Byte data is insufficient. Size: " + bytes.length + " bytes");
         var buffer = new BytesInput(bytes);
         buffer.bigEndian = true;
+        #if flash
+        try {
+            return cast decodeSFSArray(buffer);
+        } catch (e:flash.errors.EOFError) {
+            throw new haxe.io.Eof();
+        }
+        #else
         return cast decodeSFSArray(buffer);
+        #end
     }
 
     private function decodeSFSObject(buffer:BytesInput):ISFSObject {
-        var headerByte = buffer.readByte();
+        var headerByte = readU8(buffer);
         if (headerByte != SFSDataType.SFS_OBJECT)
             throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_OBJECT + ", found: " + headerByte);
 
@@ -94,7 +150,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     private function decodeSFSObjectBody(buffer:BytesInput):ISFSObject {
         var sfsObject = SFSObject.newInstance();
-        var size = buffer.readInt16();
+        var size = readI16(buffer);
         if (size < 0)
             throw new IllegalStateException("Can't decode SFSObject. Size is negative = " + size);
 
@@ -109,7 +165,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function decodeSFSArray(buffer:BytesInput):ISFSArray {
-        var headerByte = buffer.readByte();
+        var headerByte = readU8(buffer);
         if (headerByte != SFSDataType.SFS_ARRAY)
             throw new IllegalStateException("Invalid SFSDataType. Expected: " + SFSDataType.SFS_ARRAY + ", found: " + headerByte);
 
@@ -118,7 +174,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
 
     private function decodeSFSArrayBody(buffer:BytesInput):ISFSArray {
         var sfsArray = SFSArray.newInstance();
-        var size = buffer.readInt16();
+        var size = readI16(buffer);
         if (size < 0)
             throw new IllegalStateException("Can't decode SFSArray. Size is negative = " + size);
 
@@ -136,12 +192,12 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function decodeSFSObjectKey(buffer:BytesInput):String {
-        var keySize = buffer.readByte() & 0xFF;
+        var keySize = readU8(buffer) & 0xFF;
         return readUtf(buffer, keySize);
     }
 
     private function decodeObject(buffer:BytesInput):SFSDataWrapper {
-        var headerByte = buffer.readByte();
+        var headerByte = readU8(buffer);
 
         if (headerByte == SFSDataType.NULL) return binDecode_NULL(buffer);
         if (headerByte == SFSDataType.BOOL) return binDecode_BOOL(buffer);
@@ -184,63 +240,63 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function binDecode_BOOL(buffer:BytesInput):SFSDataWrapper {
-        var boolByte = buffer.readByte();
+        var boolByte = readU8(buffer);
         if (boolByte == 0) return new SFSDataWrapper(SFSDataType.BOOL, false);
         if (boolByte == 1) return new SFSDataWrapper(SFSDataType.BOOL, true);
         throw new SFSCodecException("Error decoding Bool type. Illegal value: " + boolByte);
     }
 
     private function binDecode_BYTE(buffer:BytesInput):SFSDataWrapper {
-        return new SFSDataWrapper(SFSDataType.BYTE, buffer.readByte());
+        return new SFSDataWrapper(SFSDataType.BYTE, readU8(buffer));
     }
 
     private function binDecode_SHORT(buffer:BytesInput):SFSDataWrapper {
-        return new SFSDataWrapper(SFSDataType.SHORT, buffer.readInt16());
+        return new SFSDataWrapper(SFSDataType.SHORT, readI16(buffer));
     }
 
     private function binDecode_INT(buffer:BytesInput):SFSDataWrapper {
-        return new SFSDataWrapper(SFSDataType.INT, buffer.readInt32());
+        return new SFSDataWrapper(SFSDataType.INT, readI32(buffer));
     }
 
     private function binDecode_LONG(buffer:BytesInput):SFSDataWrapper {
-        var hi = buffer.readInt32();
-        var lo = buffer.readInt32();
+        var hi = readI32(buffer);
+        var lo = readI32(buffer);
         trace(PlatformInt64.make(hi, lo));
         return new SFSDataWrapper(SFSDataType.LONG, PlatformInt64.make(hi, lo));
     }
 
     private function binDecode_FLOAT(buffer:BytesInput):SFSDataWrapper {
-        return new SFSDataWrapper(SFSDataType.FLOAT, buffer.readFloat());
+        return new SFSDataWrapper(SFSDataType.FLOAT, readF32(buffer));
     }
 
     private function binDecode_DOUBLE(buffer:BytesInput):SFSDataWrapper {
-        return new SFSDataWrapper(SFSDataType.DOUBLE, buffer.readDouble());
+        return new SFSDataWrapper(SFSDataType.DOUBLE, readF64(buffer));
     }
 
     private function binDecode_STRING(buffer:BytesInput):SFSDataWrapper {
-        var strLen = buffer.readInt16();
+        var strLen = readI16(buffer);
         if (strLen < 0) throw new SFSCodecException("Error decoding UtfString. Negative size: " + strLen);
         return new SFSDataWrapper(SFSDataType.STRING, readUtf(buffer, strLen));
     }
 
     private function binDecode_SHORT_STRING(buffer:BytesInput):SFSDataWrapper {
-        var strLen = buffer.readByte() & 0xFF;
+        var strLen = readU8(buffer) & 0xFF;
         return new SFSDataWrapper(SFSDataType.SHORT_STRING, readUtf(buffer, strLen));
     }
 
     private function binDecode_TEXT(buffer:BytesInput):SFSDataWrapper {
-        var strLen = buffer.readInt32();
+        var strLen = readI32(buffer);
         if (strLen < 0) throw new SFSCodecException("Error decoding Text. Negative size: " + strLen);
         return new SFSDataWrapper(SFSDataType.TEXT, readUtf(buffer, strLen));
     }
 
     private function binDecode_VECTOR2(buffer:BytesInput):SFSDataWrapper {
-        var vec = new SFSVector2(buffer.readFloat(), buffer.readFloat());
+        var vec = new SFSVector2(readF32(buffer), readF32(buffer));
         return new SFSDataWrapper(SFSDataType.VECTOR2, vec);
     }
 
     private function binDecode_VECTOR3(buffer:BytesInput):SFSDataWrapper {
-        var vec = new SFSVector3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
+        var vec = new SFSVector3(readF32(buffer), readF32(buffer), readF32(buffer));
         return new SFSDataWrapper(SFSDataType.VECTOR3, vec);
     }
 
@@ -248,7 +304,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<Bool>();
         for (j in 0...arraySize) {
-            var boolData = buffer.readByte();
+            var boolData = readU8(buffer);
             if (boolData == 0) arr.push(false);
             else if (boolData == 1) arr.push(true);
             else throw new SFSCodecException("Error decoding BoolArray. Invalid bool value: " + boolData);
@@ -257,24 +313,31 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     }
 
     private function binDecode_BYTE_ARRAY(buffer:BytesInput):SFSDataWrapper {
-        var arraySize = buffer.readInt32();
+        var arraySize = readI32(buffer);
         if (arraySize < 0) throw new SFSCodecException("Error decoding typed array size. Negative size: " + arraySize);
+        #if flash
+        var bytesData = new flash.utils.ByteArray();
+        bytesData.endian = flash.utils.Endian.LITTLE_ENDIAN;
+        if (arraySize > 0)
+            (@:privateAccess buffer.b : flash.utils.ByteArray).readBytes(bytesData, 0, arraySize);
+        #else
         var byteData = buffer.read(arraySize);
         var bytesData:BytesData = byteData.getData();
+        #end
         return new SFSDataWrapper(SFSDataType.BYTE_ARRAY, bytesData);
     }
 
     private function binDecode_SHORT_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<Int>();
-        for (j in 0...arraySize) arr.push(buffer.readInt16());
+        for (j in 0...arraySize) arr.push(readI16(buffer));
         return new SFSDataWrapper(SFSDataType.SHORT_ARRAY, arr);
     }
 
     private function binDecode_INT_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<Int>();
-        for (j in 0...arraySize) arr.push(buffer.readInt32());
+        for (j in 0...arraySize) arr.push(readI32(buffer));
         return new SFSDataWrapper(SFSDataType.INT_ARRAY, arr);
     }
 
@@ -282,8 +345,8 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<PlatformInt64>();
         for (j in 0...arraySize) {
-            var hi = buffer.readInt32();
-            var lo = buffer.readInt32();
+            var hi = readI32(buffer);
+            var lo = readI32(buffer);
             arr.push(PlatformInt64.make(hi, lo));
         }
         return new SFSDataWrapper(SFSDataType.LONG_ARRAY, arr);
@@ -292,14 +355,14 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binDecode_FLOAT_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<Float>();
-        for (j in 0...arraySize) arr.push(buffer.readFloat());
+        for (j in 0...arraySize) arr.push(readF32(buffer));
         return new SFSDataWrapper(SFSDataType.FLOAT_ARRAY, arr);
     }
 
     private function binDecode_DOUBLE_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<Float>();
-        for (j in 0...arraySize) arr.push(buffer.readDouble());
+        for (j in 0...arraySize) arr.push(readF64(buffer));
         return new SFSDataWrapper(SFSDataType.DOUBLE_ARRAY, arr);
     }
 
@@ -307,7 +370,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<String>();
         for (j in 0...arraySize) {
-            var strLen = buffer.readInt16();
+            var strLen = readI16(buffer);
             if (strLen < 0) throw new SFSCodecException("Error decoding UtfStringArray element. Element has negative size: " + strLen);
             arr.push(readUtf(buffer, strLen));
         }
@@ -318,7 +381,7 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<String>();
         for (j in 0...arraySize) {
-            var strLen = buffer.readByte() & 0xFF;
+            var strLen = readU8(buffer) & 0xFF;
             arr.push(readUtf(buffer, strLen));
         }
         return new SFSDataWrapper(SFSDataType.SHORT_STRING_ARRAY, arr);
@@ -327,19 +390,19 @@ class DefaultSFSDataSerializer implements ISFSDataSerializer {
     private function binDecode_VECTOR2_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<SFSVector2>();
-        for (j in 0...arraySize) arr.push(new SFSVector2(buffer.readFloat(), buffer.readFloat()));
+        for (j in 0...arraySize) arr.push(new SFSVector2(readF32(buffer), readF32(buffer)));
         return new SFSDataWrapper(SFSDataType.VECTOR2_ARRAY, arr);
     }
 
     private function binDecode_VECTOR3_ARRAY(buffer:BytesInput):SFSDataWrapper {
         var arraySize = getTypeArraySize(buffer);
         var arr = new Array<SFSVector3>();
-        for (j in 0...arraySize) arr.push(new SFSVector3(buffer.readFloat(), buffer.readFloat(), buffer.readFloat()));
+        for (j in 0...arraySize) arr.push(new SFSVector3(readF32(buffer), readF32(buffer), readF32(buffer)));
         return new SFSDataWrapper(SFSDataType.VECTOR3_ARRAY, arr);
     }
 
     private function getTypeArraySize(buffer:BytesInput):Int {
-        var arraySize = buffer.readInt16();
+        var arraySize = readI16(buffer);
         if (arraySize < 0) throw new SFSCodecException("Error decoding typed array size. Negative size: " + arraySize);
         return arraySize;
     }
