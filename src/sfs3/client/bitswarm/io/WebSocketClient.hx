@@ -74,7 +74,10 @@ class WebSocketClient extends BaseSocketClient {
 			};
 
 			ws.onerror = function(error:String) {
-				handleError(error);
+				if (socketState == SocketState.Connected)
+					disconnect(ClientDisconnectionReason.UNKNOWN, error);
+				else
+					handleError(error);
 			};
 
 			#if (!library && (flash || openfl))
