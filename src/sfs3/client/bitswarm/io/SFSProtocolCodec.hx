@@ -84,7 +84,7 @@ class SFSProtocolCodec implements IProtocolCodec
 
         // Debug
         #if !no_traces
-        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL)
+        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL && ProtocolUtils.mayDumpRequest(request))
             log.info("Outgoing, {}, {}", request.getTransport(), ByteUtils.hexDump(data));
         #end
 
@@ -97,7 +97,7 @@ class SFSProtocolCodec implements IProtocolCodec
         request.setContent(sfso.toBinary());
 
         // Debug
-        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL && Logger.isDebugEnabled())
+        if (bitSwarm.getNetDebugLevel() == NetDebugLevel.PROTOCOL && Logger.isDebugEnabled() && ProtocolUtils.mayDumpRequest(request))
             log.debug("Outgoing, {}, {}", request.getTransport(), sfso.getDump());
 
         ioHandler.onDataWrite(request);
