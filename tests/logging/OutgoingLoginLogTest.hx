@@ -47,7 +47,9 @@ class OutgoingLoginLogTest {
             "disconnected login exposed its arguments");
 
         messages = [];
-        var box = new sfs3.client.bitswarm.bbox.BlueBoxClient(link);
+        // The formatter needs only the link and session; keep the test independent of HTTP executors.
+        var box = Type.createEmptyInstance(sfs3.client.bitswarm.bbox.BlueBoxClient);
+        @:privateAccess box.bitswarm = link;
         var session = "test-bluebox-session";
         @:privateAccess box.sessId = session;
         var bytes = Bytes.ofString(MARKER);
