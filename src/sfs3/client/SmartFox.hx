@@ -659,7 +659,9 @@ class SmartFox implements ISmartFox implements IDispatchable {
 	 */
 	public function send(request:IClientRequest):Void {
 		if (!isConnected()) {
-			log.warn("Client is not connected. Request cannot be sent: " + request);
+			// A disconnected login can still carry credentials in its request object.
+			log.warn("Client is not connected. Request cannot be sent: " +
+				((request is sfs3.client.requests.LoginRequest) ? "LoginRequest" : Std.string(request)));
 			return;
 		}
 

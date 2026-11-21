@@ -448,7 +448,7 @@ class BlueBoxClient implements IDispatchable
         var request = reqSessId + SEP + cmd + SEP + encodedData;
 
         if (bitswarm != null && bitswarm.isBBoxDebug())
-            trace("INFO: BB Outgoing: " + request);
+            trace('INFO: BB Outgoing: $cmd, ${data == null ? 0 : data.length} bytes');
 
         return request;
     }

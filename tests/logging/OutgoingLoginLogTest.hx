@@ -37,6 +37,28 @@ class OutgoingLoginLogTest {
         return link.wire;
     }
 
+    static function checkNoTransportDump(link:CaptureLink):Void {
+        messages = [];
+        var params = new SFSObject();
+        params.putString("csk", MARKER);
+        new sfs3.client.SmartFox().send(new LoginRequest("", MARKER, "offline", params));
+        var warning = messages.join("\n");
+        check(warning.indexOf("Client is not connected") >= 0 && warning.indexOf(MARKER) < 0,
+            "disconnected login exposed its arguments");
+
+        messages = [];
+        var box = new sfs3.client.bitswarm.bbox.BlueBoxClient(link);
+        var session = "test-bluebox-session";
+        @:privateAccess box.sessId = session;
+        var bytes = Bytes.ofString(MARKER);
+        var base64 = haxe.crypto.Base64.encode(bytes);
+        var request = @:privateAccess box.encodeRequest("data", bytes);
+        check(request.indexOf(base64) >= 0 && request.indexOf(session) >= 0, "BlueBox request changed");
+        var log = messages.join("\n");
+        check(log.indexOf("data") >= 0 && log.indexOf(bytes.length + " bytes") >= 0 &&
+            log.indexOf(base64) < 0 && log.indexOf(session) < 0, "BlueBox logged a session or payload");
+    }
+
     public static function main():Void {
         var link = new CaptureLink();
         var handler = new SFSIOHandler(link);
@@ -72,6 +94,7 @@ class OutgoingLoginLogTest {
         Logger.setLevel(INFO);
         new SFSProtocolCodec(sink).onPacketWrite(raw);
         check(sink.received == raw && messages.length == 0, "raw login dumped or lost");
+        checkNoTransportDump(link);
         Logger.setLevel(previousLevel);
         haxe.Log.trace = previousTrace;
         trace("PASS: outgoing login content and hex dumps omitted; wire and other diagnostics preserved");
@@ -82,6 +105,7 @@ private class CaptureLink extends BitSwarmClient {
     public var level:NetDebugLevel = OFF;
     public var wire:Bytes;
     public function new() super(null);
+    override public function isBBoxDebug():Bool return true;
     override public function getNetDebugLevel():NetDebugLevel return level;
     override public function writeToSocket(data:Bytes, transport:TransportType):Void { wire = data; }
 }
