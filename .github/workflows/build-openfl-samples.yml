@@ -44,7 +44,7 @@ jobs:
           haxelib install openfl
           haxelib install lime
           haxelib install crypto
-          haxelib install colyseus-websocket
+          haxelib install colyseus-websocket "$(jq -er '.dependencies["colyseus-websocket"]' haxelib.json)"
           haxelib install haxe-concurrent
           haxelib install hxjava
           haxelib git air https://github.com/tobil4sk/air
