@@ -3,9 +3,6 @@ import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 import haxe.io.BytesInput;
 import haxe.io.BytesData;
-import sfs3.client.bitswarm.io.IRequest;
-import sfs3.client.controllers.SystemController;
-import sfs3.client.requests.BaseRequest;
 
 class ProtocolUtils
 {
@@ -14,11 +11,6 @@ class ProtocolUtils
     public static final INT32_BYTE_SIZE:Int = 4; // Integer.SIZE / 8 = 32 / 8
 
     public static final CTRL_DATA_BYTE_SIZE:Int = 3;
-
-    /** Login params can include credentials at any nesting depth. Keep the entire outgoing payload out of dumps. */
-    public static inline function mayDumpRequest(request:IRequest):Bool {
-        return request.getControllerId() != SystemController.CONTROLLER_ID || request.getId() != BaseRequest.Login;
-    }
 
     public static function encodePacketHeader(packetHeader:PacketHeader):Int
     {
